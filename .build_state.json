@@ -1,0 +1,310 @@
+{
+ "__overview__": "1bdb2ee6c4d2efec",
+ "__tplver__": 3,
+ "Agnico_Eagle": {
+  "id": "Agnico_Eagle",
+  "hash": "8b6e947c0d1c1da6",
+  "md": "Agnico_Eagle\\Agnico_Eagle_摘要.md",
+  "mtime": 1783058934.2907765
+ },
+ "Andean_Precious_Metals": {
+  "id": "Andean_Precious_Metals",
+  "hash": "931e06bdccdfb8ce",
+  "md": "Andean_Precious_Metals\\Andean_Precious_Metals_摘要.md",
+  "mtime": 1783058994.144461
+ },
+ "AngloGold_Ashanti": {
+  "id": "AngloGold_Ashanti",
+  "hash": "6bdae97b789a82e2",
+  "md": "AngloGold_Ashanti\\AngloGold_Ashanti_摘要.md",
+  "mtime": 1784079643.684209
+ },
+ "ARE_Holdings_Asahi_Refining": {
+  "id": "ARE_Holdings_Asahi_Refining",
+  "hash": "b84636137d8248bd",
+  "md": "ARE_Holdings_Asahi_Refining\\ARE_Holdings_摘要.md",
+  "mtime": 1790709123.6178045
+ },
+ "Avino_Silver_Gold": {
+  "id": "Avino_Silver_Gold",
+  "hash": "892cd04c0a481d58",
+  "md": "Avino_Silver_Gold\\Avino_Silver_Gold_摘要.md",
+  "mtime": 1783059094.913317
+ },
+ "Barrick_Gold": {
+  "id": "Barrick_Gold",
+  "hash": "f9d2bdc1cb2993f5",
+  "md": "Barrick_Gold\\Barrick_Gold_摘要.md",
+  "mtime": 1783059429.6654272
+ },
+ "Bunker_Hill_Mining": {
+  "id": "Bunker_Hill_Mining",
+  "hash": "2720d2e64aa78c83",
+  "md": "Bunker_Hill_Mining\\Bunker_Hill_Mining_摘要.md",
+  "mtime": 1783314793.3649778
+ },
+ "Coeur_Mining": {
+  "id": "Coeur_Mining",
+  "hash": "b3f5f9ca0ca525f4",
+  "md": "Coeur_Mining\\Coeur_Mining_摘要.md",
+  "mtime": 1783314889.05193
+ },
+ "Endeavour_Silver": {
+  "id": "Endeavour_Silver",
+  "hash": "e6ff314e7c326208",
+  "md": "Endeavour_Silver\\Endeavour_Silver_摘要.md",
+  "mtime": 1783315180.891582
+ },
+ "First_Majestic_Silver": {
+  "id": "First_Majestic_Silver",
+  "hash": "45657b239d75df1b",
+  "md": "First_Majestic_Silver\\First_Majestic_Silver_摘要.md",
+  "mtime": 1783314723.4726267
+ },
+ "Fortuna_Mining": {
+  "id": "Fortuna_Mining",
+  "hash": "8f5b6a84b71ed7a9",
+  "md": "Fortuna_Mining\\Fortuna_Mining_摘要.md",
+  "mtime": 1784079736.7751453
+ },
+ "Fresnillo": {
+  "id": "Fresnillo",
+  "hash": "cbbf7679f7c2be17",
+  "md": "Fresnillo\\Fresnillo_摘要.md",
+  "mtime": 1783314969.4240458
+ },
+ "Glencore": {
+  "id": "Glencore",
+  "hash": "6c6c60970a874992",
+  "md": "Glencore\\Glencore_摘要.md",
+  "mtime": 1783314745.121077
+ },
+ "Hecla_Mining": {
+  "id": "Hecla_Mining",
+  "hash": "ba964659192f8fb1",
+  "md": "Hecla_Mining\\Hecla_Mining_摘要.md",
+  "mtime": 1783314946.0675676
+ },
+ "Hochschild_Mining": {
+  "id": "Hochschild_Mining",
+  "hash": "33465a47a1839abd",
+  "md": "Hochschild_Mining\\Hochschild_Mining_摘要.md",
+  "mtime": 1784079850.557346
+ },
+ "Impala_Platinum": {
+  "id": "Impala_Platinum",
+  "hash": "82b55b9da15e42ee",
+  "md": "Impala_Platinum\\Impala_Platinum_摘要.md",
+  "mtime": 1791443837.2608166
+ },
+ "Industrias_Penoles": {
+  "id": "Industrias_Penoles",
+  "hash": "728c5c02ac102333",
+  "md": "Industrias_Penoles\\Industrias_Penoles_摘要.md",
+  "mtime": 1783315111.0466197
+ },
+ "KGHM": {
+  "id": "KGHM",
+  "hash": "d3b0289dd8f322dc",
+  "md": "KGHM\\KGHM_摘要.md",
+  "mtime": 1786000292.612628
+ },
+ "MAG_Silver": {
+  "id": "MAG_Silver",
+  "hash": "6be0bd6a87c6040a",
+  "md": "MAG_Silver\\MAG_Silver_摘要.md",
+  "mtime": 1784080209.1555007
+ },
+ "McEwen_Inc": {
+  "id": "McEwen_Inc",
+  "hash": "520fb78850504d9d",
+  "md": "McEwen_Inc\\McEwen_Inc_摘要.md",
+  "mtime": 1784080148.271865
+ },
+ "Newmont": {
+  "id": "Newmont",
+  "hash": "c6d5f4a1fc5bee0e",
+  "md": "Newmont\\Newmont_摘要.md",
+  "mtime": 1783058346.7582276
+ },
+ "Northam_Platinum": {
+  "id": "Northam_Platinum",
+  "hash": "67e8e20124f01ecf",
+  "md": "Northam_Platinum\\Northam_Platinum_摘要.md",
+  "mtime": 1784079819.7738943
+ },
+ "Pan_American_Silver": {
+  "id": "Pan_American_Silver",
+  "hash": "873f433fa87afc84",
+  "md": "Pan_American_Silver\\Pan_American_Silver_摘要.md",
+  "mtime": 1783058408.1598408
+ },
+ "Sibanye_Stillwater": {
+  "id": "Sibanye_Stillwater",
+  "hash": "e8cb515ae359e74d",
+  "md": "Sibanye_Stillwater\\Sibanye_Stillwater_摘要.md",
+  "mtime": 1784080108.3888688
+ },
+ "Silver_Tiger_Metals": {
+  "id": "Silver_Tiger_Metals",
+  "hash": "80cdd54f59418f55",
+  "md": "Silver_Tiger_Metals\\Silver_Tiger_Metals_摘要.md",
+  "mtime": 1783315026.8079982
+ },
+ "Silvercorp_Metals": {
+  "id": "Silvercorp_Metals",
+  "hash": "03d13063814d8ff2",
+  "md": "Silvercorp_Metals\\Silvercorp_Metals_摘要.md",
+  "mtime": 1783315095.2125523
+ },
+ "SilverCrest_Metals": {
+  "id": "SilverCrest_Metals",
+  "hash": "4d6695bf75e371c2",
+  "md": "SilverCrest_Metals\\SilverCrest_Metals_摘要.md",
+  "mtime": 1784080275.767244
+ },
+ "Skeena_Gold_Silver": {
+  "id": "Skeena_Gold_Silver",
+  "hash": "8489e466910d8f85",
+  "md": "Skeena_Gold_Silver\\Skeena_Gold_Silver_摘要.md",
+  "mtime": 1783315171.8826873
+ },
+ "South32": {
+  "id": "South32",
+  "hash": "ed0274bd15520eb4",
+  "md": "South32\\South32_摘要.md",
+  "mtime": 1783314840.1906912
+ },
+ "SSR_Mining": {
+  "id": "SSR_Mining",
+  "hash": "6526477de0b65c00",
+  "md": "SSR_Mining\\SSR_Mining_摘要.md",
+  "mtime": 1784080064.2692282
+ },
+ "Valterra_Platinum": {
+  "id": "Valterra_Platinum",
+  "hash": "e183339b2580a57f",
+  "md": "Valterra_Platinum\\Valterra_Platinum_摘要.md",
+  "mtime": 1788916665.5508249
+ },
+ "Vizsla_Silver": {
+  "id": "Vizsla_Silver",
+  "hash": "3580fc62f3ccb723",
+  "md": "Vizsla_Silver\\Vizsla_Silver_摘要.md",
+  "mtime": 1783314913.0971406
+ },
+ "Wheaton_Precious_Metals": {
+  "id": "Wheaton_Precious_Metals",
+  "hash": "49976644e75d56ac",
+  "md": "Wheaton_Precious_Metals\\Wheaton_Precious_Metals_摘要.md",
+  "mtime": 1783315005.8881838
+ },
+ "中金岭南_000060": {
+  "id": "中金岭南_000060",
+  "hash": "b41d21bbadc0ee45",
+  "md": "中金岭南_000060\\中金岭南_000060_摘要.md",
+  "mtime": 1784084891.3802342
+ },
+ "云南铜业_000878": {
+  "id": "云南铜业_000878",
+  "hash": "c72db83123e34a80",
+  "md": "云南铜业_000878\\云南铜业_000878_摘要.md",
+  "mtime": 1784085927.0584483
+ },
+ "云南锡业_000960": {
+  "id": "云南锡业_000960",
+  "hash": "9db15a48a666521b",
+  "md": "云南锡业_000960\\云南锡业_000960_摘要.md",
+  "mtime": 1784085971.2885506
+ },
+ "兴业银锡_000426": {
+  "id": "兴业银锡_000426",
+  "hash": "5eb628ce4ac229ff",
+  "md": "兴业银锡_000426\\兴业银锡_000426_摘要.md",
+  "mtime": 1784084752.4245207
+ },
+ "华钰矿业_601020": {
+  "id": "华钰矿业_601020",
+  "hash": "bc994b03f066cbb7",
+  "md": "华钰矿业_601020\\华钰矿业_601020_摘要.md",
+  "mtime": 1784086285.896936
+ },
+ "国城矿业_000688": {
+  "id": "国城矿业_000688",
+  "hash": "a50fea019f2f58d6",
+  "md": "国城矿业_000688\\国城矿业_000688_摘要.md",
+  "mtime": 1784085449.96779
+ },
+ "恒邦股份_002237": {
+  "id": "恒邦股份_002237",
+  "hash": "3ec56187d7363ee4",
+  "md": "恒邦股份_002237\\恒邦股份_002237_摘要.md",
+  "mtime": 1784083994.8463695
+ },
+ "株冶集团_600961": {
+  "id": "株冶集团_600961",
+  "hash": "b563f6bf02bafc40",
+  "md": "株冶集团_600961\\株冶集团_600961_摘要.md",
+  "mtime": 1784084325.653274
+ },
+ "江西铜业_600362": {
+  "id": "江西铜业_600362",
+  "hash": "5c8eb4590bbd6283",
+  "md": "江西铜业_600362\\江西铜业_600362_摘要.md",
+  "mtime": 1784085876.9274697
+ },
+ "湖南白银_002716": {
+  "id": "湖南白银_002716",
+  "hash": "2b05e710ff63bf88",
+  "md": "湖南白银_002716\\湖南白银_002716_摘要.md",
+  "mtime": 1784083912.3741302
+ },
+ "湖南黄金_002155": {
+  "id": "湖南黄金_002155",
+  "hash": "d15e76a6f379fa92",
+  "md": "湖南黄金_002155\\湖南黄金_002155_摘要.md",
+  "mtime": 1784086361.7420988
+ },
+ "白银有色_601212": {
+  "id": "白银有色_601212",
+  "hash": "5044d17b717db146",
+  "md": "白银有色_601212\\白银有色_601212_摘要.md",
+  "mtime": 1784086229.8380725
+ },
+ "盛达资源_000603": {
+  "id": "盛达资源_000603",
+  "hash": "e41ee74325daa8c1",
+  "md": "盛达资源_000603\\盛达资源_000603_摘要.md",
+  "mtime": 1784084944.0185819
+ },
+ "紫金矿业_601899": {
+  "id": "紫金矿业_601899",
+  "hash": "685c2bd56a9e13a2",
+  "md": "紫金矿业_601899\\紫金矿业_601899_摘要.md",
+  "mtime": 1784084745.635015
+ },
+ "西部矿业_601168": {
+  "id": "西部矿业_601168",
+  "hash": "817a90b8f3b28f14",
+  "md": "西部矿业_601168\\西部矿业_601168_摘要.md",
+  "mtime": 1784085051.688641
+ },
+ "豫光金铅_600531": {
+  "id": "豫光金铅_600531",
+  "hash": "557c078833080f82",
+  "md": "豫光金铅_600531\\豫光金铅_600531_摘要.md",
+  "mtime": 1784083975.3550014
+ },
+ "银泰黄金_000975": {
+  "id": "银泰黄金_000975",
+  "hash": "910ce53a8e42d71f",
+  "md": "银泰黄金_000975\\银泰黄金_000975_摘要.md",
+  "mtime": 1784084083.0673385
+ },
+ "驰宏锌锗_600497": {
+  "id": "驰宏锌锗_600497",
+  "hash": "33d9ea1de6fcd2a3",
+  "md": "驰宏锌锗_600497\\驰宏锌锗_600497_摘要.md",
+  "mtime": 1784083787.7191637
+ }
+}
