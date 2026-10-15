@@ -1,5 +1,4 @@
 
-/* ---------- 详情页（浅色主题） ---------- */
 :root {
   --ink: #1F2430; --ink-2: #5A6272; --ink-3: #8A91A0;
   --line: #E3E6EC; --bg: #F7F8FA; --card: #FFFFFF;
@@ -18,8 +17,7 @@ body {
 }
 .topbar .back {
   color: var(--ink-2); text-decoration: none; font-size: 14px;
-  border: 1px solid var(--line); background: #fff; border-radius: 8px;
-  padding: 5px 14px;
+  border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 5px 14px;
 }
 .topbar .back:hover { border-color: var(--brand); color: var(--brand-ink); }
 .topbar .title { font-weight: 700; font-size: 16px; }
@@ -30,8 +28,7 @@ body {
 .wrap { max-width: 1100px; margin: 26px auto 60px; padding: 0 24px; }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-  padding: 36px 48px; box-shadow: 0 1px 3px rgba(31,36,48,.04);
-  margin-bottom: 22px;
+  padding: 36px 48px; box-shadow: 0 1px 3px rgba(31,36,48,.04); margin-bottom: 22px;
 }
 h1 { font-size: 24px; margin: 0 0 6px; letter-spacing: .5px; }
 h2 { font-size: 19px; margin: 34px 0 12px; padding-left: 12px; border-left: 4px solid var(--brand); }
@@ -51,19 +48,19 @@ pre code { background: none; padding: 0; }
 a { color: var(--brand-ink); }
 hr { border: none; border-top: 1px solid var(--line); margin: 26px 0; }
 ul, ol { padding-left: 24px; }
-/* ---------- v3: 图表卡片 ---------- */
-.chart {
+/* ---------- v5: Chart.js 图表卡片 ---------- */
+.chart-box {
   background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFE 100%);
   border: 1px solid var(--line); border-radius: 12px;
-  padding: 14px 16px 8px; margin: 20px 0 8px;
+  padding: 14px 18px 12px; margin: 20px 0 10px;
   box-shadow: 0 2px 10px rgba(31,42,72,.05);
 }
-.chart + table { margin-top: 4px; }
-/* ---------- v2: 年报文件下载区 ---------- */
+.chart-title { font-size: 14.5px; font-weight: 800; color: #1A2030; margin-bottom: 8px; letter-spacing: .2px; }
+.chart-sub { font-size: 11px; font-weight: 400; color: var(--ink-3); margin-left: 10px; letter-spacing: .3px; }
+.chart-canvas-wrap { position: relative; height: 300px; width: 100%; }
+/* ---------- v5: 原文来源区 ---------- */
 .files h2 { margin-top: 4px; }
-.files table { font-size: 13px; }
-.files td.sz { white-space: nowrap; color: var(--ink-3); width: 90px; }
+.files .src-link { font-size: 15px; margin: 10px 0 6px; }
+.files .src-link a { font-weight: 600; }
 .files .hint { color: var(--ink-3); font-size: 12.5px; margin: 4px 0 10px; }
-.foot {
-  margin-top: 18px; color: var(--ink-3); font-size: 12px; text-align: center;
-}
+.foot { margin-top: 18px; color: var(--ink-3); font-size: 12px; text-align: center; }
