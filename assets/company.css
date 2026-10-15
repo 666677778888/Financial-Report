@@ -27,10 +27,11 @@ body {
   font-size: 12px; color: var(--brand-ink); background: #EEF0FA;
   border-radius: 20px; padding: 2px 10px; white-space: nowrap;
 }
-.wrap { max-width: 980px; margin: 26px auto 60px; padding: 0 24px; }
+.wrap { max-width: 1020px; margin: 26px auto 60px; padding: 0 24px; }
 .card {
   background: var(--card); border: 1px solid var(--line); border-radius: 14px;
   padding: 34px 44px; box-shadow: 0 1px 3px rgba(31,36,48,.04);
+  margin-bottom: 22px;
 }
 h1 { font-size: 24px; margin: 0 0 6px; letter-spacing: .5px; }
 h2 { font-size: 19px; margin: 34px 0 12px; padding-left: 12px; border-left: 4px solid var(--brand); }
@@ -50,6 +51,16 @@ pre code { background: none; padding: 0; }
 a { color: var(--brand-ink); }
 hr { border: none; border-top: 1px solid var(--line); margin: 26px 0; }
 ul, ol { padding-left: 24px; }
+/* ---------- v2: 图表卡片 ---------- */
+.chart {
+  background: #FFFFFF; border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px 18px 10px; margin: 18px 0 6px;
+}
+/* ---------- v2: 年报文件下载区 ---------- */
+.files h2 { margin-top: 4px; }
+.files table { font-size: 13px; }
+.files td.sz { white-space: nowrap; color: var(--ink-3); width: 90px; }
+.files .hint { color: var(--ink-3); font-size: 12.5px; margin: 4px 0 10px; }
 .foot {
   margin-top: 18px; color: var(--ink-3); font-size: 12px; text-align: center;
 }
