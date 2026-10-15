@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="pCkLOGai21zGjvY7y35Wvd"><head data-page-node-id="Fk6P4djpT58bBjVODC06l0">
+<meta charset="UTF-8" data-page-node-id="BbuWhmaoEPV0BqE4YGRfWB">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="LyixjG2vIsmkJ8d62mMi4h">
+<title data-page-node-id="FIRR6GZuqNVXFgMbNhjyRD">贵金属年报摘要库</title>
+<style data-page-node-id="6esFEFRMxDYY10d3UF06b7">
+:root {
+  --ink: #1F2430; --ink-2: #5A6272; --ink-3: #9AA1AF;
+  --line: #E3E6EC; --bg: #F7F8FA; --card: #FFF;
+  --brand: #6B7FD7; --brand-ink: #43509E; --brand-bg: #EEF0FA;
+}
+* { box-sizing: border-box; margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 15px/1.6 -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+.hero {
+  background: linear-gradient(135deg, #EEF0FA 0%, #F7F8FA 70%);
+  border-bottom: 1px solid var(--line);
+  padding: 34px 32px 26px;
+}
+.hero h1 { font-size: 24px; letter-spacing: .5px; }
+.hero p { color: var(--ink-2); margin-top: 6px; font-size: 13.5px; }
+.hero .stats { margin-top: 14px; display: flex; gap: 22px; flex-wrap: wrap; font-size: 13px; color: var(--ink-2); }
+.hero .stats b { color: var(--brand-ink); font-size: 16px; margin-right: 4px; }
+
+.controls {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(255,255,255,.94); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 32px;
+  display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+}
+.search {
+  flex: 1 1 260px; max-width: 420px;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+  padding: 8px 14px;
+}
+.search:focus-within { border-color: var(--brand); }
+.search svg { flex: none; stroke: var(--ink-3); }
+.search input {
+  border: none; outline: none; background: none; flex: 1;
+  font-size: 14px; color: var(--ink);
+}
+.cats { display: flex; gap: 6px; flex-wrap: wrap; }
+.cat-btn {
+  border: 1px solid var(--line); background: #fff; color: var(--ink-2);
+  font-size: 12.5px; border-radius: 20px; padding: 4px 12px; cursor: pointer;
+  transition: all .15s;
+}
+.cat-btn:hover { border-color: var(--brand); color: var(--brand-ink); }
+.cat-btn.on { background: var(--brand-ink); border-color: var(--brand-ink); color: #fff; }
+.count { font-size: 12.5px; color: var(--ink-3); margin-left: auto; white-space: nowrap; }
+
+.grid-wrap { max-width: 1480px; margin: 0 auto; padding: 22px 32px 60px; }
+.grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+@media (max-width: 1240px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 920px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px)  { .grid { grid-template-columns: 1fr; } }
+
+.card {
+  position: relative; display: block; text-decoration: none;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px 18px 14px; overflow: hidden;
+  transition: box-shadow .15s, transform .15s, border-color .15s;
+}
+.card:hover {
+  border-color: var(--brand); box-shadow: 0 4px 16px rgba(67,80,158,.10);
+  transform: translateY(-2px);
+}
+.card .bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.card .row1 { display: flex; align-items: baseline; gap: 8px; }
+.card .name {
+  font-size: 15.5px; font-weight: 700; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;
+}
+.card .code { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.card .brief {
+  margin-top: 8px; color: var(--ink-2); font-size: 12.8px; line-height: 1.55;
+  height: 3.1em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.card .row3 {
+  margin-top: 10px; display: flex; align-items: center; justify-content: space-between;
+}
+.badge {
+  font-size: 11.5px; border-radius: 4px; padding: 2px 8px;
+  color: #fff; white-space: nowrap;
+}
+.card .upd { font-size: 11.5px; color: var(--ink-3); }
+.empty {
+  grid-column: 1 / -1; text-align: center; color: var(--ink-3);
+  padding: 60px 0; font-size: 14px;
+}
+.foot {
+  text-align: center; color: var(--ink-3); font-size: 12px; padding: 18px 0 30px;
+}
+kbd {
+  background: #fff; border: 1px solid var(--line); border-bottom-width: 2px;
+  border-radius: 4px; padding: 0 5px; font-size: 11.5px; color: var(--ink-2);
+}
+</style>
+<style id="__dm_no_drag_style__">* { -webkit-user-drag: none !important; }</style><style id="__dm_bindable_badge_style__">[data-sp-bindable="database"]{outline:1px dashed #0088ff;outline-offset:2px;border-radius:4px;}[data-sp-bindable="database"] *{pointer-events:none !important;transition:none !important;animation:none !important;}[data-sp-bindable="database"]{transition:none !important;animation:none !important;}</style></head>
+<body data-page-node-id="EsiDR66om2GGMmpkMzuYJg" style="">
+
+<div class="hero" data-page-node-id="w1OlvH3fuddl23TGDYzugH">
+  <h1 data-page-node-id="qApZb2qwzDle6CYIMqo0Bk" style="white-space: pre-wrap;">贵金属生产商年报摘要库​</h1>
+  <p data-page-node-id="hQfebulZZFrsFEr1AV3S7z">51 家金银 / PGM / 副产银 / 精炼公司 · 年度报告核心数据 · 供需基本面研究底稿</p>
+  <div class="stats" data-page-node-id="gLkGmHaIQEusQndP8BM2xJ">
+    <span data-page-node-id="JeLT7EoPRiPshwdmX39JzB"><b id="st-total" data-page-node-id="lnIO8zm53hrDE6AcJHREgf">51</b>家公司</span>
+    <span data-page-node-id="OcaHjNV89lHMDjz7E6lUt1"><b id="st-cats" data-page-node-id="mm6Bt5CFCRZpA3OiThTEMd">11</b>个分类</span>
+    <span data-page-node-id="f4oTVMuIiE9W3pDfZHnHLu"><b id="st-updated" data-page-node-id="63VQ7LF4KIyh5yegdGL5aA">2026-10-15 11:42</b>最近构建</span>
+  </div>
+</div>
+
+<div class="controls" data-page-node-id="C8VqDa60PgNqrplwNWo2Kb">
+  <label class="search" data-page-node-id="t6o1g7OWDnc7UBbDjDpXLS">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke-width="2" data-page-node-id="GUGWHAYAVjM6rMtOyangNA"><circle cx="11" cy="11" r="7" data-page-node-id="zYr1W77jvTVekXrsf5boJD"></circle><path d="M20 20l-4-4" data-page-node-id="e3tLvmRHKGzrZp63hTH5kM"></path></svg>
+    <input id="q" type="text" placeholder="搜索公司 / 代码 / 关键词…  （/ 聚焦）" autocomplete="off" data-page-node-id="MVY3ybzVk5eocLmPS9RqOL">
+  </label>
+  <div class="cats" id="cats" data-page-node-id="6hJ4u9jICKRmKryq8MwYew"><button class="cat-btn" data-page-node-id="aCci1Q9Lab27eMbD4OSqpT">全部</button><button class="cat-btn on" data-page-node-id="o7JJa4mlNWtaHLCrRTDouG">在产白银核心 12</button><button class="cat-btn" data-page-node-id="KI7n4OYEeTGGOBm8PIZywa">A股多金属副产银 10</button><button class="cat-btn" data-page-node-id="mNJDRPUdAPSoI4qK9cbgZy">多金属矿业巨头 5</button><button class="cat-btn" data-page-node-id="95D6IkdHBeFB8OnFv50kBN">A股白银冶炼 5</button><button class="cat-btn" data-page-node-id="cA0bdeDLCKMykiFSTh2UmP">在产黄金核心 4</button><button class="cat-btn" data-page-node-id="TUrojtAzu748prYwpwAvZU">开发/勘探阶段 4</button><button class="cat-btn" data-page-node-id="ijqmE21ELlujYLHU3ODLLx">铂族金属 PGM 4</button><button class="cat-btn" data-page-node-id="nwzuJf1AUdv3pazTAIDV4e">A股银矿核心 3</button><button class="cat-btn" data-page-node-id="QSxLesoyKXjJctiTZjMxCR">已被收购/退市 2</button><button class="cat-btn" data-page-node-id="BUjAxCA6ELv6gOIuzxxSuy">贵金属精炼厂 1</button><button class="cat-btn" data-page-node-id="U32olQSqT7SqKGgHHFW4hq">贵金属流公司 1</button></div>
+  <span class="count" id="count" data-page-node-id="19VlDxCNE4B214aMTZguVM">显示 12 / 51</span>
+</div>
+
+<div class="grid-wrap" data-page-node-id="TTilJZc3rkDJEESml1WzXN"><div class="grid" id="grid" data-page-node-id="zPhkoDxGdcXAtwZq1Y0zfR"><a class="card" href="company/Andean_Precious_Metals/index.html" data-page-node-id="XdzQ7oJqbHbXXHZfN5tZmM"><span class="bar" style="background:#6B7FD7" data-page-node-id="xAFwmvgR4TI5tsMeT2ltPK"></span><div class="row1" data-page-node-id="gr9H2Mf8QKA0PCZcmoHxXt"><span class="name" title="Andean Precious Metals Corp. — 年报摘要" data-page-node-id="KjpEqBtjIifUMV69kfEDlH">Andean Precious Metals Corp. — 年报摘要</span><span class="code" data-page-node-id="tDNp3Z33NLG2MgzictAzWf">APM</span></div><div class="brief" title="数据来源：2024年度合并财务报表（截至2024年12月31日）" data-page-node-id="1iGhyOy7n7xl28Vv19Usw3">数据来源：2024年度合并财务报表（截至2024年12月31日）</div><div class="row3" data-page-node-id="a2PI46zDHN47y59gXKEsQR"><span class="badge" style="background:#6B7FD7" data-page-node-id="4KrUmndxiFPSFwrqAOS6Bt">在产白银核心</span><span class="upd" data-page-node-id="AChZDOHlHKXd9pVUvMX1Rv">更新 2026-07-03</span></div></a><a class="card" href="company/Avino_Silver_Gold/index.html" data-page-node-id="4IQWpuSg3pYZPibWYBxQ8q"><span class="bar" style="background:#6B7FD7" data-page-node-id="iVes8EEx1juy3bnAmtVEZ5"></span><div class="row1" data-page-node-id="tW7DZf28JsGiBg9OoLa7tD"><span class="name" title="Avino Silver &amp; Gold Mines Ltd. — 年报摘要" data-page-node-id="LPByDomh34J6GsL4CDIhAz">Avino Silver &amp; Gold Mines Ltd. — 年报摘要</span><span class="code" data-page-node-id="iWpHoKqvKzv4bzG4VC55RI">ASM</span></div><div class="brief" title="数据来源：2024年年报（Form 40-F，截至2024年12月31日）及2025年合并财务报表（截至2025年12月31日）" data-page-node-id="MneCgnOWDzqL87GmYuYEoe">数据来源：2024年年报（Form 40-F，截至2024年12月31日）及2025年合并财务报表（截至2025年12月31日）</div><div class="row3" data-page-node-id="WJbmDjOZ2G8gMHKwdZze6g"><span class="badge" style="background:#6B7FD7" data-page-node-id="CqZXJEGzvEpTT4GBSLoLz3">在产白银核心</span><span class="upd" data-page-node-id="WrYeJagjDC3BnfXlWICiE5">更新 2026-07-03</span></div></a><a class="card" href="company/Coeur_Mining/index.html" data-page-node-id="Eltdy7FaJGumjJCiFAs8fN"><span class="bar" style="background:#6B7FD7" data-page-node-id="7pokhIA3u6B9XnzQTn2zy9"></span><div class="row1" data-page-node-id="F9NuFXCLPx2Zj0PppQDJTf"><span class="name" title="Coeur Mining, Inc. 年报摘要" data-page-node-id="SbLir5PaKLYkYtxJCRDW7i">Coeur Mining, Inc. 年报摘要</span><span class="code" data-page-node-id="ek8EEQRYzgoaGqbxX6WjD6">CDE</span></div><div class="brief" title="股票代码：NYSE: CDE | 总部：芝加哥 | 成立：1928 年" data-page-node-id="IFHJxxTBFCLYGN2aHGeSxo">股票代码：NYSE: CDE | 总部：芝加哥 | 成立：1928 年</div><div class="row3" data-page-node-id="O3EAsBNKLesF71ohBtiBtL"><span class="badge" style="background:#6B7FD7" data-page-node-id="YmlwinpbzDKQX4RxHRTg4j">在产白银核心</span><span class="upd" data-page-node-id="wpIY3fa66V6FbKkrQj50Bw">更新 2026-07-06</span></div></a><a class="card" href="company/Endeavour_Silver/index.html" data-page-node-id="zY2l6Dq7K68ais7Ln9fh1E"><span class="bar" style="background:#6B7FD7" data-page-node-id="65NPaoM8wVpZ1su5SIHQvO"></span><div class="row1" data-page-node-id="JdAPzfoclY0iQNRmxoc3Tj"><span class="name" title="Endeavour Silver Corp.  年报摘要" data-page-node-id="vrFEQAHD2udXGmEKPnBQSz">Endeavour Silver Corp.  年报摘要</span><span class="code" data-page-node-id="Gqphiq5fYsxYNonzu9GjzJ">EXK</span></div><div class="brief" title="数据来源：Form 40-F / AIF (Annual Information Form) + MD&amp;A，截至 2024 年 12 月 31 日财年" data-page-node-id="HTxvnSg1TzjV6s3mYmgr6S">数据来源：Form 40-F / AIF (Annual Information Form) + MD&amp;A，截至 2024 年 12 月 31 日财年</div><div class="row3" data-page-node-id="Bsj0Jqbx8nANstYVuiPEzV"><span class="badge" style="background:#6B7FD7" data-page-node-id="BjPmmRkELRhY5jG4AU7iSw">在产白银核心</span><span class="upd" data-page-node-id="MO2DvAC3JkF2jTVcOoPeO5">更新 2026-07-06</span></div></a><a class="card" href="company/First_Majestic_Silver/index.html" data-page-node-id="lL2HGjUOgnz1OOwax2Z34Y"><span class="bar" style="background:#6B7FD7" data-page-node-id="leT7ZNp108rnrwFG1dRgKD"></span><div class="row1" data-page-node-id="IrFlx6ycVf0eR2fAl8yJG7"><span class="name" title="First Majestic Silver Corp.年报摘要" data-page-node-id="SL5cTqnLYcnYJQjtPwY2aX">First Majestic Silver Corp.年报摘要</span><span class="code" data-page-node-id="JHzqXh6liDg19XyxzgBBLO">AG</span></div><div class="brief" title="数据来源：2024 年度报告（2024 Annual Report），70 页" data-page-node-id="tMgzSOTqnUuM3qZF9vVMUK">数据来源：2024 年度报告（2024 Annual Report），70 页</div><div class="row3" data-page-node-id="rnmujeepyNPFaeDeooDTin"><span class="badge" style="background:#6B7FD7" data-page-node-id="sqEwvl7Abqc3Txe57qkuRd">在产白银核心</span><span class="upd" data-page-node-id="mZnZCkfntDYPoG0Epifia6">更新 2026-07-06</span></div></a><a class="card" href="company/Fortuna_Mining/index.html" data-page-node-id="IoLFDd9tIKJejpijCpsxzV"><span class="bar" style="background:#6B7FD7" data-page-node-id="49QKcOb9rsOLuzF6L4Z6BI"></span><div class="row1" data-page-node-id="j3f3mtGGILrKBhNqF5zlV8"><span class="name" title="Fortuna Mining Corp.  — 2025年报摘要" data-page-node-id="JLT98Iu0GZFkTh2VHmPEce">Fortuna Mining Corp.  — 2025年报摘要</span><span class="code" data-page-node-id="fYdNvFNBxDMcrkx7a1xs3R">FSM</span></div><div class="brief" title="前身Fortuna Silver Mines，银金多金属矿企，运营西非（科特迪瓦）、拉丁美洲（阿根廷、秘鲁）矿山，2025年完成资产剥离重组。" data-page-node-id="n6nPztYvNFMb54Y71phF3k">前身Fortuna Silver Mines，银金多金属矿企，运营西非（科特迪瓦）、拉丁美洲（阿根廷、秘鲁）矿山，2025年完成资产剥离重组。</div><div class="row3" data-page-node-id="xkhupkrL6nJ6auRs7s1Ftk"><span class="badge" style="background:#6B7FD7" data-page-node-id="RrdAkasuVL6IAF2z4474my">在产白银核心</span><span class="upd" data-page-node-id="EuPfGmjqCKuohYHCUu0zlc">更新 2026-07-15</span></div></a><a class="card" href="company/Fresnillo/index.html" data-page-node-id="1NieEXTXyz6HeLZAnSoQDb"><span class="bar" style="background:#6B7FD7" data-page-node-id="kf15Q6K5iFIuqOF0wZxL7N"></span><div class="row1" data-page-node-id="pmbu6a9T2crAdU9SNtYmxH"><span class="name" title="Fresnillo plc年报摘要" data-page-node-id="1EYQAAsoidm8neQW6j9ahl">Fresnillo plc年报摘要</span><span class="code" data-page-node-id="egk7FPmIbO0ahsD9aXbOnT">FRES.L</span></div><div class="brief" title="数据来源：Fresnillo 2024 年度报告 + 2025 年度报告（Annual Report and Accounts 2025）" data-page-node-id="M3VZDSZ9npyHP5pJNXTO3O">数据来源：Fresnillo 2024 年度报告 + 2025 年度报告（Annual Report and Accounts 2025）</div><div class="row3" data-page-node-id="GSpLFlNGVKeQX3mjjr266y"><span class="badge" style="background:#6B7FD7" data-page-node-id="tKxPKZ0Qf4k8x3kThk1PTE">在产白银核心</span><span class="upd" data-page-node-id="N6x6BRkLC6Glqi3SotqljW">更新 2026-07-06</span></div></a><a class="card" href="company/Hecla_Mining/index.html" data-page-node-id="oUF9BhYNcQUDp8cfkSyVQv"><span class="bar" style="background:#6B7FD7" data-page-node-id="R4eGmZDnOtxkb9Pnd3ZCwl"></span><div class="row1" data-page-node-id="wsTWZoTZ3Oxj7iYpjmgqK8"><span class="name" title="Hecla Mining Company 年报摘要" data-page-node-id="pZNOzWtDFmleSnZFRjbPE0">Hecla Mining Company 年报摘要</span><span class="code" data-page-node-id="Wx3RnlWR93kiPB0XZLRVbl">HL</span></div><div class="brief" title="数据来源：Hecla Mining 2024 Annual Report（124页，2024财年）、Hecla Mining 10-K 2025（157页，Form 10-K 于2" data-page-node-id="ce1wEn4s5LdAzwWht2v59g">数据来源：Hecla Mining 2024 Annual Report（124页，2024财年）、Hecla Mining 10-K 2025（157页，Form 10-K 于2</div><div class="row3" data-page-node-id="Km1zV8jp06LYpJnLp2RE5p"><span class="badge" style="background:#6B7FD7" data-page-node-id="xcAu2Vyq7sNYyoCWVM85oi">在产白银核心</span><span class="upd" data-page-node-id="NSU2SWA89ePCwY1GHhOuIu">更新 2026-07-06</span></div></a><a class="card" href="company/Hochschild_Mining/index.html" data-page-node-id="IMlk4g5jPM9vYkf4Frmm1W"><span class="bar" style="background:#6B7FD7" data-page-node-id="OtfcFbX1GgIPBwVzgMDWm7"></span><div class="row1" data-page-node-id="kxCxXvZdqSEDCTpx0d0xYT"><span class="name" title="Hochschild Mining plc  — 2025年报摘要" data-page-node-id="fFTNeGhYsRG0yGnxq2F4PA">Hochschild Mining plc  — 2025年报摘要</span><span class="code" data-page-node-id="o7ypsZjfI9zR3BncmQ0xGH">HOCM.L</span></div><div class="brief" title="秘鲁银金矿企，伦敦主板上市，专注银金勘探、开采和加工。拥有3座在产矿山（秘鲁Inmaculada、阿根廷San Jose、巴西Mara Rosa）和多个开发项目。" data-page-node-id="vj7kwvHA8XNryKjssVaBw6">秘鲁银金矿企，伦敦主板上市，专注银金勘探、开采和加工。拥有3座在产矿山（秘鲁Inmaculada、阿根廷San Jose、巴西Mara Rosa）和多个开发项目。</div><div class="row3" data-page-node-id="alUUJBN37aQLx72HwwYAQn"><span class="badge" style="background:#6B7FD7" data-page-node-id="Cn6ZJ4GKNhOlVIRiGBHDd5">在产白银核心</span><span class="upd" data-page-node-id="PoGCihOayIu2a2owyUchAi">更新 2026-07-15</span></div></a><a class="card" href="company/Pan_American_Silver/index.html" data-page-node-id="h2VtHFd8kvLyYCi7UCIlci"><span class="bar" style="background:#6B7FD7" data-page-node-id="mKuZ092WoZtz2rI1xp16mU"></span><div class="row1" data-page-node-id="IZspsdhDsG1LG6hvVe7goB"><span class="name" title="Pan American Silver Corp. 年报摘要" data-page-node-id="6L9Gewrjk48lo8cGbsZyck">Pan American Silver Corp. 年报摘要</span><span class="code" data-page-node-id="HU0hl4DAhVx7xvBhR0czsj">PAAS</span></div><div class="brief" title="公司简介：Pan American Silver（泛美白银，NYSE/TSX: PAAS）是全球领先的白银和黄金生产商，运营矿山分布于加拿大、墨西哥、秘鲁、巴西、玻利维亚、智利、阿" data-page-node-id="I16mtqgg6TLAGNXWOIFrWe">公司简介：Pan American Silver（泛美白银，NYSE/TSX: PAAS）是全球领先的白银和黄金生产商，运营矿山分布于加拿大、墨西哥、秘鲁、巴西、玻利维亚、智利、阿</div><div class="row3" data-page-node-id="vR7Rj198BSNyEdDgbrBXtT"><span class="badge" style="background:#6B7FD7" data-page-node-id="QBe8jnKCBZMWU5MvDh9rkh">在产白银核心</span><span class="upd" data-page-node-id="V3oOSta56PurRZENSJEmXo">更新 2026-07-03</span></div></a><a class="card" href="company/Silvercorp_Metals/index.html" data-page-node-id="NGbKYlZRYzJQUAvVpfrTac"><span class="bar" style="background:#6B7FD7" data-page-node-id="pkcaj9em4ozZztVEFDmmH9"></span><div class="row1" data-page-node-id="WK3ilAgkiqFQublGFupJH7"><span class="name" title="Silvercorp Metals Inc. 摘要" data-page-node-id="SBJcf2Gg8sgEkSenuYTdtD">Silvercorp Metals Inc. 摘要</span><span class="code" data-page-node-id="IhBaqaGbOSMQkPIOChahJJ">SVM</span></div><div class="brief" title="股票代码：TSX/NYSE American: SVM" data-page-node-id="OmT5VVptQeQS2IbEbjlyJR">股票代码：TSX/NYSE American: SVM</div><div class="row3" data-page-node-id="EZzRmyzQFFDNV59gAAGP9f"><span class="badge" style="background:#6B7FD7" data-page-node-id="9BuB44eVE5gGHjCjjqscMw">在产白银核心</span><span class="upd" data-page-node-id="o3HMFlZ62NJjhZZ53cyD9L">更新 2026-07-06</span></div></a><a class="card" href="company/SSR_Mining/index.html" data-page-node-id="4RdYiWiyNm1T85nEcWEtdH"><span class="bar" style="background:#6B7FD7" data-page-node-id="SLLiE8Yv2NSaPe2WEpEVeR"></span><div class="row1" data-page-node-id="WZwrTxKjfgOqHiiGT01vjJ"><span class="name" title="SSR Mining Inc.年报摘要" data-page-node-id="pWBb65RUbmqd1QbLhGhGP7">SSR Mining Inc.年报摘要</span><span class="code" data-page-node-id="OQ5x4HFXsGNFhSawt8RFvk">SSRM</span></div><div class="brief" title="数据来源：SSR Mining 10-K 年报，截至2025年12月31日财年（FY2025）" data-page-node-id="kuHfaBNCIex3LzLW39lZCi">数据来源：SSR Mining 10-K 年报，截至2025年12月31日财年（FY2025）</div><div class="row3" data-page-node-id="6Z608C4tyGnR5SXDCp6CLb"><span class="badge" style="background:#6B7FD7" data-page-node-id="GmcBvR2BQIdMNOzTtSwqUp">在产白银核心</span><span class="upd" data-page-node-id="NW9eoLMBUXMaFqqYCsc3m1">更新 2026-07-15</span></div></a></div></div>
+<div class="foot" data-page-node-id="c9rxRvxJD32vJQPcp6CCUJ">点击卡片查看年报摘要全文 · 数据目录：precious-metals/年报 · 增量构建，新增公司自动出现</div>
+
+<script data-page-node-id="BubgbJHK7QinVzLOAe4BwV">
+"use strict";
+const COMPANIES = [{"id": "Agnico_Eagle", "name": "Agnico Eagle Mines Limited — 年报摘要", "code": "AEM", "category": "在产黄金核心", "hq": "加拿大", "brief": "数据来源：2024年报（截至2024年12月31日）及2025年报（截至2025年12月31日）", "updated": "2026-07-03", "url": "company/Agnico_Eagle/index.html"}, {"id": "Andean_Precious_Metals", "name": "Andean Precious Metals Corp. — 年报摘要", "code": "APM", "category": "在产白银核心", "hq": "加拿大/玻利维亚", "brief": "数据来源：2024年度合并财务报表（截至2024年12月31日）", "updated": "2026-07-03", "url": "company/Andean_Precious_Metals/index.html"}, {"id": "AngloGold_Ashanti", "name": "AngloGold Ashanti plc  — 2025年报摘要", "code": "AU", "category": "在产黄金核心", "hq": "南非", "brief": "全球第三大黄金生产商，运营10座矿山，分布在非洲、美洲、澳大利亚三大区域共10个国家。", "updated": "2026-07-15", "url": "company/AngloGold_Ashanti/index.html"}, {"id": "ARE_Holdings_Asahi_Refining", "name": "ARE Holdings, Inc.— 摘要", "code": "5857.T", "category": "贵金属精炼厂", "hq": "日本", "brief": "摘要生成日期：2026年9月16日（2026年9月30日更新：补入有価証券報告書 FY2026.3 数据）", "updated": "2026-09-30", "url": "company/ARE_Holdings_Asahi_Refining/index.html"}, {"id": "Avino_Silver_Gold", "name": "Avino Silver & Gold Mines Ltd. — 年报摘要", "code": "ASM", "category": "在产白银核心", "hq": "加拿大/墨西哥", "brief": "数据来源：2024年年报（Form 40-F，截至2024年12月31日）及2025年合并财务报表（截至2025年12月31日）", "updated": "2026-07-03", "url": "company/Avino_Silver_Gold/index.html"}, {"id": "Barrick_Gold", "name": "巴里克黄金/矿业公司  — 年报摘要", "code": "B/ABX", "category": "在产黄金核心", "hq": "加拿大", "brief": "股票代码：NYSE: B（2025年由GOLD变更为B）/ TSX: ABX", "updated": "2026-07-03", "url": "company/Barrick_Gold/index.html"}, {"id": "Bunker_Hill_Mining", "name": "Bunker Hill Mining Corp. 年报摘要", "code": "BNKR", "category": "开发/勘探阶段", "hq": "美国", "brief": "股票代码：TSX-V: BNKR | OTCQB: BHLL | 注册地：内华达州", "updated": "2026-07-06", "url": "company/Bunker_Hill_Mining/index.html"}, {"id": "Coeur_Mining", "name": "Coeur Mining, Inc. 年报摘要", "code": "CDE", "category": "在产白银核心", "hq": "美国", "brief": "股票代码：NYSE: CDE | 总部：芝加哥 | 成立：1928 年", "updated": "2026-07-06", "url": "company/Coeur_Mining/index.html"}, {"id": "Endeavour_Silver", "name": "Endeavour Silver Corp.  年报摘要", "code": "EXK", "category": "在产白银核心", "hq": "加拿大/墨西哥", "brief": "数据来源：Form 40-F / AIF (Annual Information Form) + MD&A，截至 2024 年 12 月 31 日财年", "updated": "2026-07-06", "url": "company/Endeavour_Silver/index.html"}, {"id": "First_Majestic_Silver", "name": "First Majestic Silver Corp.年报摘要", "code": "AG", "category": "在产白银核心", "hq": "加拿大/墨西哥", "brief": "数据来源：2024 年度报告（2024 Annual Report），70 页", "updated": "2026-07-06", "url": "company/First_Majestic_Silver/index.html"}, {"id": "Fortuna_Mining", "name": "Fortuna Mining Corp.  — 2025年报摘要", "code": "FSM", "category": "在产白银核心", "hq": "加拿大", "brief": "前身Fortuna Silver Mines，银金多金属矿企，运营西非（科特迪瓦）、拉丁美洲（阿根廷、秘鲁）矿山，2025年完成资产剥离重组。", "updated": "2026-07-15", "url": "company/Fortuna_Mining/index.html"}, {"id": "Fresnillo", "name": "Fresnillo plc年报摘要", "code": "FRES.L", "category": "在产白银核心", "hq": "墨西哥/伦敦", "brief": "数据来源：Fresnillo 2024 年度报告 + 2025 年度报告（Annual Report and Accounts 2025）", "updated": "2026-07-06", "url": "company/Fresnillo/index.html"}, {"id": "Glencore", "name": "Glencore plc 年报摘要", "code": "GLEN.L", "category": "多金属矿业巨头", "hq": "瑞士", "brief": "数据来源：Glencore 2024 Annual Report（273页）、2025 Annual Report（249页）", "updated": "2026-07-06", "url": "company/Glencore/index.html"}, {"id": "Hecla_Mining", "name": "Hecla Mining Company 年报摘要", "code": "HL", "category": "在产白银核心", "hq": "美国", "brief": "数据来源：Hecla Mining 2024 Annual Report（124页，2024财年）、Hecla Mining 10-K 2025（157页，Form 10-K 于2", "updated": "2026-07-06", "url": "company/Hecla_Mining/index.html"}, {"id": "Hochschild_Mining", "name": "Hochschild Mining plc  — 2025年报摘要", "code": "HOCM.L", "category": "在产白银核心", "hq": "秘鲁/英国", "brief": "秘鲁银金矿企，伦敦主板上市，专注银金勘探、开采和加工。拥有3座在产矿山（秘鲁Inmaculada、阿根廷San Jose、巴西Mara Rosa）和多个开发项目。", "updated": "2026-07-15", "url": "company/Hochschild_Mining/index.html"}, {"id": "Impala_Platinum", "name": "Impala Platinum  年报摘要", "code": "IMPA.SJ", "category": "铂族金属 PGM", "hq": "南非", "brief": "股票上市地：约翰内斯堡证券交易所（JSE）", "updated": "2026-10-08", "url": "company/Impala_Platinum/index.html"}, {"id": "Industrias_Penoles", "name": "Industrias Peñoles 年报摘要", "code": "IPOB.MX", "category": "多金属矿业巨头", "hq": "墨西哥", "brief": "数据来源：Industrias Peñoles 2024 Annual Report（154页，英文）、Industrias Peñoles 2025 Informe Anual（", "updated": "2026-07-06", "url": "company/Industrias_Penoles/index.html"}, {"id": "KGHM", "name": "KGHM Polska Miedź S.A. 年报摘要", "code": "KGH.WA", "category": "多金属矿业巨头", "hq": "波兰", "brief": "公司简介：KGHM 是波兰最大的矿业公司，全球领先的铜银生产商之一，总部位于波兰卢宾（Lubin）。主营铜矿开采与冶炼，伴生银、镍、钼及贵金属（TPM）。核心资产包括波兰本土3座矿", "updated": "2026-08-06", "url": "company/KGHM/index.html"}, {"id": "MAG_Silver", "name": "MAG Silver Corp.年报摘要", "code": "—", "category": "已被收购/退市", "hq": "Pan American Silver（2025.09）", "brief": "数据来源：MAG Silver 40-F年报（截至2024年12月31日），2024年度财务业绩新闻稿，运营数据", "updated": "2026-07-15", "url": "company/MAG_Silver/index.html"}, {"id": "McEwen_Inc", "name": "McEwen Inc.年报摘要", "code": "MUX", "category": "多金属矿业巨头", "hq": "美国", "brief": "数据来源：McEwen Inc. 10-K 年报，截至2025年12月31日财年（FY2025）", "updated": "2026-07-15", "url": "company/McEwen_Inc/index.html"}, {"id": "Newmont", "name": "Newmont Corporation 年报摘要", "code": "NEM", "category": "在产黄金核心", "hq": "美国", "brief": "公司简介：Newmont（纽蒙特）是全球最大的黄金矿业公司，总部位于美国丹佛，在NYSE上市（代码：NEM）。业务覆盖美国、加拿大、墨西哥、多米尼加、秘鲁、苏里南、阿根廷、智利、澳", "updated": "2026-07-03", "url": "company/Newmont/index.html"}, {"id": "Northam_Platinum", "name": "Northam Platinum 2025年报摘要", "code": "NHM.SJ", "category": "铂族金属 PGM", "hq": "南非", "brief": "股票上市地：约翰内斯堡证券交易所（JSE），股票代码 NPH", "updated": "2026-07-15", "url": "company/Northam_Platinum/index.html"}, {"id": "Pan_American_Silver", "name": "Pan American Silver Corp. 年报摘要", "code": "PAAS", "category": "在产白银核心", "hq": "加拿大", "brief": "公司简介：Pan American Silver（泛美白银，NYSE/TSX: PAAS）是全球领先的白银和黄金生产商，运营矿山分布于加拿大、墨西哥、秘鲁、巴西、玻利维亚、智利、阿", "updated": "2026-07-03", "url": "company/Pan_American_Silver/index.html"}, {"id": "Sibanye_Stillwater", "name": "Sibanye-Stillwater 2025年报摘要", "code": "SBSW", "category": "铂族金属 PGM", "hq": "南非", "brief": "股票上市地：约翰内斯堡证券交易所（JSE），股票代码 SSW；美国ADR", "updated": "2026-07-15", "url": "company/Sibanye_Stillwater/index.html"}, {"id": "Silver_Tiger_Metals", "name": "Silver Tiger Metals Inc. 摘要", "code": "SLVR", "category": "开发/勘探阶段", "hq": "加拿大/墨西哥", "brief": "股票代码：TSXV: SLVR / OTCQX: SLVTF", "updated": "2026-07-06", "url": "company/Silver_Tiger_Metals/index.html"}, {"id": "Silvercorp_Metals", "name": "Silvercorp Metals Inc. 摘要", "code": "SVM", "category": "在产白银核心", "hq": "加拿大/中国", "brief": "股票代码：TSX/NYSE American: SVM", "updated": "2026-07-06", "url": "company/Silvercorp_Metals/index.html"}, {"id": "SilverCrest_Metals", "name": "SilverCrest Metals Inc.年报摘要", "code": "—", "category": "已被收购/退市", "hq": "Coeur Mining（2025 Q1）", "brief": "数据来源：SilverCrest 2024年Q4及全年运营业绩公告（2025年1月15日）、2024年指导文件、季度财务报告", "updated": "2026-07-15", "url": "company/SilverCrest_Metals/index.html"}, {"id": "Skeena_Gold_Silver", "name": "Skeena Resources Limited 摘要", "code": "SKE", "category": "开发/勘探阶段", "hq": "加拿大", "brief": "股票代码：TSX: SKE / NYSE: SKE", "updated": "2026-07-06", "url": "company/Skeena_Gold_Silver/index.html"}, {"id": "South32", "name": "South32 年报摘要", "code": "S32.AX", "category": "多金属矿业巨头", "hq": "澳大利亚", "brief": "数据来源：South32 Annual Report 2024（财年截至2024年6月30日）与 Annual Report 2025（财年截至2025年6月30日）。South3", "updated": "2026-07-06", "url": "company/South32/index.html"}, {"id": "SSR_Mining", "name": "SSR Mining Inc.年报摘要", "code": "SSRM", "category": "在产白银核心", "hq": "美国", "brief": "数据来源：SSR Mining 10-K 年报，截至2025年12月31日财年（FY2025）", "updated": "2026-07-15", "url": "company/SSR_Mining/index.html"}, {"id": "Valterra_Platinum", "name": "Valterra Platinum年报摘要", "code": "VAL(JSE)", "category": "铂族金属 PGM", "hq": "南非", "brief": "公司定位：全球最大铂金生产商（原生Pt供应份额~33%、Rh~35%、Pd~19%），2025年6月从Anglo American分拆，于约翰内斯堡和伦敦双重上市（JSE代码VAL", "updated": "2026-09-09", "url": "company/Valterra_Platinum/index.html"}, {"id": "Vizsla_Silver", "name": "Vizsla Silver Corp. 摘要", "code": "VZLA", "category": "开发/勘探阶段", "hq": "加拿大/墨西哥", "brief": "数据来源：Vizsla Silver Corp. Annual Information Form（AIF）for the year ended April 30, 2024 与 C", "updated": "2026-07-06", "url": "company/Vizsla_Silver/index.html"}, {"id": "Wheaton_Precious_Metals", "name": "Wheaton Precious Metals 摘要", "code": "WPM", "category": "贵金属流公司", "hq": "加拿大", "brief": "数据来源：Wheaton Precious Metals 2024 Annual Report（财年截至2024年12月31日）与 2025 Annual Report（财年截至2", "updated": "2026-07-06", "url": "company/Wheaton_Precious_Metals/index.html"}, {"id": "中金岭南_000060", "name": "中金岭南年报摘要", "code": "000060", "category": "A股多金属副产银", "hq": "", "brief": "基于中金岭南2024年度报告（266页）及2025年度报告（251页）编制。公司为中国铅锌行业龙头企业，核心矿山为广东凡口铅锌矿（中国第二大产银矿山），同时拥有海外矿山（澳大利亚布", "updated": "2026-07-15", "url": "company/中金岭南_000060/index.html"}, {"id": "云南铜业_000878", "name": "云南铜业年报摘要", "code": "000878", "category": "A股多金属副产银", "hq": "", "brief": "数据来源：2024年年度报告、2025年年度报告", "updated": "2026-07-15", "url": "company/云南铜业_000878/index.html"}, {"id": "云南锡业_000960", "name": "云南锡业年报摘要", "code": "000960", "category": "A股多金属副产银", "hq": "", "brief": "数据来源：2024年年度报告、2025年年度报告", "updated": "2026-07-15", "url": "company/云南锡业_000960/index.html"}, {"id": "兴业银锡_000426", "name": "兴业银锡年报摘要", "code": "000426", "category": "A股银矿核心", "hq": "", "brief": "数据来源：2024年年度报告、2025年年度报告", "updated": "2026-07-15", "url": "company/兴业银锡_000426/index.html"}, {"id": "华钰矿业_601020", "name": "华钰矿业年报摘要", "code": "601020", "category": "A股多金属副产银", "hq": "", "brief": "西藏矿业企业，海外塔吉克斯坦塔铝金矿为核心，锑铅锌伴生银，银产能约200吨/年。", "updated": "2026-07-15", "url": "company/华钰矿业_601020/index.html"}, {"id": "国城矿业_000688", "name": "国城矿业年报摘要", "code": "000688", "category": "A股多金属副产银", "hq": "", "brief": "基于2024年度报告（发布于2025年3月）与2025年度报告（发布于2026年3月）", "updated": "2026-07-15", "url": "company/国城矿业_000688/index.html"}, {"id": "恒邦股份_002237", "name": "恒邦股份年报摘要", "code": "002237", "category": "A股白银冶炼", "hq": "", "brief": "数据来源：2024年、2025年年度报告", "updated": "2026-07-15", "url": "company/恒邦股份_002237/index.html"}, {"id": "株冶集团_600961", "name": "株冶集团年报摘要", "code": "600961", "category": "A股白银冶炼", "hq": "", "brief": "中国五矿体系铅锌冶炼企业，集铅锌等有色金属的采选、冶炼、销售为一体的综合性公司。拥有完整的产业链，旗下水口山铅锌矿富含金银，白银产能470吨/年。", "updated": "2026-07-15", "url": "company/株冶集团_600961/index.html"}, {"id": "江西铜业_600362", "name": "江西铜业年报摘要", "code": "600362", "category": "A股多金属副产银", "hq": "", "brief": "数据来源：2024年年度报告、2025年年度报告", "updated": "2026-07-15", "url": "company/江西铜业_600362/index.html"}, {"id": "湖南白银_002716", "name": "湖南白银年报摘要", "code": "002716", "category": "A股白银冶炼", "hq": "", "brief": "数据来源：2024年、2025年年度报告", "updated": "2026-07-15", "url": "company/湖南白银_002716/index.html"}, {"id": "湖南黄金_002155", "name": "湖南黄金年报摘要", "code": "002155", "category": "A股白银冶炼", "hq": "", "brief": "湖南省黄金企业，黄金为主、白银为副产品，银产能约120吨/年，旗下有黄金洞冶炼厂。", "updated": "2026-07-15", "url": "company/湖南黄金_002155/index.html"}, {"id": "白银有色_601212", "name": "白银有色年报摘要", "code": "601212", "category": "A股多金属副产银", "hq": "", "brief": "甘肃省有色金属企业，铜铅锌多金属冶炼副产银，银产能约550吨/年，白银市因矿得名。", "updated": "2026-07-15", "url": "company/白银有色_601212/index.html"}, {"id": "盛达资源_000603", "name": "盛达资源年报摘要", "code": "000603", "category": "A股银矿核心", "hq": "", "brief": "数据来源：2024年年度报告、2025年年度报告", "updated": "2026-07-15", "url": "company/盛达资源_000603/index.html"}, {"id": "紫金矿业_601899", "name": "紫金矿业年报摘要", "code": "601899", "category": "A股多金属副产银", "hq": "", "brief": "基于紫金矿业2024年度报告（379页）及2025年度报告（352页）编制。公司为大型跨国矿业集团，主营铜、金、锌、锂、银、钼等，海外资产占比极高，为全球金属矿业TOP3企业。", "updated": "2026-07-15", "url": "company/紫金矿业_601899/index.html"}, {"id": "西部矿业_601168", "name": "西部矿业年报摘要", "code": "601168", "category": "A股多金属副产银", "hq": "", "brief": "基于西部矿业2024年度报告（236页）及2025年度报告（194页）编制。公司为青海省属国有控股大型有色金属矿业上市公司，主营铜、铅、锌、铁等多金属矿的采选、冶炼与深加工，并布局", "updated": "2026-07-15", "url": "company/西部矿业_601168/index.html"}, {"id": "豫光金铅_600531", "name": "豫光金铅年报摘要", "code": "600531", "category": "A股白银冶炼", "hq": "", "brief": "数据来源：2024年报、2025年报 | 中国第一大白银冶炼企业、最大铅冶炼企业", "updated": "2026-07-15", "url": "company/豫光金铅_600531/index.html"}, {"id": "银泰黄金_000975", "name": "银泰黄金 / 山金国际年报摘要", "code": "000975", "category": "A股银矿核心", "hq": "", "brief": "数据来源：2024年、2025年年度报告", "updated": "2026-07-15", "url": "company/银泰黄金_000975/index.html"}, {"id": "驰宏锌锗_600497", "name": "驰宏锌锗年报摘要", "code": "600497", "category": "A股多金属副产银", "hq": "", "brief": "数据来源：2024年报、2025年报 | 中铝集团旗下，中国铅锌冶炼龙头+锗稀缺资源企业", "updated": "2026-07-15", "url": "company/驰宏锌锗_600497/index.html"}];
+const CAT_COLORS = {"在产白银核心": "#6B7FD7", "在产黄金核心": "#C99A2E", "多金属矿业巨头": "#4C8C6A", "贵金属流公司": "#8A7AB5", "铂族金属 PGM": "#3E7CA8", "开发/勘探阶段": "#B8763E", "已被收购/退市": "#8C8C8C", "A股银矿核心": "#5B8FB9", "A股多金属副产银": "#7A9E7E", "A股白银冶炼": "#C9899A", "贵金属精炼厂": "#A8708C"};
+
+const $ = id => document.getElementById(id);
+const grid = $("grid"), q = $("q"), catsBox = $("cats"), countEl = $("count");
+
+// ---- 分类按钮 ----
+const catOrder = [];
+const catCount = {};
+COMPANIES.forEach(c => {
+  if (!catOrder.includes(c.category)) catOrder.push(c.category);
+  catCount[c.category] = (catCount[c.category] || 0) + 1;
+});
+catOrder.sort((a, b) => catCount[b] - catCount[a]);
+let activeCat = "";
+
+function renderCats() {
+  const frag = document.createDocumentFragment();
+  const all = btn("全部", "");
+  frag.appendChild(all);
+  catOrder.forEach(cat => frag.appendChild(btn(cat + " " + catCount[cat], cat)));
+  catsBox.innerHTML = "";
+  catsBox.appendChild(frag);
+
+  function btn(label, val) {
+    const b = document.createElement("button");
+    b.className = "cat-btn" + (activeCat === val ? " on" : "");
+    b.textContent = label;
+    b.onclick = () => { activeCat = val; renderCats(); renderGrid(); };
+    return b;
+  }
+}
+
+// ---- 卡片 ----
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+function renderGrid() {
+  const kw = q.value.trim().toLowerCase();
+  const list = COMPANIES.filter(c => {
+    if (activeCat && c.category !== activeCat) return false;
+    if (!kw) return true;
+    return (c.name + " " + c.code + " " + c.category + " " + c.brief + " " + c.hq).toLowerCase().includes(kw);
+  });
+  countEl.textContent = list.length ? `显示 ${list.length} / ${COMPANIES.length}` : "";
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty">没有匹配的公司，换个关键词试试</div>';
+    return;
+  }
+  grid.innerHTML = list.map(c => {
+    const color = CAT_COLORS[c.category] || "#8C8C8C";
+    return '<a class="card" href="' + esc(c.url) + '">' +
+      '<span class="bar" style="background:' + color + '"></span>' +
+      '<div class="row1"><span class="name" title="' + esc(c.name) + '">' + esc(c.name) + '</span>' +
+      '<span class="code">' + esc(c.code || c.id) + '</span></div>' +
+      '<div class="brief" title="' + esc(c.brief) + '">' + esc(c.brief || "—") + '</div>' +
+      '<div class="row3"><span class="badge" style="background:' + color + '">' + esc(c.category) + '</span>' +
+      '<span class="upd">更新 ' + esc(c.updated) + '</span></div>' +
+      '</a>';
+  }).join("");
+}
+
+// ---- 事件 ----
+q.addEventListener("input", renderGrid);
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+  if (e.key === "Escape") { q.value = ""; renderGrid(); }
+});
+
+// ---- init ----
+$("st-total").textContent = COMPANIES.length;
+$("st-cats").textContent = catOrder.length;
+renderCats();
+renderGrid();
+</script>
+
+
+
+</body></html>
