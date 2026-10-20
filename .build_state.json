@@ -1,5 +1,5 @@
 {
- "__overview__": "1bdb2ee6c4d2efec",
+ "__overview__": "dd16fca5f533d0fb",
  "__tplver__": 5,
  "Agnico_Eagle": {
   "id": "Agnico_Eagle",
@@ -21,9 +21,9 @@
  },
  "ARE_Holdings_Asahi_Refining": {
   "id": "ARE_Holdings_Asahi_Refining",
-  "hash": "b84636137d8248bd",
+  "hash": "9987f818278f1705",
   "md": "ARE_Holdings_Asahi_Refining/ARE_Holdings_摘要.md",
-  "mtime": 1790709123.6178045
+  "mtime": 1792523578.5219169
  },
  "Avino_Silver_Gold": {
   "id": "Avino_Silver_Gold",
@@ -129,9 +129,9 @@
  },
  "Northam_Platinum": {
   "id": "Northam_Platinum",
-  "hash": "67e8e20124f01ecf",
+  "hash": "ab509bf1e546c47c",
   "md": "Northam_Platinum/Northam_Platinum_摘要.md",
-  "mtime": 1784079819.7738943
+  "mtime": 1792523605.1811593
  },
  "Pan_American_Silver": {
   "id": "Pan_American_Silver",
