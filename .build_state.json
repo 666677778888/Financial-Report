@@ -1,11 +1,17 @@
 {
- "__overview__": "9c3b1b5a0055e6eb",
+ "__overview__": "7ab542f95d35f9f0",
  "__tplver__": 5,
  "Agnico_Eagle": {
   "id": "Agnico_Eagle",
   "hash": "8b6e947c0d1c1da6",
   "md": "Agnico_Eagle/Agnico_Eagle_摘要.md",
   "mtime": 1783058934.2907765
+ },
+ "Americas_Gold_and_Silver": {
+  "id": "Americas_Gold_and_Silver",
+  "hash": "5343b61e933c93e4",
+  "md": "Americas_Gold_and_Silver/Americas_Gold_and_Silver_摘要.md",
+  "mtime": 1794322236.3300054
  },
  "Andean_Precious_Metals": {
   "id": "Andean_Precious_Metals",
@@ -31,6 +37,12 @@
   "md": "Avino_Silver_Gold/Avino_Silver_Gold_摘要.md",
   "mtime": 1783059094.913317
  },
+ "B2Gold": {
+  "id": "B2Gold",
+  "hash": "609f771281458b09",
+  "md": "B2Gold/B2Gold_摘要.md",
+  "mtime": 1794322124.1080143
+ },
  "Barrick_Gold": {
   "id": "Barrick_Gold",
   "hash": "f9d2bdc1cb2993f5",
@@ -43,17 +55,41 @@
   "md": "Bunker_Hill_Mining/Bunker_Hill_Mining_摘要.md",
   "mtime": 1783314793.3649778
  },
+ "Caledonia_Mining": {
+  "id": "Caledonia_Mining",
+  "hash": "46fecd51a3ed8ef1",
+  "md": "Caledonia_Mining/Caledonia_Mining_摘要.md",
+  "mtime": 1794322552.7668855
+ },
  "Coeur_Mining": {
   "id": "Coeur_Mining",
   "hash": "b3f5f9ca0ca525f4",
   "md": "Coeur_Mining/Coeur_Mining_摘要.md",
   "mtime": 1783314889.05193
  },
+ "Dakota_Gold": {
+  "id": "Dakota_Gold",
+  "hash": "925ff412b17e7ea3",
+  "md": "Dakota_Gold/Dakota_Gold_摘要.md",
+  "mtime": 1794322556.6673882
+ },
+ "DOWA_Holdings_5714": {
+  "id": "DOWA_Holdings_5714",
+  "hash": "2dbf5f1c39547cf0",
+  "md": "DOWA_Holdings_5714/DOWA_Holdings_摘要.md",
+  "mtime": 1792567114.7303255
+ },
  "Endeavour_Silver": {
   "id": "Endeavour_Silver",
   "hash": "e6ff314e7c326208",
   "md": "Endeavour_Silver/Endeavour_Silver_摘要.md",
   "mtime": 1783315180.891582
+ },
+ "Equinox_Gold": {
+  "id": "Equinox_Gold",
+  "hash": "d9c4fa73b01f2f58",
+  "md": "Equinox_Gold/Equinox_Gold_摘要.md",
+  "mtime": 1794322270.9277256
  },
  "First_Majestic_Silver": {
   "id": "First_Majestic_Silver",
@@ -73,6 +109,12 @@
   "md": "Fresnillo/Fresnillo_摘要.md",
   "mtime": 1783314969.4240458
  },
+ "Galiano_Gold": {
+  "id": "Galiano_Gold",
+  "hash": "ec1b4f4d5a580a9b",
+  "md": "Galiano_Gold/Galiano_Gold_摘要.md",
+  "mtime": 1794322315.248409
+ },
  "Glencore": {
   "id": "Glencore",
   "hash": "6c6c60970a874992",
@@ -85,11 +127,23 @@
   "md": "Hecla_Mining/Hecla_Mining_摘要.md",
   "mtime": 1783314946.0675676
  },
+ "Highlander_Silver": {
+  "id": "Highlander_Silver",
+  "hash": "92078527afc8655d",
+  "md": "Highlander_Silver/Highlander_Silver_摘要.md",
+  "mtime": 1794322335.7901626
+ },
  "Hochschild_Mining": {
   "id": "Hochschild_Mining",
   "hash": "33465a47a1839abd",
   "md": "Hochschild_Mining/Hochschild_Mining_摘要.md",
   "mtime": 1784079850.557346
+ },
+ "IAMGOLD": {
+  "id": "IAMGOLD",
+  "hash": "5fc9520d31c74d97",
+  "md": "IAMGOLD/IAMGOLD_摘要.md",
+  "mtime": 1794322362.0989833
  },
  "Impala_Platinum": {
   "id": "Impala_Platinum",
@@ -102,6 +156,18 @@
   "hash": "728c5c02ac102333",
   "md": "Industrias_Penoles/Industrias_Penoles_摘要.md",
   "mtime": 1783315111.0466197
+ },
+ "Integra_Resources": {
+  "id": "Integra_Resources",
+  "hash": "20a6ba014500c35d",
+  "md": "Integra_Resources/Integra_Resources_摘要.md",
+  "mtime": 1794322416.7323022
+ },
+ "JX_Advanced_Metals_5016": {
+  "id": "JX_Advanced_Metals_5016",
+  "hash": "e354d8e0be89cb09",
+  "md": "JX_Advanced_Metals_5016/JX_Advanced_Metals_摘要.md",
+  "mtime": 1792567114.7313273
  },
  "KGHM": {
   "id": "KGHM",
@@ -121,6 +187,24 @@
   "md": "McEwen_Inc/McEwen_Inc_摘要.md",
   "mtime": 1784080148.271865
  },
+ "Mitsubishi_Materials_5711": {
+  "id": "Mitsubishi_Materials_5711",
+  "hash": "e9d8b8f1c1a70e47",
+  "md": "Mitsubishi_Materials_5711/Mitsubishi_Materials_摘要.md",
+  "mtime": 1792567091.2112164
+ },
+ "Mitsui_Kinzoku_5706": {
+  "id": "Mitsui_Kinzoku_5706",
+  "hash": "2ad6efd6b134bbfc",
+  "md": "Mitsui_Kinzoku_5706/Mitsui_Kinzoku_摘要.md",
+  "mtime": 1792567102.1417065
+ },
+ "New_Found_Gold": {
+  "id": "New_Found_Gold",
+  "hash": "2c87ad560e4a05a3",
+  "md": "New_Found_Gold/New_Found_Gold_摘要.md",
+  "mtime": 1794322191.9401374
+ },
  "Newmont": {
   "id": "Newmont",
   "hash": "c6d5f4a1fc5bee0e",
@@ -132,6 +216,12 @@
   "hash": "ab509bf1e546c47c",
   "md": "Northam_Platinum/Northam_Platinum_摘要.md",
   "mtime": 1792523605.1811593
+ },
+ "Osisko_Gold_Group": {
+  "id": "Osisko_Gold_Group",
+  "hash": "1780ecaccbc55f8f",
+  "md": "Osisko_Gold_Group/Osisko_Gold_Group_摘要.md",
+  "mtime": 1794322480.6189802
  },
  "Pan_American_Silver": {
   "id": "Pan_American_Silver",
@@ -180,6 +270,18 @@
   "hash": "6526477de0b65c00",
   "md": "SSR_Mining/SSR_Mining_摘要.md",
   "mtime": 1784080064.2692282
+ },
+ "Sumitomo_Metal_Mining_5713": {
+  "id": "Sumitomo_Metal_Mining_5713",
+  "hash": "f61fe9f6476d7c54",
+  "md": "Sumitomo_Metal_Mining_5713/Sumitomo_Metal_Mining_摘要.md",
+  "mtime": 1792567102.1417065
+ },
+ "Toho_Zinc_5707": {
+  "id": "Toho_Zinc_5707",
+  "hash": "bf02579974b6a471",
+  "md": "Toho_Zinc_5707/Toho_Zinc_摘要.md",
+  "mtime": 1792567091.2112164
  },
  "Valterra_Platinum": {
   "id": "Valterra_Platinum",
@@ -306,41 +408,5 @@
   "hash": "33d9ea1de6fcd2a3",
   "md": "驰宏锌锗_600497/驰宏锌锗_600497_摘要.md",
   "mtime": 1784083787.7191637
- },
- "DOWA_Holdings_5714": {
-  "id": "DOWA_Holdings_5714",
-  "hash": "2dbf5f1c39547cf0",
-  "md": "DOWA_Holdings_5714/DOWA_Holdings_摘要.md",
-  "mtime": 1792567114.7303255
- },
- "JX_Advanced_Metals_5016": {
-  "id": "JX_Advanced_Metals_5016",
-  "hash": "e354d8e0be89cb09",
-  "md": "JX_Advanced_Metals_5016/JX_Advanced_Metals_摘要.md",
-  "mtime": 1792567114.7313273
- },
- "Mitsubishi_Materials_5711": {
-  "id": "Mitsubishi_Materials_5711",
-  "hash": "e9d8b8f1c1a70e47",
-  "md": "Mitsubishi_Materials_5711/Mitsubishi_Materials_摘要.md",
-  "mtime": 1792567091.2112164
- },
- "Mitsui_Kinzoku_5706": {
-  "id": "Mitsui_Kinzoku_5706",
-  "hash": "2ad6efd6b134bbfc",
-  "md": "Mitsui_Kinzoku_5706/Mitsui_Kinzoku_摘要.md",
-  "mtime": 1792567102.1417065
- },
- "Sumitomo_Metal_Mining_5713": {
-  "id": "Sumitomo_Metal_Mining_5713",
-  "hash": "f61fe9f6476d7c54",
-  "md": "Sumitomo_Metal_Mining_5713/Sumitomo_Metal_Mining_摘要.md",
-  "mtime": 1792567102.1417065
- },
- "Toho_Zinc_5707": {
-  "id": "Toho_Zinc_5707",
-  "hash": "bf02579974b6a471",
-  "md": "Toho_Zinc_5707/Toho_Zinc_摘要.md",
-  "mtime": 1792567091.2112164
  }
 }
