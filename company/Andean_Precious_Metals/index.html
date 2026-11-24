@@ -13,6 +13,99 @@
   <span class="tag">APM · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="APM" data-name="Andean Precious Metals Corp. — 年报摘要" data-ccy="CAD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Andean Precious Metals Corp. — 年报摘要（APM.TO · CAD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/APM.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Andean Precious Metals Corp. — 年报摘要</h1>
 <blockquote>
@@ -359,11 +452,72 @@
 <li><strong>关注MSPL再融资</strong>：$36.1M贷款2025年11月到期是近期关键财务事件</li>
 <li><strong>数据局限</strong>：本文件仅为财务报表，缺少详细运营产量数据（盎司/吨）、储量资源量及项目规划，建议结合MD&amp;A和技术报告综合分析</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2024（截至2024-12-31）｜<strong>主金属</strong>：银（San Bartolomé，玻利维亚）+ 金（Soledad Mountain，美国）</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>2024</th>
+<th>2023</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1（cash cost per oz）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>数据源为审计后财务报表（未含MD&amp;A），证据文件无成本行；无 per oz 现金成本披露</td>
+</tr>
+<tr>
+<td>直接生产成本合计</td>
+<td>179,757</td>
+<td>97,342</td>
+<td>千美元</td>
+<td>=采矿及矿石采购 105,586 + 选矿处理 58,436 + 其他生产成本 15,735（2024）；摘要正文 4.2 节</td>
+</tr>
+<tr>
+<td>销售成本合计（COGS）</td>
+<td>165,305</td>
+<td>105,892</td>
+<td>千美元</td>
+<td>=直接成本 179,757 + 采矿特许权税 5,779 − 存货调整 20,231（2024）</td>
+</tr>
+<tr>
+<td>毛利</td>
+<td>68,561</td>
+<td>14,201</td>
+<td>千美元</td>
+<td>毛利率 27.0%（2023：11.3%）</td>
+</tr>
+<tr>
+<td>C2 / C3 / AISC</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>无 D&amp;A 分项及期间费用分矿山披露</td>
+</tr>
+</tbody>
+</table>
+<div class="chart-box"><div class="chart-title">开采成本（C1/C2/C3框架）<span class="chart-sub">2023–2024 · 柱状图</span></div><div class="chart-canvas-wrap"><canvas id="chart6"></canvas></div></div>
+
+<p><strong>要点</strong>：
+- <strong>per oz 成本不可得</strong>：财务报表未披露银/金物理产量（盎司），不可以收入推算产量，故 C1（净副产品抵扣后每盎司现金成本）无法计算；需补充公司 MD&amp;A / AIF 获取 San Bartolomé 与 Soledad Mountain 的 cash cost per oz。
+- 2024 年为 Soledad Mountain（Golden Queen）收购后首个完整年度，直接生产成本近乎翻倍（$97.3M→$179.8M），毛利率由 11.3% 升至 27.0%。
+- COGS 与直接成本的差异项：采矿特许权税（2024：$5.78M）与存货调整（2024：-$20.2M）。
+- 玻利维亚人工成本（2024 直接成本口径内 $37.9M）与美国产能爬坡期成本是影响成本结构的主要变量。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://andeanpm.com/investors/" target="_blank" rel="noopener">Andean Precious Metals Corp. — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Andean_Precious_Metals/Andean_Precious_Metals_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Andean_Precious_Metals/Andean_Precious_Metals_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
-<script>window.__PM_CHARTS__ = [{"title": "2.1 收入分金属构成", "years": [2023, 2024], "series": [{"label": "San Bartolomé + Soledad", "unit": "", "points": [120203.0, 136351.0]}, {"label": "Soledad Mountain", "unit": "", "points": [5090.0, 117649.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "2.2 分业务收入", "years": [2023, 2024], "series": [{"label": "玻利维亚（San Bartolomé）", "unit": "", "points": [null, 126905.0]}, {"label": "美国（Soledad Mountain）", "unit": "", "points": [null, 127095.0]}, {"label": "合计", "unit": "", "points": [125324.0, 254000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "4.2 成本结构", "years": [2023, 2024], "series": [{"label": "采矿及矿石采购", "unit": "", "points": [43532.0, 105586.0]}, {"label": "选矿处理", "unit": "", "points": [41854.0, 58436.0]}, {"label": "其他生产成本", "unit": "", "points": [11956.0, 15735.0]}, {"label": "直接成本合计", "unit": "", "points": [97342.0, 179757.0]}, {"label": "采矿特许权税", "unit": "", "points": [7574.0, 5779.0]}, {"label": "存货调整", "unit": "", "points": [976.0, -20231.0]}, {"label": "销售成本合计", "unit": "", "points": [105892.0, 165305.0]}, {"label": "毛利", "unit": "", "points": [14201.0, 68561.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "4.3 财务亮点", "years": [2023, 2024], "series": [{"label": "收入", "unit": "", "points": [125300000.0, 254000000.0]}, {"label": "经营利润", "unit": "", "points": [20000.0, 41900000.0]}, {"label": "净利润", "unit": "", "points": [41900000.0, 19200000.0]}, {"label": "每股收益（基本）", "unit": "基本", "points": [0.27, 0.13]}, {"label": "现金及等价物", "unit": "", "points": [64900000.00000001, 62400000.0]}, {"label": "有价证券", "unit": "", "points": [5200000.0, 38500000.0]}, {"label": "总债务", "unit": "", "points": [47500000.0, 70300000.0]}, {"label": "权益", "unit": "", "points": [135400000.0, 151000000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "4.7 资本支出", "years": [2023, 2024], "series": [{"label": "玻利维亚", "unit": "", "points": [5500000.0, 5600000.0]}, {"label": "美国", "unit": "", "points": [3500000.0, 29800000.0]}, {"label": "合计", "unit": "", "points": [9000000.0, 35400000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}];</script>
+<script>window.__PM_CHARTS__ = [{"title": "2.1 收入分金属构成", "years": [2023, 2024], "series": [{"label": "San Bartolomé + Soledad", "unit": "", "points": [120203.0, 136351.0]}, {"label": "Soledad Mountain", "unit": "", "points": [5090.0, 117649.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "2.2 分业务收入", "years": [2023, 2024], "series": [{"label": "玻利维亚（San Bartolomé）", "unit": "", "points": [null, 126905.0]}, {"label": "美国（Soledad Mountain）", "unit": "", "points": [null, 127095.0]}, {"label": "合计", "unit": "", "points": [125324.0, 254000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "4.2 成本结构", "years": [2023, 2024], "series": [{"label": "采矿及矿石采购", "unit": "", "points": [43532.0, 105586.0]}, {"label": "选矿处理", "unit": "", "points": [41854.0, 58436.0]}, {"label": "其他生产成本", "unit": "", "points": [11956.0, 15735.0]}, {"label": "直接成本合计", "unit": "", "points": [97342.0, 179757.0]}, {"label": "采矿特许权税", "unit": "", "points": [7574.0, 5779.0]}, {"label": "存货调整", "unit": "", "points": [976.0, -20231.0]}, {"label": "销售成本合计", "unit": "", "points": [105892.0, 165305.0]}, {"label": "毛利", "unit": "", "points": [14201.0, 68561.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "4.3 财务亮点", "years": [2023, 2024], "series": [{"label": "收入", "unit": "", "points": [125300000.0, 254000000.0]}, {"label": "经营利润", "unit": "", "points": [20000.0, 41900000.0]}, {"label": "净利润", "unit": "", "points": [41900000.0, 19200000.0]}, {"label": "每股收益（基本）", "unit": "基本", "points": [0.27, 0.13]}, {"label": "现金及等价物", "unit": "", "points": [64900000.00000001, 62400000.0]}, {"label": "有价证券", "unit": "", "points": [5200000.0, 38500000.0]}, {"label": "总债务", "unit": "", "points": [47500000.0, 70300000.0]}, {"label": "权益", "unit": "", "points": [135400000.0, 151000000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "4.7 资本支出", "years": [2023, 2024], "series": [{"label": "玻利维亚", "unit": "", "points": [5500000.0, 5600000.0]}, {"label": "美国", "unit": "", "points": [3500000.0, 29800000.0]}, {"label": "合计", "unit": "", "points": [9000000.0, 35400000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "开采成本（C1/C2/C3框架）", "years": [2023, 2024], "series": [{"label": "直接生产成本合计", "unit": "千美元", "points": [97342.0, 179757.0]}, {"label": "销售成本合计（COGS）", "unit": "千美元", "points": [105892.0, 165305.0]}, {"label": "毛利", "unit": "千美元", "points": [14201.0, 68561.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}];</script>
 
 <script>/**
  * Skipped minification because the original files appears to be already minified.

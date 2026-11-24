@@ -13,6 +13,99 @@
   <span class="tag">HOCM.L · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="HOC" data-name="Hochschild Mining plc  — 2025年报摘要" data-ccy="GBp">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Hochschild Mining plc  — 2025年报摘要（HOC.L · GBp）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/HOC.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Hochschild Mining plc (LSE: HOCM, FTSE 250) — 2025年报摘要</h1>
 <blockquote>
@@ -528,9 +621,70 @@
 </ol>
 <hr />
 <p><em>本摘要基于Hochschild Mining plc 2025 Annual Report编制，数据截至2025年12月31日。</em></p>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025｜<strong>主金属</strong>：银/金（金当量合并，US$/oz报告）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au Eq（集团合并，Attributable）</td>
+<td>1,430</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>2,138</td>
+<td>US$/oz Au Eq</td>
+<td>AISC按应占基础计算，<strong>不含秘鲁权利金</strong>（该权利金在所得税行确认）；金银比83:1折算；AISC亦可表述为US$25.7/oz Ag Eq</td>
+</tr>
+<tr>
+<td>Au Eq（Inmaculada，秘鲁100%）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,732</td>
+<td>US$/oz Au Eq</td>
+<td>分矿山，仅AISC</td>
+</tr>
+<tr>
+<td>Au Eq（San Jose，阿根廷51%）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>2,520</td>
+<td>US$/oz Au Eq</td>
+<td>分矿山，仅AISC；受阿根廷出口蓝美元汇率优惠取消（2025.4）推升</td>
+</tr>
+<tr>
+<td>Au Eq（Mara Rosa，巴西100%）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>3,697</td>
+<td>US$/oz Au Eq</td>
+<td>分矿山，仅AISC；运营危机年份（产量-37%+维护成本超预算）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- 集团AISC同比+37.2%（$1,558→$2,138/oz Au Eq，2024年已按新口径重述），主因Mara Rosa运营危机（AISC $3,697，+163%）、计划内品位下降、金价驱动权利金/利润分享上升及阿根廷出口优惠取消
+- 公司披露C1（cash cost）与AISC两级，C2/C3未披露；AISC口径2024年起改为attributable基础并剔除秘鲁权利金（计入所得税行），与2023年前total basis不可比
+- 2026年指引：集团AISC $2,157-2,320/oz Au Eq（金银比77:1）；Inmaculada $2,047-2,175、Mara Rosa $2,296-2,520、San Jose $2,304-2,495</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.hochschildmining.com/investors/" target="_blank" rel="noopener">Hochschild Mining plc  — 2025年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Hochschild_Mining/Hochschild_Mining_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Hochschild_Mining/Hochschild_Mining_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 集团总产量（100%口径）", "years": [2024, 2025], "series": [{"label": "金 (koz)", "unit": "koz", "points": [281.14, 259.16]}, {"label": "银 (koz)", "unit": "koz", "points": [10530.0, 9251.0]}, {"label": "金当量 (koz Au Eq, 100%)", "unit": "", "points": [408.0, 370.62]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "1.2 权益产量（Attributable）", "years": [2024, 2025], "series": [{"label": "金 (koz)", "unit": "koz", "points": [245.01, 221.44]}, {"label": "银 (koz)", "unit": "koz", "points": [8496.0, 7475.0]}, {"label": "金当量 (koz Au Eq)", "unit": "koz Au Eq", "points": [347.37, 311.51]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "1.3 分矿山产量明细（100%口径）", "years": [2024, 2025], "series": [{"label": "Inmaculada (秘鲁, 100%)", "unit": "秘鲁, 100%", "points": [143.78, 142.23]}, {"label": "Inmaculada", "unit": "", "points": [6368.0, 5618.0]}, {"label": "Inmaculada", "unit": "", "points": [220.5, 209.92]}, {"label": "San Jose (阿根廷, 51%)", "unit": "阿根廷, 51%", "points": [73.73, 76.97]}, {"label": "San Jose", "unit": "", "points": [4150.0, 3625.0]}, {"label": "San Jose", "unit": "", "points": [123.73, 120.64]}, {"label": "Mara Rosa (巴西, 100%)", "unit": "巴西, 100%", "points": [63.64, 39.96]}, {"label": "Mara Rosa", "unit": "", "points": [63.77, 40.06]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "1.4 冶炼/处理量", "years": [2024, 2025], "series": [{"label": "Inmaculada", "unit": "", "points": [1197965.0, 1372800.0]}, {"label": "San Jose", "unit": "", "points": [581303.0, 705426.0]}, {"label": "Mara Rosa", "unit": "", "points": [1757955.0, 1424031.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "3.2 成本结构", "years": [2023, 2024, 2025], "series": [{"label": "AISC ($/oz Au Eq)", "unit": "$/oz Au Eq", "points": [1454.0, 1558.0, 2138.0]}, {"label": "Cash Cost ($/oz Au Eq)", "unit": "$/oz Au Eq", "points": [1110.0, 1108.0, 1430.0]}, {"label": "Inmaculada AISC ($/oz Au Eq)", "unit": "$/oz Au Eq", "points": [null, 1479.0, 1732.0]}, {"label": "San Jose AISC ($/oz Au Eq)", "unit": "$/oz Au Eq", "points": [null, 1973.0, 2520.0]}, {"label": "Mara Rosa AISC ($/oz Au Eq)", "unit": "$/oz Au Eq", "points": [null, 1408.0, 3697.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "3.3 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "总资源量 (Moz Ag Eq)", "unit": "Moz Ag Eq", "points": [1708.0, 1739.0]}, {"label": "年度新增资源 (Moz Au Eq)", "unit": "Moz Au Eq", "points": [null, 1.7]}], "log": true, "type": "bar", "omitted": 0, "id": "chart6"}, {"title": "3.4 财务亮点", "years": [2024, 2025], "series": [{"label": "收入 ($M)", "unit": "$M", "points": [947.7, 1182.1]}, {"label": "调整后EBITDA ($M)", "unit": "$M", "points": [421.4, 583.7]}, {"label": "税前利润($M, Pre-exceptional)", "unit": "", "points": [null, 200.7]}, {"label": "基本EPS ($, Pre-exceptional)", "unit": "", "points": [0.23, 0.31]}, {"label": "净债务 ($M)", "unit": "$M", "points": [215.6, 22.7]}, {"label": "现金 ($M)", "unit": "$M", "points": [97.0, 317.0]}, {"label": "总股息 (US cents/share)", "unit": "", "points": [1.9, 5.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart7"}];</script>
 

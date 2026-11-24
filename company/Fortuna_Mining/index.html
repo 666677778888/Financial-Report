@@ -13,6 +13,99 @@
   <span class="tag">FSM · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="FSM" data-name="Fortuna Mining Corp.  — 2025年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Fortuna Mining Corp.  — 2025年报摘要（FSM · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/FSM.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Fortuna Mining Corp. (NYSE: FSM) — 2025年报(40-F)摘要</h1>
 <blockquote>
@@ -514,9 +607,70 @@
 </ol>
 <hr />
 <p><em>本摘要基于Fortuna Mining Corp. 2025 Form 40-F及AIF编制，数据截至2025年12月31日。</em></p>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au（集团合并，Au Eq）</td>
+<td>944</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,870</td>
+<td>US$/oz Au Eq</td>
+<td>非IFRS cash cost，净副产品抵扣；AISC含维持性资本开支、权利金、矿业税等</td>
+</tr>
+<tr>
+<td>Au（Lindero）</td>
+<td>1,132</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,716</td>
+<td>US$/oz Au</td>
+<td>分矿山；C1净铜副产品抵扣</td>
+</tr>
+<tr>
+<td>Au（Séguéla）</td>
+<td>679</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,560</td>
+<td>US$/oz Au</td>
+<td>分矿山</td>
+</tr>
+<tr>
+<td>Ag（Caylloma，Ag Eq）</td>
+<td>17.387</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>27.467</td>
+<td>US$/oz Ag Eq</td>
+<td>多金属（Ag/Pb/Zn）按当量折算（Ag:Au=98.3:1、Ag:Pb=1:45.2、Ag:Zn=1:31.0）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- 2025年集团合并C1（cash cost）944 US$/oz Au Eq，同比降4.4%（2024年987），主因剥离高成本银矿资产；但合并AISC升至1,870 US$/oz Au Eq（2024年1,640），反映权利金上升与资产组合变化
+- 公司仅披露C1与AISC两个层级，C2/C3未披露；2024年Q4起AISC口径调整纳入阿根廷blue-chip swaps，可比期间已重述
+- Séguéla为成本最低金矿（C1=679 US$/oz），从低成本爬产期进入正常运营后AISC仍上行；2026年集团AISC指引$1,830-1,975/oz（假设金价$3,750/oz，权利金+~$30/oz）</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://fortunamining.com/investors/financial-reports/" target="_blank" rel="noopener">Fortuna Mining Corp.  — 2025年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Fortuna_Mining/Fortuna_Mining_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Fortuna_Mining/Fortuna_Mining_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 集团合并产量总览", "years": [2023, 2024, 2025], "series": [{"label": "金 (oz)", "unit": "oz", "points": [326638.0, 369637.0, 277709.0]}, {"label": "银 (oz)", "unit": "oz", "points": [5883691.0, 3724945.0, 966108.0]}, {"label": "铅 (lbs)", "unit": "lbs", "points": [40851657.0, 39555339.0, 34696351.0]}, {"label": "锌 (lbs)", "unit": "lbs", "points": [55060450.0, 51905635.0, 50761436.0]}, {"label": "金当量 GEO (oz)", "unit": "oz", "points": [null, 369637.0, 277709.0]}, {"label": "收入 ($M)", "unit": "$M", "points": [842.4, 1062.0, 947.1]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "1.2 分矿山产量明细（持续运营矿山）", "years": [2023, 2024, 2025], "series": [{"label": "Lindero (阿根廷)", "unit": "阿根廷", "points": [101238.0, 97287.0, 87489.0]}, {"label": "Séguéla (科特迪瓦)", "unit": "科特迪瓦", "points": [78617.0, 137781.0, 152426.0]}, {"label": "Caylloma (秘鲁)", "unit": "秘鲁", "points": [1227060.0, 1176543.0, 966108.0]}, {"label": "Caylloma (秘鲁)", "unit": "秘鲁", "points": [40851657.0, 39555339.0, 34696351.0]}, {"label": "Caylloma (秘鲁)", "unit": "秘鲁", "points": [55060450.0, 51905635.0, 50761436.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "1.3 已剥离矿山（2025年部分产出）", "years": [2024, 2025], "series": [{"label": "Yaramoko (布基纳法索)", "unit": "布基纳法索", "points": [116206.0, 37794.0]}, {"label": "San Jose (墨西哥)", "unit": "墨西哥", "points": [2548402.0, 0.0]}, {"label": "San Jose (墨西哥)", "unit": "墨西哥", "points": [17811.0, 0.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "3.2 成本结构", "years": [2023, 2024, 2025], "series": [{"label": "合并Cash Cost ($/oz Au Eq)", "unit": "$/oz Au Eq", "points": [874.0, 987.0, 944.0]}, {"label": "合并AISC ($/oz Au Eq)", "unit": "$/oz Au Eq", "points": [1480.0, 1640.0, 1870.0]}, {"label": "Lindero AISC ($/oz)", "unit": "$/oz", "points": [1444.0, 1793.0, 1716.0]}, {"label": "Séguéla AISC ($/oz)", "unit": "$/oz", "points": [760.0, 1153.0, 1560.0]}, {"label": "Caylloma AISC ($/oz Ag Eq)", "unit": "$/oz Ag Eq", "points": [19.91, 21.73, 27.47]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}];</script>
 

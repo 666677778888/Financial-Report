@@ -13,6 +13,99 @@
   <span class="tag">IMPA.SJ · 铂族金属 PGM</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="IMPL" data-name="Impala Platinum  年报摘要" data-ccy="ZAR">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Impala Platinum  年报摘要（IMP.JO · ZAR）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/IMPL.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Impala Platinum (Implats) 年报摘要</h1>
 <blockquote>
@@ -725,11 +818,108 @@
 <blockquote>
 <p><strong>数据来源</strong>：Impala Platinum Holdings Limited Annual Integrated Report FY2025（截至2025年6月30日），128页，提取100页。</p>
 </blockquote>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（单列参考）。
+<strong>Implats披露口径为 unit cost（总成本口径，含D&amp;A，stock-adjusted per 6E oz），非净副产品抵扣的C1。</strong></p>
+</blockquote>
+<p><strong>财年</strong>：F2026（截至2026-06-30，最新）｜<strong>主金属</strong>：PGM（6E）</p>
+<h3>集团口径（F2026 vs FY2025）</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>F2026</th>
+<th>FY2025</th>
+<th>变化</th>
+<th>单位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>集团stock-adjusted单位成本</strong></td>
+<td><strong>R24,249</strong>/6Eoz</td>
+<td>R22,491/6Eoz</td>
+<td><strong>+8%</strong>（+R1,758/oz）</td>
+<td>R/6Eoz</td>
+</tr>
+<tr>
+<td>集团单位成本（US$口径）</td>
+<td>绝对值未在提取文本中</td>
+<td>—</td>
+<td><strong>-7.8%</strong>（兰特升值压低美元口径）</td>
+<td>US$/6Eoz</td>
+</tr>
+<tr>
+<td>吨处理成本</td>
+<td>R2,887/t</td>
+<td>R2,818/t</td>
+<td>+2%</td>
+<td>R/t milled</td>
+</tr>
+<tr>
+<td>集团现金成本总额</td>
+<td>R67.3bn</td>
+<td>R60.3bn</td>
+<td>+12%（+R7.0bn）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>集团采矿通胀</td>
+<td>5.6%（贡献R1,224/6Eoz）</td>
+<td>—</td>
+<td>南非5.9%；加拿大US$口径5.1%</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<div class="chart-box"><div class="chart-title">集团口径（F2026 vs FY2025）<span class="chart-sub">2025–2026 · 柱状图</span></div><div class="chart-canvas-wrap"><canvas id="chart6"></canvas></div></div>
+
+<p>成本变动拆解：通胀贡献R1,224/oz；维护与基建酌量支出（主要在Impala Rustenburg和Zimplats）贡献R964/oz（+4.3%）；产量提升抵减R96/oz；兰特走强对Zimplats/Canada成本折算贡献-R334/oz。</p>
+<h3>分部单位成本（F2026 vs FY2025）</h3>
+<table>
+<thead>
+<tr>
+<th>分部</th>
+<th>F2026</th>
+<th>FY2025</th>
+<th>变化</th>
+<th>单位/口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zimplats</td>
+<td><strong>US$1,101</strong></td>
+<td>US$898</td>
+<td><strong>+23%</strong></td>
+<td>US$/6Eoz in matte（stock-adj）；另：现金成本US$706m（+29%）、吨成本US$88/t（+21%）</td>
+</tr>
+<tr>
+<td>Impala Canada</td>
+<td><strong>C$1,489</strong></td>
+<td>C$1,348</td>
+<td><strong>+10%</strong></td>
+<td>C$/6Eoz in concentrate（含矿石堆存成本）；另：现金成本C$315m（-1%）</td>
+</tr>
+</tbody>
+</table>
+<div class="chart-box"><div class="chart-title">分部单位成本（F2026 vs FY2025）<span class="chart-sub">2025–2026 · 柱状图</span></div><div class="chart-canvas-wrap"><canvas id="chart7"></canvas></div></div>
+
+<p><strong>要点</strong>
+- 公司未按C1/C2/C3或WGC AISC框架披露；上表unit cost为公司自有总成本口径（含D&amp;A），stock-adjusted
+- 提取文本另有三组分部数据（未带矿山名上下文，归属待核，不作填列）：R26,484/6Eoz（+21%，FY2025: R21,902）；R24,946/6Eoz stock-adj（+5%，FY2025: R23,667，对应段成本总额R43.5bn/+9%）；US$1,200/6Eoz in concentrate（+12%，FY2025: US$1,069，现金成本US$287m/+6%）
+- 收入对照：6E basket收入R38,116/oz（+51%）/ US$2,267/oz（+63%），单位成本增幅（+8%）显著低于收入增幅
+- <strong>FY2027指引</strong>：单位成本R25,250–26,250/6Eoz（+4%~8%，stock-adjusted）</p>
+<blockquote>
+<p>数据来源：Impala Platinum Audited summarised consolidated annual results for the year ended 30 June 2026（2026-09-30发布）+ Annual Financial Statements F2026。</p>
+</blockquote>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.implats.co.za/" target="_blank" rel="noopener">Impala Platinum  年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2025–2026 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Impala_Platinum/Impala_Platinum_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Impala_Platinum/Impala_Platinum_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
-<script>window.__PM_CHARTS__ = [{"title": "⭐ FY2026 快照（Annual Integrated Report 2026，截至2026-06-30，2026-09-30发布）", "years": [2025, 2026], "series": [{"label": "集团6E产量", "unit": "", "points": [3480000.0, 3500000.0]}, {"label": "6E精炼及可售产量", "unit": "", "points": [3370000.0, null]}, {"label": "吨处理量", "unit": "", "points": [26290000.0, 26900000.0]}, {"label": "EBITDA", "unit": "", "points": [9900000000.0, 43600000000.0]}, {"label": "Headline earnings", "unit": "", "points": [700000000.0, 22900000000.0]}, {"label": "自由现金流", "unit": "", "points": [2400000000.0, 22000000000.0]}, {"label": "调整后净现金", "unit": "", "points": [8500000000.0, 22000000000.0]}, {"label": "资本支出", "unit": "", "points": [7000000000.0, 7200000000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "1.1 集团精炼产量（按金属，含销售口径）", "years": [2024, 2025], "series": [{"label": "铑 Rh", "unit": "", "points": [193300.0, 196400.0]}, {"label": "镍 Nickel", "unit": "", "points": [12617.0, 13299.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.2 成本结构", "years": [2024, 2025], "series": [{"label": "现金成本总额", "unit": "", "points": [58600000000.0, 60300000000.0]}, {"label": "销售成本", "unit": "", "points": [80900000000.0, 83000000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "3.3 财务表现", "years": [2024, 2025], "series": [{"label": "收入", "unit": "", "points": [86400000000.0, 85500000000.0]}, {"label": "毛利", "unit": "", "points": [5500000000.0, 2400000000.0]}, {"label": "EBITDA", "unit": "", "points": [12400000000.0, 9900000000.0]}, {"label": "Headline earnings", "unit": "", "points": [2411000000.0, 732000000.0]}, {"label": "自由现金流", "unit": "", "points": [null, 2400000000.0]}, {"label": "调整后净现金", "unit": "", "points": [null, 8100000000.0]}, {"label": "流动性", "unit": "", "points": [null, 19700000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "3.4 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "6E权益资源量", "unit": "", "points": [316500000.0, 315000000.0]}, {"label": "6E权益储量", "unit": "", "points": [54600000.0, 49100000.0]}, {"label": "Pt资源量", "unit": "", "points": [156300000.0, 155200000.0]}, {"label": "Pd资源量", "unit": "", "points": [97400000.0, 97400000.0]}, {"label": "Pt储量", "unit": "", "points": [26300000.0, 24200000.0]}, {"label": "Pd储量", "unit": "", "points": [18000000.0, 15700000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}];</script>
+<script>window.__PM_CHARTS__ = [{"title": "⭐ FY2026 快照（Annual Integrated Report 2026，截至2026-06-30，2026-09-30发布）", "years": [2025, 2026], "series": [{"label": "集团6E产量", "unit": "", "points": [3480000.0, 3500000.0]}, {"label": "6E精炼及可售产量", "unit": "", "points": [3370000.0, null]}, {"label": "吨处理量", "unit": "", "points": [26290000.0, 26900000.0]}, {"label": "EBITDA", "unit": "", "points": [9900000000.0, 43600000000.0]}, {"label": "Headline earnings", "unit": "", "points": [700000000.0, 22900000000.0]}, {"label": "自由现金流", "unit": "", "points": [2400000000.0, 22000000000.0]}, {"label": "调整后净现金", "unit": "", "points": [8500000000.0, 22000000000.0]}, {"label": "资本支出", "unit": "", "points": [7000000000.0, 7200000000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "1.1 集团精炼产量（按金属，含销售口径）", "years": [2024, 2025], "series": [{"label": "铑 Rh", "unit": "", "points": [193300.0, 196400.0]}, {"label": "镍 Nickel", "unit": "", "points": [12617.0, 13299.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.2 成本结构", "years": [2024, 2025], "series": [{"label": "现金成本总额", "unit": "", "points": [58600000000.0, 60300000000.0]}, {"label": "销售成本", "unit": "", "points": [80900000000.0, 83000000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "3.3 财务表现", "years": [2024, 2025], "series": [{"label": "收入", "unit": "", "points": [86400000000.0, 85500000000.0]}, {"label": "毛利", "unit": "", "points": [5500000000.0, 2400000000.0]}, {"label": "EBITDA", "unit": "", "points": [12400000000.0, 9900000000.0]}, {"label": "Headline earnings", "unit": "", "points": [2411000000.0, 732000000.0]}, {"label": "自由现金流", "unit": "", "points": [null, 2400000000.0]}, {"label": "调整后净现金", "unit": "", "points": [null, 8100000000.0]}, {"label": "流动性", "unit": "", "points": [null, 19700000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "3.4 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "6E权益资源量", "unit": "", "points": [316500000.0, 315000000.0]}, {"label": "6E权益储量", "unit": "", "points": [54600000.0, 49100000.0]}, {"label": "Pt资源量", "unit": "", "points": [156300000.0, 155200000.0]}, {"label": "Pd资源量", "unit": "", "points": [97400000.0, 97400000.0]}, {"label": "Pt储量", "unit": "", "points": [26300000.0, 24200000.0]}, {"label": "Pd储量", "unit": "", "points": [18000000.0, 15700000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "集团口径（F2026 vs FY2025）", "years": [2025, 2026], "series": [{"label": "集团现金成本总额", "unit": "—", "points": [60300000000.0, 67300000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}, {"title": "分部单位成本（F2026 vs FY2025）", "years": [2025, 2026], "series": [{"label": "Zimplats", "unit": "", "points": [898.0, 1101.0]}, {"label": "Impala Canada", "unit": "", "points": [1348.0, 1489.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart7"}];</script>
 
 <script>/**
  * Skipped minification because the original files appears to be already minified.

@@ -13,6 +13,99 @@
   <span class="tag">HL · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="HL" data-name="Hecla Mining Company 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Hecla Mining Company 年报摘要（HL · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/HL.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Hecla Mining Company 年报摘要</h1>
 <blockquote>
@@ -564,9 +657,76 @@
 <li><strong>银价实现价从 $23.33 升至 $28.58</strong>（2024），叠加 Lucky Friday 复产，推动销售收入创纪录达 $929.9M。</li>
 <li><strong>Libby Exploration（蒙大拿）是中长期增长选项</strong>，但面临法律障碍，存在不确定性。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2024（截至2024-12-31）｜<strong>主金属</strong>：银（银金混合生产商）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ag（集团，by-product口径）</td>
+<td>2.72（2023：3.23）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>13.06（2023：11.76）</td>
+<td>US$/oz Ag</td>
+<td>Cash cost after by-product credits per silver ounce（非GAAP），副产金/铅/锌/铜抵扣；集团口径含Greens Creek+Lucky Friday（Keno Hill爬坡期剔除）</td>
+</tr>
+<tr>
+<td>Ag – Greens Creek（副产品口径）</td>
+<td>-0.05（负值）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>5.65（2023：7.14）</td>
+<td>US$/oz Ag</td>
+<td>金/锌/铅（含2024年起新增铜付计）作副产品抵扣，抵扣额大于现金成本，C1为负</td>
+</tr>
+<tr>
+<td>Ag – Lucky Friday（主产品口径）</td>
+<td>7.80</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>16.50（2023：12.21）</td>
+<td>US$/oz Ag</td>
+<td>铅/锌作副产品抵扣；2024年为火灾复产首年（2023-08火灾停产、2024-01-09复产），AISC含复产年份固定成本摊薄影响</td>
+</tr>
+<tr>
+<td>Ag – Keno Hill</td>
+<td>2.72*</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>13.06*</td>
+<td>US$/oz Ag</td>
+<td>爬坡期披露有限（*本摘要3.2节表格数值；10-K注明Keno Hill处于ramp-up阶段，正式成本计算将其剔除——两处口径矛盾，谨慎使用）</td>
+</tr>
+<tr>
+<td>Au – Casa Berardi（by-product口径）</td>
+<td>1,762（2023：1,652）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,990（2023：1,990为2023列；2022：1,825）</td>
+<td>US$/oz Au</td>
+<td>银作副产品抵扣</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：Hecla的C1/AISC均为「after by-product credits」口径。Greens Creek本质是银为主、金锌铅铜副产的多金属矿，副产品抵扣使其C1为负（-0.05美元/oz）；Lucky Friday为高品位主产品银矿（铅锌副产），C1为正7.80，AISC高达16.50（复产年固定成本所致）。证据文件（10-K 2025版，报告FY2024）与AnnualReport_2024摘录数值一致。C2/C3未披露。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.hecla.com/investors/financial-reports/default.aspx" target="_blank" rel="noopener">Hecla Mining Company 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Hecla_Mining/Hecla_Mining_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Hecla_Mining/Hecla_Mining_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 集团总产量", "years": [2022, 2023, 2024], "series": [{"label": "银 Silver", "unit": "盎司", "points": [14182987.0, 14342863.0, 16169930.0]}, {"label": "金 Gold", "unit": "盎司", "points": [175807.0, 151259.0, 141923.0]}, {"label": "铅 Lead", "unit": "吨", "points": [48713.0, 40347.0, 52515.0]}, {"label": "锌 Zinc", "unit": "吨", "points": [64748.0, 60579.0, 66308.0]}, {"label": "铜 Copper", "unit": "吨", "points": [1904.0, 1823.0, 1874.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "Greens Creek（阿拉斯加）— 银金多金属矿，公司 flagship", "years": [2022, 2023, 2024], "series": [{"label": "矿石处理量", "unit": "吨", "points": [881445.0, 914796.0, 895318.0]}, {"label": "银", "unit": "盎司", "points": [9741935.0, 9731752.0, 8480877.0]}, {"label": "金", "unit": "盎司", "points": [48216.0, 60896.0, 55275.0]}, {"label": "铅", "unit": "吨", "points": [19480.0, 19578.0, 18320.0]}, {"label": "锌", "unit": "吨", "points": [52312.0, 51496.0, 51288.0]}, {"label": "铜", "unit": "吨", "points": [1904.0, 1823.0, 1874.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "Lucky Friday（爱达荷）— 高品位银矿", "years": [2022, 2023, 2024], "series": [{"label": "矿石处理量", "unit": "吨", "points": [356907.0, 231129.0, 406541.0]}, {"label": "银", "unit": "盎司", "points": [4412764.0, 3086119.0, 4890949.0]}, {"label": "铅", "unit": "吨", "points": [29233.0, 19543.0, 31265.0]}, {"label": "锌", "unit": "吨", "points": [12436.0, 7944.0, 13513.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "Keno Hill（育空，加拿大）— 银矿，2022年收购 Alexco 后产能爬坡", "years": [2022, 2023, 2024], "series": [{"label": "矿石处理量", "unit": "吨", "points": [null, 56331.0, 109292.0]}, {"label": "银", "unit": "盎司", "points": [null, 1502577.0, 2773873.0]}, {"label": "铅", "unit": "吨", "points": [null, 1225.0, 2930.0]}, {"label": "锌", "unit": "吨", "points": [null, 1139.0, 1507.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "Casa Berardi（魁北克）— 金矿", "years": [2022, 2023, 2024], "series": [{"label": "矿石处理量", "unit": "吨", "points": [1588739.0, 1446488.0, 1523420.0]}, {"label": "金", "unit": "盎司", "points": [127590.0, 90363.0, 86648.0]}, {"label": "银", "unit": "盎司", "points": [28289.0, 22415.0, 24231.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "3.2 财务与成本结构", "years": [2022, 2023, 2024], "series": [{"label": "总销售收入", "unit": "", "points": [718400000.0, 714900000.0, 929900000.0]}, {"label": "净利润（归属普通股股东）", "unit": "归属普通股股东", "points": [null, null, 35300000.0]}, {"label": "资本开支", "unit": "", "points": [null, null, 214500000.0]}, {"label": "勘探与预开发开支", "unit": "", "points": [null, null, 27300000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}, {"title": "3.2 财务与成本结构", "years": [2022, 2023, 2024], "series": [{"label": "Greens Creek（银）", "unit": "银", "points": [5.17, 7.14, 5.65]}, {"label": "Lucky Friday（银）", "unit": "银", "points": [12.86, 12.21, 16.5]}, {"label": "Keno Hill（银）", "unit": "银", "points": [null, null, 13.06]}, {"label": "Casa Berardi（金）", "unit": "金", "points": [1825.0, 2048.0, 1990.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart7"}, {"title": "3.5 平均实现价格", "years": [2022, 2023, 2024], "series": [{"label": "银（实现价，/oz）", "unit": "实现价，/oz", "points": [21.53, 23.33, 28.58]}, {"label": "金（实现价，/oz）", "unit": "实现价，/oz", "points": [1803.0, 1939.0, 2403.0]}, {"label": "铅（实现价，/磅）", "unit": "实现价，/磅", "points": [1.01, 1.03, 0.97]}, {"label": "锌（实现价，/磅）", "unit": "实现价，/磅", "points": [1.41, 1.35, 1.37]}, {"label": "铜（实现价，/磅）", "unit": "实现价，/磅", "points": [null, null, 4.2]}], "log": true, "type": "bar", "omitted": 0, "id": "chart8"}];</script>
 

@@ -13,6 +13,99 @@
   <span class="tag">IPOB.MX · 多金属矿业巨头</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="PEOLES" data-name="Industrias Peñoles 年报摘要" data-ccy="MXN">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Industrias Peñoles 年报摘要（PE&amp;OLES.MX · MXN）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/PEOLES.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Industrias Peñoles 年报摘要</h1>
 <blockquote>
@@ -920,9 +1013,70 @@
 <li><strong>Fresnillo plc 储量2025年大幅增加</strong>（Fresnillo矿 +50%、Saucito +20%、Ciénega +23%），与 Peñoles 矿山储量下降形成对比。</li>
 <li><strong>风险跟踪</strong>：Tizapa 工会关系、墨西哥采矿法规、Capela 人员留存、Milpillas 寿命、锌 TC 走势。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（日历年，2025 Informe Anual）｜<strong>主金属</strong>：银（全球最大银矿商）+金+锌+铜</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>银</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>未按C1框架单列；银成本隐含于副产抵扣框架</td>
+</tr>
+<tr>
+<td>金</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>未按C1框架单列</td>
+</tr>
+<tr>
+<td>锌</td>
+<td>有披露，绝对值错位†</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>US¢/lbe</td>
+<td>†2025年报表格含"Cash cost C1 (zinc)<em>"标签；叙述：锌C1同比</em>*-8.1%**（成本下降+锌价上涨）</td>
+</tr>
+<tr>
+<td>铜</td>
+<td>有披露，绝对值错位†</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>US¢/lbe</td>
+<td>†表格含"Cash cost C1 (cobre)<em>"标签；叙述：铜C1同比</em>*+8.8%**（可售当量铜从27.8M lb降至25.4M lb）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- Peñoles确按C1框架披露，对象为<strong>锌/铜</strong>（US¢/lbe当量磅口径：总毛销售收入/金属均价折算当量磅，见2024年报脚注"¹ Pounds equivalent of zinc: total gross sales / average zinc price"），银/金无C1单列
+- 2025年报（西语）提取文本中"414.89""47"等数值与锌/铜C1标签<strong>错位</strong>，无法可靠归属到具体金属/矿山，已删除错误数值行，不作填列；绝对值待原文PDF表格核对
+- 叙述性可靠信息（变动率）：<strong>锌C1 -8.1%</strong>（成本下降+锌价上涨）；<strong>铜C1 +8.8%</strong>（当量铜销量27.8→25.4百万磅）；另有一矿山C1同比**-29.1%**（当量磅销量增加摊薄生产成本增量，归属待核）</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.penoles.com.mx/en/investors" target="_blank" rel="noopener">Industrias Peñoles 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Industrias_Penoles/Industrias_Penoles_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Industrias_Penoles/Industrias_Penoles_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 合并矿山产量（含 Fresnillo plc 100% 应付产量）", "years": [2023, 2024, 2025], "series": [{"label": "金 Gold", "unit": "koz", "points": [675844.0, 680647.0, 642000.0]}, {"label": "银 Silver", "unit": "koz（百万盎司）", "points": [72398.0, 70586.0, null]}, {"label": "铅 Lead", "unit": "t", "points": [85428.0, 89652.0, 85000.0]}, {"label": "锌 Zinc", "unit": "t", "points": [282093.0, 270847.0, 250000.0]}, {"label": "铜（精矿）Copper in concentrates", "unit": "t", "points": [9250.0, 10673.0, 10010.0]}, {"label": "铜阴极 Copper cathodes（Milpillas）", "unit": "t", "points": [13676.0, 12866.0, 10522.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "Velardeña（Durango）— 锌为主矿", "years": [2023, 2024, 2025], "series": [{"label": "矿石处理量", "unit": "kt", "points": [2801.0, 2677.0, 2763.0]}, {"label": "银", "unit": "koz", "points": [591.0, 724.0, 605.0]}, {"label": "锌", "unit": "t", "points": [81066.0, 80941.0, 77955.0]}, {"label": "铅", "unit": "t", "points": [2595.0, 2877.0, 1584.0]}, {"label": "铜", "unit": "t", "points": [2923.0, 2877.0, 3050.0]}, {"label": "Cash cost（锌磅）", "unit": "US¢/lbe", "points": [104.9, 87.0, 84.8]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "Sabinas（Zacatecas）— 多金属：锌-银-铅-铜", "years": [2023, 2024, 2025], "series": [{"label": "矿石处理量", "unit": "kt", "points": [1251.0, 1081.0, 1113.0]}, {"label": "银", "unit": "koz", "points": [2828.0, 2047.0, 2113.0]}, {"label": "锌", "unit": "t", "points": [16236.0, 12848.0, 11671.0]}, {"label": "铅", "unit": "t", "points": [7110.0, 6296.0, 7268.0]}, {"label": "铜", "unit": "t", "points": [2529.0, 1339.0, 860.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "Tizapa（Estado de México）— 多金属（51% Peñoles）", "years": [2023, 2024, 2025], "series": [{"label": "矿石处理量", "unit": "kt", "points": [960.0, 627.0, 309.0]}, {"label": "银", "unit": "koz", "points": [5894.0, 3570.0, 1833.0]}, {"label": "锌", "unit": "t", "points": [41463.0, 26935.0, 13036.0]}, {"label": "金", "unit": "oz", "points": [37824.0, 23500.0, 12060.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "Capela（Guerrero）— 多金属", "years": [2023, 2024, 2025], "series": [{"label": "矿石处理量", "unit": "kt", "points": [1216.0, 1204.0, 1313.0]}, {"label": "银", "unit": "koz", "points": [2234.0, 1813.0, 2518.0]}, {"label": "锌", "unit": "t", "points": [26691.0, 20327.0, 25733.0]}, {"label": "铅", "unit": "t", "points": [3411.0, 989.0, 1742.0]}, {"label": "铜", "unit": "t", "points": [2467.0, 5324.0, 5734.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "Milpillas（Sonora）— 铜阴极", "years": [2023, 2024, 2025], "series": [{"label": "矿石堆存", "unit": "kt", "points": [2062.0, 2214.0, 2005.0]}, {"label": "铜阴极", "unit": "t", "points": [13676.0, 12866.0, 10522.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart6"}, {"title": "1.4 金属冶炼/精炼产量（Met-Mex Torreón 综合体）", "years": [2023, 2024, 2025], "series": [{"label": "精炼金", "unit": "koz", "points": [973700.0, 877923.0, 884000.0]}, {"label": "精炼银", "unit": "Moz", "points": [77.8, 76.3, 70.6]}, {"label": "精炼铅", "unit": "kt", "points": [119.8, 114.9, 105.1]}, {"label": "精炼锌", "unit": "kt", "points": [251.8, 241.2, 199.1]}], "log": true, "type": "bar", "omitted": 0, "id": "chart7"}, {"title": "3.3 财务与成本结构", "years": [2023, 2024, 2025], "series": [{"label": "净销售额", "unit": "", "points": [5927.0, 6650.0, 8647.0]}, {"label": "EBITDA（UAFIDA）", "unit": "UAFIDA", "points": [null, 1841.0, 3250.0]}, {"label": "净利润", "unit": "", "points": [null, 73.0, 1373.0]}, {"label": "固定资产投资", "unit": "", "points": [596.0, 446.0, 545.0]}, {"label": "勘探投资", "unit": "", "points": [233.0, 212.0, 231.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart8"}, {"title": "3.3 财务与成本结构", "years": [2024, 2025], "series": [{"label": "Velardeña", "unit": "US¢/lbe 锌", "points": [87.0, 84.8]}, {"label": "Sabinas", "unit": "US¢/lbe 锌", "points": [113.8, 101.5]}, {"label": "Tizapa", "unit": "US¢/lbe 锌", "points": [64.5, 59.2]}, {"label": "Capela", "unit": "US¢/lbe 锌", "points": [110.6, 78.4]}, {"label": "Milpillas", "unit": "US¢/lbe 铜", "points": [329.8, null]}], "log": true, "type": "bar", "omitted": 0, "id": "chart9"}, {"title": "3.4 储量/资源量变化", "years": [2023, 2024], "series": [{"label": "金", "unit": "koz", "points": [8237.0, 8142.0]}, {"label": "银", "unit": "koz", "points": [604014.0, 523356.0]}, {"label": "铅", "unit": "kt", "points": [1512.0, 1405.0]}, {"label": "锌", "unit": "kt", "points": [4860.0, 4394.0]}, {"label": "铜", "unit": "kt", "points": [353.0, 255.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart10"}, {"title": "3.4 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "Fresnillo", "unit": "", "points": [13712.0, 20605.0]}, {"label": "Ciénega", "unit": "", "points": [2917.0, 3584.0]}, {"label": "Saucito", "unit": "", "points": [14579.0, 17444.0]}, {"label": "Juanicipio（56%）", "unit": "56%", "points": [10378.0, 11760.0]}, {"label": "Herradura", "unit": "", "points": [213124.0, 229353.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart11"}, {"title": "3.7 2025年大宗商品价格（Penoles 年报披露）", "years": [2024, 2025], "series": [{"label": "MXN/USD 平均汇率", "unit": "", "points": [20.13, 20.28]}], "log": false, "type": "bar", "omitted": 0, "id": "chart12"}];</script>
 

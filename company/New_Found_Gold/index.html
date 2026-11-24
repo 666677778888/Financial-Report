@@ -13,6 +13,99 @@
   <span class="tag">NFGC · 开发/勘探阶段</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="NFGC" data-name="New Found Gold — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · New Found Gold — 年报摘要（NFGC · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/NFGC.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>New Found Gold — 年报摘要</h1>
 <blockquote>
@@ -204,6 +297,47 @@
 <div class="chart-box"><div class="chart-title">四、财务摘要<span class="chart-sub">2024–2025 · 柱状图</span></div><div class="chart-canvas-wrap"><canvas id="chart1"></canvas></div></div>
 
 <p>年内完成$6,300万包销配售+$2,000万私募（合计股权融资$8,348万）；并购Maritime带入现金$900万。流通股由200,458,094股增至342,329,665股。</p>
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本；C2=C1+D&amp;A；C3=C2+期间费用；AISC=WGC标准。<strong>本公司当前为勘探/预商业化生产阶段，无实际开采成本</strong>；下表为PEA研究成本指引（非实际）。</p>
+</blockquote>
+<p><strong>研究基准</strong>：Queensway PEA（2025-06-30生效）；Hammerdown PEA（2026-02-18生效）｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>金属</th>
+<th>C1（现金成本，指引）</th>
+<th>AISC（指引）</th>
+<th>单位</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Queensway</td>
+<td>Au</td>
+<td>1,085</td>
+<td>1,256</td>
+<td>US$/oz Au</td>
+<td>PEA 2025</td>
+</tr>
+<tr>
+<td>Hammerdown</td>
+<td>Au</td>
+<td>未披露</td>
+<td>2,429</td>
+<td>US$/oz Au</td>
+<td>PEA 2026</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- <strong>Queensway PEA</strong>：WGC调整后运营成本 US$1,085/oz Au（即C1口径：精矿运输+冶炼费用+权利金+总运营成本÷销量）；维持性资本 US$171/oz；<strong>AISC = 1,085 + 171 = US$1,256/oz</strong>（LOM，对应金价US$2,500/oz）。AISC与C1的差异（$171/oz）即矿山寿命期内维持性资本支出。
+- <strong>Hammerdown PEA</strong>：LOM AISC US$2,429/oz（加权金价US$3,656/oz），因窄脉露天开采+700 tpd小规模选厂，成本显著高于Queensway；C1现金成本未在摘要数据中单列。
+- C2（C1+D&amp;A）、C3（C2+期间费用）在两份PEA中均未单列，<strong>无C2/C3指引</strong>。
+- 正文「三、项目进展」已含上述PEA经济性数据（NPV/IRR/CAPEX），本节为标准化成本口径引用；Hammerdown已于2025年11月首次浇铸，实际成本数据待商业化生产（2026年H2）后披露。</p>
+<hr />
 <h2>五、要点与风险</h2>
 <ol>
 <li><strong>转型生产商</strong>：Hammerdown已于2025年11月首次出金、2026年下半年达商业化生产，Queensway Phase 1瞄准2027年首产，公司形成"以产养探"双引擎。</li>
@@ -215,7 +349,7 @@
 </ol>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.newfoundgold.ca/investors/" target="_blank" rel="noopener">New Found Gold — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 New_Found_Gold/New_Found_Gold_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 New_Found_Gold/New_Found_Gold_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "四、财务摘要", "years": [2024, 2025], "series": [{"label": "现金及等价物（12/31）", "unit": "12/31", "points": [22317548.0, 58838699.0]}, {"label": "营运资本", "unit": "", "points": [null, 62559017.0]}, {"label": "股东权益", "unit": "", "points": [66570705.0, 419097255.0]}, {"label": "净亏损", "unit": "", "points": [null, 47572620.0]}, {"label": "G&A费用", "unit": "", "points": [6864539.0, 11656734.0]}, {"label": "经营现金流（流出）", "unit": "流出", "points": [null, -55147267.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}];</script>
 

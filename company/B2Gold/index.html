@@ -13,6 +13,99 @@
   <span class="tag">BTG · 在产黄金核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="BTG" data-name="B2Gold — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · B2Gold — 年报摘要（BTG · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/BTG.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>B2Gold — 年报摘要</h1>
 <blockquote>
@@ -258,9 +351,44 @@
 <li><strong>Otjikoto地下接力</strong>：Antelope地下开发已批准，资本开支由1.29亿降至1.05亿美元，2029–2032年可助矿山年产约11万 oz。</li>
 <li><strong>地缘政治/合规</strong>：马里2023矿业法下Fekola Regional国家权益10%（可再加增）、Gold Prepay预付金交付义务（2025年7月–2026年6月交付132,384 oz）、对冲项下锁定$1,750/oz最低结算$2.2亿的领子合约；2024年Goose/Fekola减值19.7亿美元教训反映资本纪律风险。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，介于C2与C3之间，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au</td>
+<td>769</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,584</td>
+<td>US$/oz</td>
+<td>现金运营成本（cash operating costs）=769（$/oz <strong>produced</strong>口径）；AISC=1,584（$/oz sold，2024：1,463，+8%）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- 证据文件（40-F前瞻性陈述及Goose 2026指引部分）未含FY2025集团单值原文，本表769/1,584取自摘要财务表（MD&amp;A口径）。
+- 注意口径差异：B2Gold现金运营成本按<strong>每盎司产出</strong>（$/oz produced）计，与同行$/oz sold口径不可直接比较。
+- 现金运营成本同比−13%（879→769），主因Fekola增产摊薄；AISC同比+8%，主因Goose投产初期成本及Fekola Phase 8剥离。
+- 公司未披露C2/C3口径；2026年指引AISC $2,400–2,580/oz（$5,000金价、权利金约$525/oz假设）。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.b2gold.com/investors/" target="_blank" rel="noopener">B2Gold — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 B2Gold/B2Gold_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 B2Gold/B2Gold_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "二、黄金产量（盎司）", "years": [2024, 2025], "series": [{"label": "Fekola Mine（Fekola Complex）", "unit": "", "points": [392946.0, 530769.0]}, {"label": "— 其中Fekola地下", "unit": "", "points": [null, 25230.0]}, {"label": "Masbate", "unit": "", "points": [194046.0, 196526.0]}, {"label": "Otjikoto（90%权益口径）", "unit": "90%权益口径", "points": [198142.0, 199139.0]}, {"label": "合计（含Goose商用前）", "unit": "含Goose商用前", "points": [785134.0, 979604.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "四、财务摘要（IFRS，千美元）", "years": [2024, 2025], "series": [{"label": "黄金收入", "unit": "", "points": [1902030.0, 3061238.0]}, {"label": "实现金价($/oz)", "unit": "$/oz", "points": [2373.0, 3299.0]}, {"label": "净利润（亏损）", "unit": "亏损", "points": [-626653.0, 426699.0]}, {"label": "调整后净利", "unit": "", "points": [206542.0, 611853.0]}, {"label": "经营现金流", "unit": "", "points": [877604.0, 895836.0]}, {"label": "现金运营成本($/oz produced)", "unit": "", "points": [879.0, 769.0]}, {"label": "AISC($/oz sold)", "unit": "$/oz sold", "points": [1463.0, 1584.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}];</script>
 

@@ -13,6 +13,99 @@
   <span class="tag">SLVR · 开发/勘探阶段</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="SLVRF" data-name="Silver Tiger Metals Inc. 摘要" data-ccy="CAD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Silver Tiger Metals Inc. 摘要（SLVR.TO · CAD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/SLVRF.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Silver Tiger Metals Inc. 摘要</h1>
 <blockquote>
@@ -165,10 +258,40 @@
 <li>资源性资产（CAD $76.6M，占公司总资产95%）的减值评估被识别为关键审计事项，管理层判断不存在减值迹象。</li>
 </ul>
 <hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本；C2=C1+D&amp;A；C3=C2+期间费用；AISC=WGC标准。<strong>不适用（纯勘探，无PEA/FS成本研究）</strong>。</p>
+</blockquote>
+<p><strong>研究基准</strong>：无（El Tigre 项目本摘要数据源中无PEA/PFS/FS经济研究及NI 43-101资源量估算）｜<strong>主金属</strong>：银+金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本，指引）</th>
+<th>AISC（指引）</th>
+<th>单位</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ag/Au</td>
+<td>不适用</td>
+<td>不适用</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- 公司为纯勘探阶段，无在产矿山、无收入，本摘要数据源亦未披露任何PEA/FS层面的C1或AISC指引，<strong>C1/C2/C3均不适用</strong>。
+- 唯一与"未来成本"相关的既定条款为量产地土地协议附加的金价挂钩权利金（投产后金价<US$1,200/oz付US$3/oz Au，US$1,201-1,500付US$5/oz，>US$1,501付US$7/oz，另商业投产时一次性US$500,000），将构成未来现金成本的组成部分。
+- 正文中「成本结构」一节所列为管理费用构成，非开采成本。</p>
+<hr />
 <p><strong>研究员需知</strong>：Silver Tiger 是典型的高风险早期勘探阶段公司，核心关注点为（1）2025年4月完成的 CAD$1,500万融资能否支撑下一阶段工作；（2）El Tigre 土地所有权转让进展；（3）墨西哥 VAT 应收款回收；（4）尚未发布符合 NI 43-101 的资源量估算。建议跟踪公司后续技术报告发布。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://silvertigermetals.com/investors/" target="_blank" rel="noopener">Silver Tiger Metals Inc. 摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Silver_Tiger_Metals/Silver_Tiger_Metals_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Silver_Tiger_Metals/Silver_Tiger_Metals_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "勘探活动趋势", "years": [2024, 2025], "series": [{"label": "资源性资产新增支出（含VAT回收前）", "unit": "含VAT回收前", "points": [17900000.0, 7900000.0]}, {"label": "净现金消耗（经营+投资活动）", "unit": "经营+投资活动", "points": [-20600000.0, -6000000.0]}, {"label": "期末现金", "unit": "", "points": [9200000.0, 3200000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "财务表现", "years": [2024, 2025], "series": [{"label": "净亏损", "unit": "", "points": [-3160000.0, -4250000.0]}, {"label": "每股亏损（基本/摊薄）", "unit": "基本/摊薄", "points": [0.01, 0.01]}, {"label": "经营活动现金流出", "unit": "", "points": [-1600000.0, -2840000.0]}, {"label": "勘探资本支出（净值）", "unit": "净值", "points": [-19060000.0, -3190000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}];</script>
 

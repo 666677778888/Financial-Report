@@ -13,6 +13,99 @@
   <span class="tag">FRES.L · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="FRES" data-name="Fresnillo plc年报摘要" data-ccy="GBp">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Fresnillo plc年报摘要（FRES.L · GBp）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/FRES.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Fresnillo plc（LSE: FRES）年报摘要</h1>
 <blockquote>
@@ -740,9 +833,49 @@
 <blockquote>
 <p>注：矿山口径产量与 "Attributable Production (含 Silverstream)" 口径存在差异。2024 年 attributable 银产量 56.3 moz 包含 Silverstream（约 4 moz）+ Juanicipio 56% 权益折算。</p>
 </blockquote>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：银（公司为银金混合生产商）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ag（co-product口径，集团银矿）</td>
+<td>见分矿山：Fresnillo 18.0 / Saucito 13.0 / Juanicipio 8.2 / San Julián Veins 13.0</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>Fresnillo 27.0 / Saucito 18.9 / Juanicipio 12.9 / San Julián Veins 19.8</td>
+<td>US$/oz Ag eq</td>
+<td>adjusted cash cost per silver equivalent ounce，分矿山披露；AISC per equivalent silver ounce</td>
+</tr>
+<tr>
+<td>Au（co-product口径，金矿）</td>
+<td>Herradura 1,214.9 / Ciénega 1,697.5</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>Herradura 1,628.7 / Ciénega 2,224.6</td>
+<td>US$/oz Au eq</td>
+<td>cash cost per gold equivalent ounce，分矿山披露（公司本年主矿山成本表未再单列 by-product 口径）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：Fresnillo 的 cash cost 为 co-product（equivalent ounce）口径——银矿按银当量盎司、金矿按金当量盎司计算，非 by-product 净抵扣口径。公司现金成本定义为「销售成本+冶炼加工费−折旧」，折旧已在公式中剔除，故接近 C1 现金成本概念（但含从价税等差异）。2025 年银矿成本普升（Fresnillo 矿 +16.5%、San Julián +21.4%），主因品位下降与试剂消耗增加；Herradura 金矿现金成本 -15.7%（运营优化、采矿周期改进）。C2/C3 公司未按矿山披露。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.fresnilloplc.com/investors/" target="_blank" rel="noopener">Fresnillo plc年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Fresnillo/Fresnillo_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Fresnillo/Fresnillo_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "2.1 公司整体 attributable 产量（含 Silverstream）", "years": [2023, 2024, 2025, 2026], "series": [{"label": "全公司", "unit": "", "points": [56.3, 56.3, 48.7, null]}, {"label": "全公司", "unit": "", "points": [null, 631.6, 600.3, null]}], "log": false, "type": "line", "omitted": 0, "id": "chart1"}, {"title": "2.2 分矿山产量明细（2025 vs 2024）", "years": [2024, 2025], "series": [{"label": "Fresnillo（100%）", "unit": "100%", "points": [10242.0, 10273.0]}, {"label": "Fresnillo", "unit": "", "points": [51473.0, 40753.0]}, {"label": "Fresnillo", "unit": "", "points": [27088.0, 21432.0]}, {"label": "Fresnillo", "unit": "", "points": [50702.0, 44721.0]}, {"label": "Saucito（100%）", "unit": "100%", "points": [14474.0, 13791.0]}, {"label": "Saucito", "unit": "", "points": [82718.0, 69388.0]}, {"label": "Saucito", "unit": "", "points": [22729.0, 27158.0]}, {"label": "Saucito", "unit": "", "points": [34097.0, 40307.0]}], "log": false, "type": "bar", "omitted": 13, "id": "chart2"}, {"title": "2.3 成本结构（Cash Cost / AISC）", "years": [2024, 2025], "series": [{"label": "Fresnillo", "unit": "", "points": [15.42, 17.97]}, {"label": "Fresnillo", "unit": "", "points": [21.97, 27.02]}, {"label": "Fresnillo", "unit": "", "points": [112.23, 131.75]}, {"label": "Saucito", "unit": "", "points": [13.64, 13.01]}, {"label": "Saucito", "unit": "", "points": [18.56, 18.94]}, {"label": "Juanicipio", "unit": "", "points": [8.18, 8.18]}, {"label": "Juanicipio", "unit": "", "points": [11.71, 12.91]}, {"label": "San Julián Veins", "unit": "", "points": [10.95, 13.29]}], "log": false, "type": "bar", "omitted": 5, "id": "chart3"}, {"title": "3.1 集团合并储量/资源量（JORC 标准）", "years": [2024, 2025], "series": [{"label": "Ore Reserves", "unit": "", "points": [331.3, 362.6]}, {"label": "Ore Reserves", "unit": "", "points": [7.2, 7.8]}, {"label": "Mineral Resources", "unit": "", "points": [2250.5, 2058.4]}, {"label": "Mineral Resources", "unit": "", "points": [38.5, 44.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "六、数据附表：分矿山年度产量汇总（2024 vs 2025）", "years": [2024, 2025], "series": [{"label": "Fresnillo", "unit": "", "points": [10242.0, 10273.0]}, {"label": "Saucito", "unit": "", "points": [14474.0, 13791.0]}, {"label": "Juanicipio", "unit": "", "points": [10400.0, 9643.0]}, {"label": "San Julián Veins", "unit": "", "points": [8443.0, 8293.0]}, {"label": "Ciénega", "unit": "", "points": [4834.0, 2775.0]}, {"label": "Herradura", "unit": "", "points": [524.0, 516.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}];</script>
 

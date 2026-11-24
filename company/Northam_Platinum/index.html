@@ -13,6 +13,99 @@
   <span class="tag">NHM.SJ · 铂族金属 PGM</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="NPH" data-name="Northam Platinum 2025年报摘要" data-ccy="ZAR">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Northam Platinum 2025年报摘要（NPH.JO · ZAR）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/NPH.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Northam Platinum 2025年报摘要</h1>
 <blockquote>
@@ -682,11 +775,92 @@
 | <code>Northam_Platinum_SustainabilityReport_F2026.pdf</code> | 可持续发展报告 |
 | <code>Northam_Platinum_SummarisedResults_F2026.pdf</code> | 财务结果摘要 |
 | <code>Northam_Platinum_MineralResourcesReserves_F2026.pdf</code> | <strong>矿产资源和储量声明（35页，本期新增）</strong> |</p>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（单列参考）。
+<strong>Northam披露口径为 unit cash cost（R/当量精炼4E oz 或 R/4E oz精矿产量），非净副产品抵扣的C1。</strong></p>
+</blockquote>
+<p><strong>财年</strong>：F2026（截至2026-06-30，SummarisedResults）｜<strong>主金属</strong>：PGM（4E）</p>
+<h3>unit cash cost（F2026 vs F2025）</h3>
+<table>
+<thead>
+<tr>
+<th>单元</th>
+<th>F2026</th>
+<th>F2025</th>
+<th>变化</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>集团</strong></td>
+<td><strong>R27,376</strong>/4Eoz</td>
+<td>R25,728/4Eoz</td>
+<td><strong>+6.4%</strong>（优于指引）</td>
+<td>R/当量精炼4E oz（equivalent refined）</td>
+</tr>
+<tr>
+<td>Zondereinde</td>
+<td>R28,365</td>
+<td>R26,758</td>
+<td>+6.0%</td>
+<td>R/当量精炼4E oz</td>
+</tr>
+<tr>
+<td>Booysendal</td>
+<td>R19,302</td>
+<td>R18,502</td>
+<td>+4.3%</td>
+<td>R/4E oz精矿产量（in concentrate produced）</td>
+</tr>
+<tr>
+<td>Eland</td>
+<td>R42,899</td>
+<td>R40,562</td>
+<td>+5.8%</td>
+<td>R/4E oz精矿产量（爬产期，约60%稳态产量）</td>
+</tr>
+</tbody>
+</table>
+<div class="chart-box"><div class="chart-title">unit cash cost（F2026 vs F2025）<span class="chart-sub">2025–2026 · 柱状图</span></div><div class="chart-canvas-wrap"><canvas id="chart2"></canvas></div></div>
+
+<h3>C1/C2/C3对照</h3>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4E PGM</td>
+<td>未按C1框架披露（见上表unit cash cost）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>R/4Eoz</td>
+<td>公司自有unit cash cost为总现金成本/盎司口径，未按C1净副产品抵扣或WGC AISC披露</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- 数据来源：Northam F2026 Trading statement（2026-08-11）及 Operational and financial results for the year ended 30 June 2026（SummarisedResults），证据文件数值已与官网原文交叉核对一致
+- 集团unit cash成本R27,376 vs 集团总收入R49,662/当量精炼4Eoz（+51.9%），成本增幅（+6.4%）远低于收入增幅；自洽性验证（Booysendal）：收入R45,595 − 现金成本R19,302 = 现金利润R26,293/4Eoz（margin 57.7%）✓
+- 铬精矿为重要副产品（F2026产量1,690,495t，+17.4%），但未见净铬抵扣后的C1口径披露
+- 提取文本中另含6E口径cash cost数值（集团R22,736/6Eoz等），标签归属存错位风险，不作填列</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.northam.co.za/investors-and-media/publications/annual-reports" target="_blank" rel="noopener">Northam Platinum 2025年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2025–2026 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Northam_Platinum/Northam_Platinum_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Northam_Platinum/Northam_Platinum_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
-<script>window.__PM_CHARTS__ = [{"title": "3.4 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "4E总资源量", "unit": "", "points": [205310000.0, 201780000.0]}, {"label": "4E总储量", "unit": "", "points": [28890000.0, 28270000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}];</script>
+<script>window.__PM_CHARTS__ = [{"title": "3.4 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "4E总资源量", "unit": "", "points": [205310000.0, 201780000.0]}, {"label": "4E总储量", "unit": "", "points": [28890000.0, 28270000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "unit cash cost（F2026 vs F2025）", "years": [2025, 2026], "series": [{"label": "Zondereinde", "unit": "", "points": [26758.0, 28365.0]}, {"label": "Booysendal", "unit": "", "points": [18502.0, 19302.0]}, {"label": "Eland", "unit": "", "points": [40562.0, 42899.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}];</script>
 
 <script>/**
  * Skipped minification because the original files appears to be already minified.

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>贵金属公司股价看板</title>
+<style>
+:root{--up:#C0392B;--dn:#1E8449;--ink:#1c2733;--sub:#5b6b7b;--line:#e3e8ee;--bg:#f6f8fa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:22px 26px 60px}
+.topnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.backidx{display:inline-block;font-size:12.5px;color:#4C6EF5;text-decoration:none;border:1px solid #d5dcea;background:#fff;border-radius:6px;padding:4px 12px;transition:box-shadow .15s}
+.backidx:hover{box-shadow:0 2px 8px rgba(28,39,51,.10)}
+.tnote{font-size:11px;color:#98a6b3}
+h1{font-size:21px;letter-spacing:.5px}
+.sub{color:var(--sub);font-size:12.5px;margin:6px 0 4px}
+.updated{color:#98a6b3;font-size:11.5px}
+.updated b{color:#1c2733;font-weight:700;font-size:12.5px}
+.mkth{margin:26px 0 10px;display:flex;align-items:baseline;gap:10px}
+.mkth h2{font-size:15.5px}
+.mkth .cnt{color:var(--sub);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 13px 10px;cursor:pointer;transition:box-shadow .15s,transform .15s;position:relative}
+.card:hover{box-shadow:0 4px 16px rgba(28,39,51,.10);transform:translateY(-1px)}
+.card.noK{opacity:.88}
+.chead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.cname{font-size:13.5px;font-weight:600}
+.ctkr{font-size:11px;color:var(--sub)}
+canvas.kmini{width:100%;height:96px;display:block}
+.mbar{display:flex;gap:12px;margin-top:7px;font-size:11.5px;color:var(--sub);flex-wrap:wrap}
+.mbar b{color:var(--ink);font-weight:600}
+.mbar .up{color:var(--up)} .mbar .dn{color:var(--dn)}
+.tag{position:absolute;top:10px;right:11px;font-size:10px;color:#fff;border-radius:3px;padding:1px 5px;background:#8a97a5}
+.tag.g{background:#b08228}
+/* 模态 */
+#modal{position:fixed;inset:0;background:rgba(20,26,34,.55);display:none;z-index:50;overflow:auto}
+#modal.on{display:block}
+.mbox{background:#fff;max-width:1080px;margin:34px auto;border-radius:12px;padding:20px 24px 26px;position:relative}
+.mclose{position:absolute;top:10px;right:14px;font-size:22px;color:var(--sub);cursor:pointer;background:none;border:none}
+.mtitle{font-size:17px;font-weight:700}
+.msub{font-size:12px;color:var(--sub);margin:2px 0 12px}
+canvas.kbig{width:100%;height:320px;display:block}
+canvas.vbig{width:100%;height:90px;display:block}
+.tooltip{position:fixed;background:#fff;border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-size:11.5px;pointer-events:none;display:none;z-index:99;box-shadow:0 3px 12px rgba(0,0,0,.12);white-space:nowrap}
+.legend{display:flex;gap:14px;font-size:11px;color:var(--sub);margin:6px 2px 2px}
+.ohead{font-size:14px;font-weight:700;margin:20px 0 4px}
+.onote{font-size:11.5px;color:var(--sub);margin-bottom:6px}
+.obars{display:flex;gap:18px;align-items:flex-end;padding:6px 4px 2px;border-bottom:1px solid #eef1f5;margin-bottom:2px}
+.obar{display:flex;flex-direction:column;align-items:center;gap:4px}
+.oval{font-size:11px;color:#5b6b7b;font-variant-numeric:tabular-nums}
+.oval.gR{color:var(--up);font-weight:600}
+.ocol{width:36px;border-radius:3px 3px 0 0;position:relative}
+.gYbg{background:linear-gradient(180deg,#cfd6dd,#b8c1ca)}
+.gRbg{background:linear-gradient(180deg,#d4574a,#C0392B)}
+.oyr{font-size:10.5px;color:#8a97a5;white-space:nowrap}
+.olegend{display:flex;gap:14px;font-size:10.5px;color:#8a97a5;margin-top:6px}
+.olegend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.src{margin-top:26px;font-size:10.5px;color:#9aa7b4;border-top:1px solid var(--line);padding-top:10px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="topnav">
+  <a class="backidx" href="index.html">← 公司年报总览</a>
+  <span class="tnote">贵金属公司股价看板</span>
+</div>
+<h1>贵金属公司股价看板</h1>
+<div class="sub">68家覆盖 · 66家在市 · 红涨绿跌 · 本币计价 · 点击卡片查看2年K线与产量展望</div>
+<div class="updated" id="upt"></div>
+<div id="mount"></div>
+
+<div id="modal"><div class="mbox">
+<button class="mclose" id="btnCloseM" title="关闭 (Esc)">×</button>
+<div class="mtitle" id="mt"></div>
+<div class="msub" id="mst"></div>
+<canvas class="kbig" id="kc"></canvas>
+<div class="legend"><span>■ 收盘价（本币）</span><span>十字光标：悬停查看OHLCV</span></div>
+<canvas class="vbig" id="vc"></canvas>
+<div class="legend"><span>■ 成交量</span></div>
+<div id="oregion"></div>
+</div></div>
+<div class="tooltip" id="tt"></div>
+
+<script src="stocks_data/manifest.js"></script>
+<div id="ohlcScripts"></div>
+<script>
+(function(){
+"use strict";
+var M = window.__STOCKS__;
+var UP = "#C0392B", DN = "#1E8449", INK = "#1c2733", SUB = "#8a97a5", LINE = "#e3e8ee";
+document.getElementById("upt").innerHTML = "<b>数据更新：" + M.updated + "</b>（日度更新） · K线源：东方财富(美股/A股) + Yahoo(非美9市场) · 估值：东财TTM / 新浪TTM / 年报静态(含汇率折算)";
+
+// ---- 动态加载 ohlc 脚本 ----
+var hasK = M.companies.filter(function(c){return c.hasKline;});
+hasK.forEach(function(c){
+  var s = document.createElement("script");
+  s.src = "stocks_data/ohlc/" + c.key + ".js";
+  document.getElementById("ohlcScripts").appendChild(s);
+});
+
+// ---- YTD ----
+function ytd(k){
+  var d = (window.__OHLC__||{})[k];
+  if(!d || !d.t.length) return null;
+  var iLast = d.t.length-1;
+  var y = d.t[iLast].slice(0,4);
+  var iBase = -1;
+  for(var i=0;i<d.t.length;i++){ if(d.t[i].slice(0,4) < y){ iBase = i; } }
+  if(iBase<0) return null;
+  var a = d.c[iBase], b = d.c[iLast];
+  return a>0 ? (b/a-1) : null;
+}
+
+// ---- 卡片迷你蜡烛图 ----
+function drawMini(cv, d){
+  var n = Math.min(120, d.t.length);
+  var s = d.t.length - n;
+  var ctx = cv.getContext("2d");
+  var W = cv.width = cv.clientWidth * (window.devicePixelRatio||1);
+  var H = cv.height = 96 * (window.devicePixelRatio||1);
+  ctx.scale(1,1);
+  var hi=-1e9, lo=1e9;
+  for(var i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo){hi=lo+1;}
+  var pad = (hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw = W/n, bw = Math.max(1, Math.min(5, cw*0.62));
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x = (j-s)*cw + cw/2;
+    var y = function(v){return H - (v-lo)/(hi-lo)*H;};
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    var top=Math.min(yo,yc), hh=Math.max(1,Math.abs(yo-yc));
+    ctx.fillRect(x-bw/2, top, bw, hh);
+  }
+  // 末值标注
+  ctx.fillStyle = INK; ctx.font = (10*(window.devicePixelRatio||1))+"px sans-serif";
+  ctx.textAlign="right";
+  ctx.fillText(fmtNum(d.c[d.t.length-1]), W-4, 12);
+}
+function fmtNum(v){
+  if(v==null) return "—";
+  if(v>=1000) return v.toFixed(0);
+  if(v>=100) return v.toFixed(1);
+  return v.toFixed(2);
+}
+function pct(v){ return (v==null)?"—":((v>=0?"+":"")+(v*100).toFixed(1)+"%"); }
+
+// ---- 渲染分组 ----
+var mount = document.getElementById("mount");
+M.markets.forEach(function(mk){
+  var list = M.companies.filter(function(c){return c.market===mk[0];});
+  if(!list.length) return;
+  var h = document.createElement("div");
+  h.className = "mkth";
+  h.innerHTML = "<h2>"+mk[1]+"</h2><span class='cnt'>"+list.length+"家 · "+mk[2]+"</span>";
+  mount.appendChild(h);
+  var g = document.createElement("div"); g.className = "grid";
+  list.forEach(function(c){
+    var el = document.createElement("div");
+    el.className = "card" + (c.hasKline?"":" noK");
+    var y = ytd(c.key);
+    var ycls = (y==null)?"":(y>=0?"up":"dn");
+    var pe = (c.pe!=null)?c.pe.toFixed(1):"—";
+    var pb = (c.pb!=null)?c.pb.toFixed(2):"—";
+    el.innerHTML =
+      "<div class='chead'><span class='cname'>"+c.name+"</span>"+
+      "<span class='ctkr'>"+(c.nameEn||"")+"</span></div>"+
+      (c.hasKline? "<canvas class='kmini'></canvas>" :
+        "<div style='height:96px;display:flex;align-items:center;justify-content:center;color:#9aa7b4;font-size:12px'>暂无K线源（非美市场）· 最新价 "+
+        (c.price!=null?fmtNum(c.price):"—")+"</div>")+
+      "<div class='mbar'>"+
+      "<span>YTD <b class='yv' data-k='"+c.key+"'>"+(c.hasKline?"…":pct(y))+"</b></span>"+
+      "<span>PE <b>"+pe+"</b></span>"+
+      "<span>PB <b>"+pb+"</b></span>"+
+      "<span><b>"+c.ccy+"</b></span></div>"+
+      (c.outlook? "<div class='tag g'>产量展望</div>":"");
+    el.onclick = (function(cc){return function(){openM(cc);};})(c);
+    g.appendChild(el);
+    if(c.hasKline){
+      var cv = el.querySelector("canvas.kmini");
+      // 等 ohlc 脚本加载完：画迷你图并回填 YTD（异步加载前无法计算）
+      (function(cv2, key){
+        var t0 = Date.now();
+        (function wait(){
+          var d = (window.__OHLC__||{})[key];
+          if(d && d.t.length){
+            drawMini(cv2, d);
+            var yv = ytd(key);
+            var b = cv2.parentNode.querySelector(".yv");
+            if(b){
+              b.textContent = pct(yv);
+              b.className = "yv" + (yv==null ? "" : (yv>=0 ? " up" : " dn"));
+            }
+          } else if(Date.now()-t0 < 10000) setTimeout(wait, 200);
+        })();
+      })(cv, c.key);
+    }
+  });
+  mount.appendChild(g);
+});
+
+// ---- 模态 ----
+var kc = document.getElementById("kc"), vc = document.getElementById("vc");
+var tt = document.getElementById("tt");
+var curKey = null, curData = null;
+
+function openM(c){
+  curKey = c.key;
+  document.getElementById("mt").textContent = c.name + "（" + c.ccy + "）";
+  document.getElementById("mst").textContent =
+    c.nameEn + " · PE " + (c.pe!=null?c.pe.toFixed(1):"—") +
+    " · PB " + (c.pb!=null?c.pb.toFixed(2):"—") +
+    " · 估值来源：" + (c.vsrc||"—");
+  var d = (window.__OHLC__||{})[c.key];
+  curData = d;
+  document.getElementById("oregion").innerHTML = outHTML(c);
+  document.getElementById("modal").className = "on";
+  if(d && d.t.length){
+    (function drawWhenVisible(){
+      if(document.getElementById("modal").className.indexOf("on")<0) return;
+      drawBig(kc, vc, d);
+    })();
+  } else {
+    var x = kc.getContext("2d");
+    x.clearRect(0,0,kc.width,kc.height);
+    kc.width = kc.clientWidth; kc.height = 320;
+    x.fillStyle="#9aa7b4"; x.font="13px sans-serif"; x.textAlign="center";
+    x.fillText("暂无K线数据（该市场无可用数据源）", kc.width/2, 170);
+    vc.width = vc.clientWidth; vc.height = 90;
+  }
+}
+function closeM(){ document.getElementById("modal").className=""; tt.style.display="none"; }
+document.getElementById("btnCloseM").addEventListener("click", closeM);
+document.getElementById("modal").addEventListener("click", function(e){
+  if(e.target === this) closeM();
+});
+
+function drawBig(c1, c2, d){
+  var W1 = c1.width = c1.clientWidth * (window.devicePixelRatio||1);
+  var H1 = c1.height = 320 * (window.devicePixelRatio||1);
+  var W2 = c2.width = c2.clientWidth * (window.devicePixelRatio||1);
+  var H2 = c2.height = 90 * (window.devicePixelRatio||1);
+  var n = d.t.length;
+  var hi=-1e9, lo=1e9, vmax=0;
+  for(var i=0;i<n;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; if(d.v[i]>vmax)vmax=d.v[i]; }
+  var pad=(hi-lo)*0.05; hi+=pad; lo-=pad;
+  var L=8, R=W1-64, T=8, B=H1-8;
+  var cw=(R-L)/n;
+  var y = function(v){ return T + (1-(v-lo)/(hi-lo))*(B-T); };
+  var ctx = c1.getContext("2d");
+  ctx.clearRect(0,0,W1,H1);
+  // 网格 5条
+  ctx.strokeStyle = LINE; ctx.fillStyle = SUB; ctx.lineWidth=1;
+  ctx.font = (10*(window.devicePixelRatio||1))+"px sans-serif"; ctx.textAlign="left";
+  for(var g=0;g<=4;g++){
+    var gv = lo + (hi-lo)*g/4, gy = y(gv);
+    ctx.beginPath(); ctx.moveTo(L,gy); ctx.lineTo(R,gy); ctx.stroke();
+    ctx.fillText(fmtNum(gv), R+6, gy+3);
+  }
+  // 蜡烛
+  var bw = Math.max(1, Math.min(7, cw*0.6));
+  for(var j=0;j<n;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], cl=d.c[j];
+    var x = L + j*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (cl>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.12);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(cl);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1,Math.abs(yo-yc)));
+  }
+  // 日期轴（首尾贴边对齐，避免裁切）
+  ctx.fillStyle = SUB;
+  for(var q=0;q<5;q++){
+    var idx = Math.floor(n*q/4);
+    if(idx<n){
+      var lx = L+idx*cw+cw/2;
+      if(q===0){ ctx.textAlign="left"; lx = L+1; }
+      else if(q===4){ ctx.textAlign="right"; lx = R; }
+      else { ctx.textAlign="center"; }
+      ctx.fillText(d.t[idx], lx, H1-1);
+    }
+  }
+  ctx.textAlign="left";
+  // 成交量
+  var vctx = c2.getContext("2d");
+  vctx.clearRect(0,0,W2,H2);
+  for(var k2=0;k2<n;k2++){
+    var x2 = L + k2*cw + cw/2;
+    var vh = (vmax>0)? d.v[k2]/vmax*(H2-14) : 0;
+    vctx.fillStyle = (d.c[k2]>=d.o[k2])?UP:DN;
+    vctx.globalAlpha = 0.55;
+    vctx.fillRect(x2-bw/2, H2-vh, bw, vh);
+  }
+  vctx.globalAlpha = 1;
+  vctx.fillStyle = SUB; vctx.textAlign="left";
+  vctx.font = (10*(window.devicePixelRatio||1))+"px sans-serif";
+  vctx.fillText("量 " + fmtBig(vmax), L+2, 10);
+
+  // 十字光标
+  c1.onmousemove = function(ev){
+    var rect = c1.getBoundingClientRect();
+    var px = (ev.clientX-rect.left)*(W1/rect.width);
+    var idx = Math.max(0, Math.min(n-1, Math.floor((px-L)/cw)));
+    var tx = L + idx*cw + cw/2;
+    ctx.clearRect(0,0,W1,H1);
+    // 重绘（简化：再跑一遍主体）——为省代码此处直接整图重画
+    drawBig(c1,c2,d);
+    ctx.strokeStyle = "#4a5b6c"; ctx.lineWidth=0.8; ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(tx,T); ctx.lineTo(tx,B); ctx.stroke(); ctx.setLineDash([]);
+    var html = "<b>"+d.t[idx]+"</b><br>O "+fmtNum(d.o[idx])+" H "+fmtNum(d.h[idx])+
+               "<br>L "+fmtNum(d.l[idx])+" C "+fmtNum(d.c[idx])+
+               "<br>量 "+fmtBig(d.v[idx])+
+               "<br>较昨 "+((idx>0)?(((d.c[idx]/d.c[idx-1]-1)*100).toFixed(2)+"%"):"—");
+    tt.innerHTML = html; tt.style.display="block";
+    tt.style.left = (ev.clientX+14)+"px"; tt.style.top = (ev.clientY-10)+"px";
+    c1.__idx = idx;
+  };
+  c1.onmouseleave = function(){ tt.style.display="none"; drawBig(c1,c2,d); };
+}
+function fmtBig(v){
+  if(v>=1e9) return (v/1e9).toFixed(2)+"B";
+  if(v>=1e6) return (v/1e6).toFixed(2)+"M";
+  if(v>=1e3) return (v/1e3).toFixed(1)+"K";
+  return String(v);
+}
+
+// ---- 产量区块：灰柱=已实现，红柱=指引（区间画下沿刻线） ----
+function outHTML(c){
+  var o = c.outlook;
+  if(!o) return "<div class='ohead'>产量展望</div><div class='onote'>待整理（该市场/公司产量数据后续批次补充）</div>";
+  var hk = Object.keys(o.hist||{}), gk = Object.keys(o.guide||{});
+  if(!hk.length){
+    return "<div class='ohead'>产量展望</div><div class='onote'>"+(o.note||"无公开指引")+"</div>";
+  }
+  var maxv = 0, i, y;
+  for(i=0;i<hk.length;i++){ if(o.hist[hk[i]]>maxv) maxv = o.hist[hk[i]]; }
+  for(i=0;i<gk.length;i++){ var t0=(o.guide[gk[i]] instanceof Array)?o.guide[gk[i]][1]:o.guide[gk[i]]; if(t0>maxv) maxv=t0; }
+  if(maxv<=0) maxv=1;
+  var H = 104, cols = "";
+  for(i=0;i<hk.length;i++){
+    y = hk[i]; var v = o.hist[y];
+    var bh = Math.max(3, Math.round(v/maxv*H));
+    cols += "<div class='obar'><div class='oval'>"+v+"</div>"+
+            "<div class='ocol gYbg' style='height:"+bh+"px'></div>"+
+            "<div class='oyr'>"+y+"</div></div>";
+  }
+  for(i=0;i<gk.length;i++){
+    y = gk[i]; var gg = o.guide[y], lo, hi, txt;
+    if(gg instanceof Array){ lo=gg[0]; hi=gg[1]; txt=gg[0]+"–"+gg[1]; }
+    else { lo=hi=gg; txt=String(gg); }
+    var bh2 = Math.max(3, Math.round(hi/maxv*H));
+    var loOff = Math.max(0, Math.round(lo/maxv*H));
+    cols += "<div class='obar'><div class='oval gR'>"+txt+"</div>"+
+            "<div class='ocol gRbg' style='height:"+bh2+"px'>"+
+            "<span style='position:absolute;left:0;right:0;bottom:"+loOff+"px;height:2px;background:#7d2318;opacity:.6'></span>"+
+            "</div><div class='oyr'>"+y+"（指引）</div></div>";
+  }
+  var u = o.unit ? "（"+o.unit+"）" : "";
+  return "<div class='ohead'>产量展望 · "+o.metric+u+"</div>"+
+         "<div class='onote'>"+(o.note||"")+"</div>"+
+         "<div class='obars'>"+cols+"</div>"+
+         "<div class='olegend'><span><i style='background:#b8c1ca'></i>已实现产量</span>"+
+         "<span><i style='background:#C0392B'></i>公司指引（深色刻线为区间下沿）</span></div>";
+}
+
+window.addEventListener("keydown", function(e){ if(e.key==="Escape") closeM(); });
+})();
+</script>
+<div class="src">数据源：K线 东方财富（A股前复权日线 / 美股日线）+ Yahoo Finance（伦敦、华沙、南非、澳洲、东京、墨西哥、加拿大，2年日线）；估值 A股/美股 东财PE-TTM·PB，伦敦/东京/加拿大 年报EPS与本币收盘按实时汇率静态测算。
+南非 JSE 原始报价为分（ZAc），已归一到兰特（ZAR）显示。产量展望整理自各公司年报摘要（FY2023-FY2025实际+FY2026指引），首批9家范例；其余公司标"待整理"。</div>
+</body>
+</html>

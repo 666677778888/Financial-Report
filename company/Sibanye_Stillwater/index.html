@@ -13,6 +13,99 @@
   <span class="tag">SBSW · 铂族金属 PGM</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="SBSW" data-name="Sibanye-Stillwater 2025年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Sibanye-Stillwater 2025年报摘要（SBSW · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/SBSW.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Sibanye-Stillwater 2025年报摘要</h1>
 <blockquote>
@@ -832,9 +925,51 @@
 <blockquote>
 <p><strong>数据来源</strong>：Sibanye-Stillwater Integrated Report 2025（截至2025年12月31日），127页，提取100页。</p>
 </blockquote>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：PGM（SA为4E、US为2E）+黄金+锌</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PGM（美国业务）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td><strong>US$1,203</strong>（R21,516）</td>
+<td>US$/2Eoz</td>
+<td>产量284,069 2Eoz超指引，AISC低于指引；受US S45X税收及Rh（US$4,800/oz）、Au（US$2,500/oz）副产抵扣影响</td>
+</tr>
+<tr>
+<td>锌</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td><strong>US$1,921</strong>（R34,356）</td>
+<td>US$/t</td>
+<td>可销售锌101kt（+22%），AISC同比改善17%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- C1/C2/C3框架未披露；证据中AISC为美国PGM业务（2E口径）与锌业务分列
+- SA PGM业务（4E口径）AISC绝对值未在本次证据提取中出现；注：SA PGM AISC口径剔除第三方PoC采购成本与Mimosa成本及资本（权益法）</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.sibanyestillwater.com/investors/" target="_blank" rel="noopener">Sibanye-Stillwater 2025年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Sibanye_Stillwater/Sibanye_Stillwater_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Sibanye_Stillwater/Sibanye_Stillwater_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 2025年集团总产量（按金属品种）", "years": [2024, 2025], "series": [{"label": "铂 Pt（矿产）", "unit": "矿产", "points": [1186718.0, 1133544.0]}, {"label": "钯 Pd（矿产）", "unit": "矿产", "points": [877730.0, 756333.0]}, {"label": "铑 Rh（矿产）", "unit": "矿产", "points": [165636.0, 161668.0]}, {"label": "钌 Ru（矿产）", "unit": "矿产", "points": [265508.0, 258393.0]}, {"label": "铱 Ir（矿产）", "unit": "矿产", "points": [63986.0, 59829.0]}, {"label": "金 Au（一次矿产）", "unit": "一次矿产", "points": [574387.0, 554606.0]}, {"label": "金 Au（二次/尾矿）", "unit": "二次/尾矿", "points": [161365.0, 157024.0]}, {"label": "金 Au（回收）", "unit": "回收", "points": [107680.0, 144450.0]}], "log": true, "type": "bar", "omitted": 7, "id": "chart1"}, {"title": "1.2 分业务单元产量", "years": [2024, 2025], "series": [{"label": "美国回收（黄金当量）", "unit": "黄金当量", "points": [374000.0, null]}, {"label": "Century锌（payable）", "unit": "payable", "points": [81597.0, 100693.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.3 财务表现", "years": [2024, 2025], "series": [{"label": "期末股息", "unit": "", "points": [0.0, null]}, {"label": "资本支出", "unit": "", "points": [21600000000.0, 20300000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 

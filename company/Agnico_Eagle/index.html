@@ -13,6 +13,99 @@
   <span class="tag">AEM · 在产黄金核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="AEM" data-name="Agnico Eagle Mines Limited — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Agnico Eagle Mines Limited — 年报摘要（AEM · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/AEM.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Agnico Eagle Mines Limited — 年报摘要</h1>
 <blockquote>
@@ -528,9 +621,44 @@
 <li><strong>财务实力</strong>：净现金$26.7亿，为项目开发和股东回报提供充足弹药</li>
 <li><strong>关注点</strong>：Fosterville品位持续下降（2025产量同比-29%），Pinos Altos高成本，需关注新项目推进进度</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，介于C2与C3之间，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au</td>
+<td>979（副产品法）；1,035（共生产品法）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,339（副产品法）；1,395（共生产品法）</td>
+<td>US$/oz</td>
+<td>TCC（by-product）=979；AISC（by-product）=1,339；生产成本/oz（IFRS）=965</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- Agnico披露副产品法（银/锌/铜收入全额抵扣）与共生产品法双口径C1，副产品法为默认口径，2025年两口径差约$56/oz。
+- 2025年TCC（副产品法）$979超出指引上限（$915–965），主因金价上涨推高权利金成本。
+- AISC（副产品法）$1,339同样超指引（$1,250–1,300），额外受Detour与Meadowbank维持性资本开支上升影响；剔除NTI支付调整后AISC（revised）为$1,313。
+- 公司未披露C2/C3口径；矿山层面单位成本示例：Detour Lake C1=$879/oz（组合最低）、Pinos Altos C1=$2,006/oz（组合最高）。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.agnicoeagle.com/English/investors/default.aspx" target="_blank" rel="noopener">Agnico Eagle Mines Limited — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Agnico_Eagle/Agnico_Eagle_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Agnico_Eagle/Agnico_Eagle_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "2.1 集团合计产量", "years": [2023, 2024, 2025], "series": [{"label": "全集团", "unit": "", "points": [3439654.0, 3485336.0, 3447367.0]}, {"label": "全集团", "unit": "", "points": [2408.0, 2485.0, 2501.0]}, {"label": "全集团", "unit": "", "points": [7702.0, 6339.0, 8446.0]}, {"label": "全集团", "unit": "", "points": [2617.0, 3951.0, 5393.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "2.2 各矿山黄金产量明细", "years": [2024, 2025], "series": [{"label": "Canadian Malartic", "unit": "", "points": [655654.0, 642612.0]}, {"label": "Detour Lake", "unit": "", "points": [671950.0, 692675.0]}, {"label": "Meadowbank", "unit": "", "points": [504719.0, 493314.0]}, {"label": "Meliadine", "unit": "", "points": [378886.0, 376346.0]}, {"label": "LaRonde", "unit": "", "points": [306750.0, 344555.0]}, {"label": "Macassa", "unit": "", "points": [279384.0, 312729.0]}, {"label": "Fosterville", "unit": "", "points": [225203.0, 160522.0]}, {"label": "Kittila", "unit": "", "points": [218860.0, 217379.0]}], "log": false, "type": "bar", "omitted": 3, "id": "chart2"}, {"title": "4.3 成本结构", "years": [2024, 2025], "series": [{"label": "生产成本/盎司", "unit": "", "points": [885.0, 965.0]}, {"label": "现金成本/盎司（副产品）", "unit": "副产品", "points": [903.0, 979.0]}, {"label": "现金成本/盎司（联产品）", "unit": "联产品", "points": [940.0, 1035.0]}, {"label": "AISC/盎司（副产品）", "unit": "副产品", "points": [1239.0, 1339.0]}, {"label": "AISC/盎司（联产品）", "unit": "联产品", "points": [1276.0, 1395.0]}, {"label": "实现金价/盎司", "unit": "", "points": [2384.0, 3454.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "4.5 财务亮点", "years": [2024, 2025], "series": [{"label": "矿业收入", "unit": "", "points": [8285799999.999999, 11907900000.0]}, {"label": "净利润", "unit": "", "points": [1895600000.0, 4461500000.0]}, {"label": "每股收益", "unit": "", "points": [3.79, 8.89]}, {"label": "EBITDA", "unit": "", "points": [4462400000.0, 8440400000.0]}, {"label": "自由现金流", "unit": "", "points": [2142900000.0, 4398900000.0]}, {"label": "现金及等价物", "unit": "", "points": [933700000.0, 2866100000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}];</script>
 

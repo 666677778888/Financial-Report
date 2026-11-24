@@ -13,6 +13,99 @@
   <span class="tag">S32.AX · 多金属矿业巨头</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="S32" data-name="South32 年报摘要" data-ccy="AUD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · South32 年报摘要（S32.AX · AUD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/S32.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>South32 年报摘要</h1>
 <blockquote>
@@ -542,9 +635,42 @@
 <li><strong>资产负债表</strong>：FY25末净现金US$123M（vs FY24末净债务US$762M），具备进一步投资灵活性</li>
 <li><strong>资本管理</strong>：US$2.5B资本管理计划延长12个月至2026年9月11日，尚有US$144M待返还股东</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-06-30）｜<strong>主金属</strong>：银为铅锌副产（Cannington）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>银（副产）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>Cannington银为铅锌副产品，公司按运营披露单位成本（不含C1/C2/C3框架）；证据提取文本中无单位成本数值</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- South32披露口径为各运营单位成本（如Cannington锌铅矿单位成本），银不作为独立成本对象
+- 不按C1框架虚构拆分；如需银边际成本，需以Peñoles/Fresnillo等银为主业公司作对照</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.south32.net/investors" target="_blank" rel="noopener">South32 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2026 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 South32/South32_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 South32/South32_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 铝产业链（Bauxite → Alumina → Aluminium）", "years": [2023, 2024, 2025], "series": [{"label": "Worsley Alumina", "unit": "", "points": [3803.0, 3777.0, 3727.0]}, {"label": "Brazil Alumina (非运营)", "unit": "非运营", "points": [null, 1286.0, 1340.0]}, {"label": "Brazil Aluminium (非运营)", "unit": "非运营", "points": [null, 104.0, 138.0]}, {"label": "Hillside Aluminium", "unit": "", "points": [null, 720.0, 718.0]}, {"label": "Mozal Aluminium", "unit": "", "points": [null, 314.0, 355.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "1.2 基本金属（铜、锌、镍）", "years": [2023, 2024, 2025], "series": [{"label": "Sierra Gorda (非运营, 45%)", "unit": "非运营, 45%", "points": [86.8, 73.8, 88.1]}, {"label": "Sierra Gorda", "unit": "", "points": [null, 60.8, 71.4]}, {"label": "Sierra Gorda", "unit": "", "points": [null, 0.9, 1.5]}, {"label": "Sierra Gorda", "unit": "", "points": [null, 24.6, 27.9]}, {"label": "Sierra Gorda", "unit": "", "points": [null, 607.0, 584.0]}, {"label": "Cannington (100%)", "unit": "100%", "points": [259.3, 285.2, 241.9]}, {"label": "Cannington", "unit": "", "points": [null, 12666.0, 10292.0]}, {"label": "Cannington", "unit": "", "points": [null, 112.4, 92.4]}], "log": true, "type": "bar", "omitted": 2, "id": "chart2"}, {"title": "1.3 锰矿", "years": [2023, 2024, 2025], "series": [{"label": "Australia Manganese (60%)", "unit": "60%", "points": [3497.0, 2324.0, 1106.0]}, {"label": "South Africa Manganese (54.6%)", "unit": "54.6%", "points": [2117.0, 2175.0, 2151.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "1.4 冶金煤（已出售）", "years": [2023, 2024, 2025], "series": [{"label": "Illawarra Metallurgical Coal", "unit": "", "points": [6452.0, 4938.0, null]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "3.2 财务表现", "years": [2024, 2025], "series": [{"label": "Underlying EBITDA", "unit": "", "points": [1802.0, 1928.0]}, {"label": "Underlying EBIT", "unit": "", "points": [886.0, 1211.0]}, {"label": "Underlying earnings（归属股东）", "unit": "归属股东", "points": [380.0, 666.0]}, {"label": "净利润（归属股东）", "unit": "归属股东", "points": [-203.0, 213.0]}, {"label": "Underlying revenue", "unit": "", "points": [8296.0, 7610.0]}, {"label": "经营活动自由现金流", "unit": "", "points": [-80.0, 192.0]}, {"label": "资本回报（股东）", "unit": "股东", "points": [null, 350.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}];</script>
 

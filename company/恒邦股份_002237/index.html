@@ -13,6 +13,99 @@
   <span class="tag">002237 · A股白银冶炼</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="002237" data-name="恒邦股份年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 恒邦股份年报摘要（002237 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/002237.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>恒邦股份（002237）年报摘要</h1>
 <blockquote>
@@ -358,9 +451,55 @@
 <li><strong>江铜集团背景</strong>：控股股东江西铜业提供资源和资金支持</li>
 <li><strong>海外采购网络</strong>：秘鲁、赞比亚子公司，覆盖全球主要产矿区</li>
 </ul>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：本公司为冶炼企业，较少动用自有矿山资源（金资源储量150.10吨但以冶炼外购原料为主），C1/C2/C3开采成本及AISC均不适用；下表为冶炼环节现金成本（成本结构口径）。摘要3.2节已有黄金冶炼成本结构表，此处仅作口径归集。</p>
+</blockquote>
+<p><strong>企业类型</strong>：冶炼型｜<strong>财年</strong>：FY2025（截至2025-12-31）</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>黄金冶炼</td>
+<td>未披露单位现金成本（成本结构：原材料77.27%、辅料0.42%、燃动0.14%、人工0.22%、折旧0.23%、其他0.33%）</td>
+<td>不适用</td>
+<td>%（占营业成本比重）</td>
+<td>原材料（金精矿/合质金）为绝对主项，未披露元/克单位加工成本；黄金毛利率仅0.39%</td>
+</tr>
+<tr>
+<td>白银/电解铜冶炼</td>
+<td>未披露单位现金成本</td>
+<td>不适用</td>
+<td>—</td>
+<td>伴生回收+外购原料，成本归集于冶炼系统</td>
+</tr>
+<tr>
+<td>矿山分部（威海恒邦/杭州建铜/栖霞金兴）</td>
+<td>未披露</td>
+<td>不适用</td>
+<td>—</td>
+<td>自有矿山较少动用，2025年黄金自产量（非外购）占比提升至48.68%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：</p>
+<ol>
+<li>公司未披露任何单位现金成本或加工费数值（元/克或元/吨）；2025年营业成本1,101.12亿元（同比+48.92%），原材料占比77.27%，为典型冶炼加工型。</li>
+<li>黄金毛利率仅0.39%（冶炼加工费极薄），利润依赖：多金属综合回收（锌锑铋硒等毛利率46.63%）+硫酸副产（毛利率60.92%）+规模放量（第四套火法系统投运）。</li>
+<li>原料端：海外矿山直接采购+贸易商结合（秘鲁、赞比亚设点），2024年合质金采购量+65.41%驱动黄金产出——原料结构与加工费方向是盈利核心变量。</li>
+</ol>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="http://www.hbyl.cn/investor/periodic-reports.jsp" target="_blank" rel="noopener">恒邦股份年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 恒邦股份_002237/恒邦股份_002237_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 恒邦股份_002237/恒邦股份_002237_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要金属产量（2023-2025年）", "years": [2023, 2024, 2025], "series": [{"label": "黄金", "unit": "", "points": [73.88, 95.98, 99.77]}, {"label": "白银", "unit": "", "points": [952.47, 825.68, 1057.04]}, {"label": "电解铜", "unit": "", "points": [203000.0, 194100.0, 253600.0]}, {"label": "硫酸", "unit": "", "points": [1322000.0, 1136900.0, 1725500.0]}, {"label": "电解铅", "unit": "", "points": [95900.0, null, null]}, {"label": "磷铵及化肥", "unit": "", "points": [0.0, 87300.0, 125300.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "3.4 财务概况", "years": [2023, 2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [65577000000.0, 75801000000.0, 112394000000.0]}, {"label": "归母净利润", "unit": "", "points": [516000000.0, 537000000.0, 638000000.0]}, {"label": "扣非归母净利润", "unit": "", "points": [627000000.0, 579000000.0, 762000000.0]}, {"label": "经营活动现金流量净额", "unit": "", "points": [1032000000.0, 412000000.0, -2005000000.0]}, {"label": "总资产", "unit": "", "points": [21901000000.0, 24724000000.0, 36557000000.0]}, {"label": "归母净资产", "unit": "", "points": [9278000000.0, 9854000000.0, 13293000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}];</script>
 

@@ -13,6 +13,99 @@
   <span class="tag">WPM · 贵金属流公司</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="WPM" data-name="Wheaton Precious Metals 摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Wheaton Precious Metals 摘要（WPM · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/WPM.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Wheaton Precious Metals 摘要</h1>
 <blockquote>
@@ -534,11 +627,79 @@
 <li><strong>分红能力</strong>：2025年季度分红 US$75M，2025年合计 US$300M；现金成本极低，分红能力与商品价格高度挂钩</li>
 <li><strong>税务不确定性</strong>：CRA 历史争议仍是潜在风险，需关注未来税务审计结果</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。<strong>Wheaton 为贵金属流公司（streaming company），自身不从事采矿运营，矿山 C1/C2/C3 与 AISC 口径均不适用</strong>；本节按流公司口径列示——每 GEO 平均现金成本（average cash cost per GEO，即按 PMPA 合同低价购买 streaming 金属的现金销售成本，含 delay ounces 非现金成本项与 G&amp;A 影响后的公司口径 non-GAAP 指标）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：金+银（以 GEO 汇总，含钯、钴）</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>2023</th>
+<th>2025</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Average cash cost（流公司口径，≈C1 替代指标）</td>
+<td>453</td>
+<td>514</td>
+<td>US$/GEO</td>
+<td>2023→2025 上涨 13%；来源：2025 年报 MD&amp;A non-GAAP（证据文件 cash cost 行）</td>
+</tr>
+<tr>
+<td>Cash operating margin</td>
+<td>1,566</td>
+<td>3,040</td>
+<td>US$/GEO</td>
+<td>2023→2025 扩大 94%；成本端近乎固定、收入端随金属价格上行</td>
+</tr>
+<tr>
+<td>合同现金购买价 – Au</td>
+<td>400–450</td>
+<td>—</td>
+<td>US$/oz</td>
+<td>PMPA 固定低价（vs 市价 2,600+/oz），摘要正文 3.1 节</td>
+</tr>
+<tr>
+<td>合同现金购买价 – Ag</td>
+<td>4.00–6.50</td>
+<td>—</td>
+<td>US$/oz</td>
+<td>PMPA 固定低价（vs 市价 30+/oz）</td>
+</tr>
+<tr>
+<td>合同购买价 – Pd</td>
+<td>18% of spot</td>
+<td>—</td>
+<td>—</td>
+<td>挂钩现货比例</td>
+</tr>
+<tr>
+<td>钴平均现金成本（2023 财年）</td>
+<td>241</td>
+<td>—</td>
+<td>US$/lb</td>
+<td>2024 年报披露的 2023 年数据，净库存减记影响 -$0.91/lb</td>
+</tr>
+</tbody>
+</table>
+<div class="chart-box"><div class="chart-title">开采成本（C1/C2/C3框架）<span class="chart-sub">2023–2025 · 柱状图 · 对数轴</span></div><div class="chart-canvas-wrap"><canvas id="chart3"></canvas></div></div>
+
+<p><strong>要点</strong>：
+- <strong>流公司成本结构</strong>：成本 = 按 PMPA 合同约定低价购买 streaming 金属的现金支付（金约 $400-450/oz、银约 $4.00-6.50/oz、钯 18% 现货价）+ 公司 G&amp;A，<strong>不适用矿山 C1/C2/C3 与 AISC</strong>（无采矿/选矿现金运营成本、无维持性资本开支）。
+- 每 GEO 平均现金成本 2025 年为 $514（2023 年 $453，+13%），现金运营利润率 $3,040/GEO（+94%）——streaming 模式对金属价格具备强杠杆：固定低价成本 + 市价销售。
+- 注意口径澄清：摘要正文 3.1 节「每个 GEO 的现金成本约为 US$4-5」应理解为<strong>合同 per-unit 购买价（银 $4.00-6.50/oz）</strong>，并非 GEO 口径现金成本；GEO 口径平均现金成本为 $514（2025）。
+- C2/C3/AISC：不适用（流公司无矿山折耗结构与维持性资本开支，证据文件未披露亦不应套用）。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.wheatonpm.com/investors/" target="_blank" rel="noopener">Wheaton Precious Metals 摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Wheaton_Precious_Metals/Wheaton_Precious_Metals_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Wheaton_Precious_Metals/Wheaton_Precious_Metals_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
-<script>window.__PM_CHARTS__ = [{"title": "1.1 年度 attributable 产量（按金属）", "years": [2024, 2025, 2026, 2030, 2031], "series": [{"label": "金（oz）", "unit": "oz", "points": [379530.0, 416171.0, null, null, null]}, {"label": "银（'000 oz）", "unit": "'000 oz", "points": [20807.0, 22289.0, null, null, null]}, {"label": "其他金属（GEOs，主要为钯+钴）", "unit": "", "points": [12406.0, 16021.0, null, null, null]}, {"label": "GEOs 合计", "unit": "", "points": [632017.0, 803658.0, null, 1200000.0, 1200000.0]}], "log": true, "type": "line", "omitted": 0, "id": "chart1"}, {"title": "3.2 财务摘要（关键数据点）", "years": [2024, 2025], "series": [{"label": "GEOs 产出", "unit": "", "points": [632017.0, 803658.0]}, {"label": "年末现金及现金等价物", "unit": "", "points": [818000000.0, null]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}];</script>
+<script>window.__PM_CHARTS__ = [{"title": "1.1 年度 attributable 产量（按金属）", "years": [2024, 2025, 2026, 2030, 2031], "series": [{"label": "金（oz）", "unit": "oz", "points": [379530.0, 416171.0, null, null, null]}, {"label": "银（'000 oz）", "unit": "'000 oz", "points": [20807.0, 22289.0, null, null, null]}, {"label": "其他金属（GEOs，主要为钯+钴）", "unit": "", "points": [12406.0, 16021.0, null, null, null]}, {"label": "GEOs 合计", "unit": "", "points": [632017.0, 803658.0, null, 1200000.0, 1200000.0]}], "log": true, "type": "line", "omitted": 0, "id": "chart1"}, {"title": "3.2 财务摘要（关键数据点）", "years": [2024, 2025], "series": [{"label": "GEOs 产出", "unit": "", "points": [632017.0, 803658.0]}, {"label": "年末现金及现金等价物", "unit": "", "points": [818000000.0, null]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "开采成本（C1/C2/C3框架）", "years": [2023, 2025], "series": [{"label": "Average cash cost（流公司口径，≈C1 替代指标）", "unit": "US$/GEO", "points": [453.0, 514.0]}, {"label": "Cash operating margin", "unit": "US$/GEO", "points": [1566.0, 3040.0]}, {"label": "钴平均现金成本（2023 财年）", "unit": "US$/lb", "points": [241.0, null]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 
 <script>/**
  * Skipped minification because the original files appears to be already minified.

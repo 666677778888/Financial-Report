@@ -13,6 +13,99 @@
   <span class="tag">601168 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="601168" data-name="西部矿业年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 西部矿业年报摘要（601168 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/601168.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>西部矿业（601168.SH）年报摘要</h1>
 <blockquote>
@@ -817,9 +910,53 @@
 <li><strong>纯内资属性</strong>：所有矿山在中国境内，无海外地缘政治风险，是纯正的国内资源股</li>
 <li><strong>盐湖锂布局</strong>：布局高镁锂比卤水萃取提锂技术，但目前尚处研发阶段，未有规模化产量</li>
 </ol>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，采矿+选冶单位成本）；AISC=WGC全维持成本（A股不披露）。白银为铅锌矿伴生+铅冶炼综合回收，开采成本按主金属（铜/铅/锌）口径披露。财年FY2025（截至2025-12-31）。</p>
+</blockquote>
+<p><strong>企业类型</strong>：矿山+冶炼混合（矿山自给率同业较高）｜<strong>主金属</strong>：铜/铅/锌（银为锡铁山/呷村伴生）</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>矿产铜（玉龙/获各琦，矿山）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>成本分析表仅分产品总额：铜类产品主营成本359.36亿元（+13.81%），矿山/冶炼未拆分</td>
+</tr>
+<tr>
+<td>银锭（冶炼，稀贵金属公司）</td>
+<td>未披露（主营成本17.75亿元，+871.40%）</td>
+<td>不适用</td>
+<td>—</td>
+<td>对应电铅20万吨/年+银430吨/年产能投产首年放量</td>
+</tr>
+<tr>
+<td>金锭（冶炼）</td>
+<td>未披露（主营成本36.44亿元）</td>
+<td>不适用</td>
+<td>—</td>
+<td>精矿含金233.57千克，原料以外购为主</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. <strong>无单位成本披露</strong>：FY2025成本分析表仅披露分产品主营业务成本总额（有色金属采选冶合计405.21亿元、占81.93%），未折算吨铜/吨锌单位成本，玉龙铜矿亦无单位成本披露。
+2. <strong>玉龙铜矿为业绩核心但成本不透明</strong>：矿产铜152,116金吨（占公司91%），年报仅披露回收率优化（一车间铜钼回收率+4.13/+2.68pct）与"严控成本费用"定性表述。
+3. **银锭成本17.75亿元（+871%）**对应稀贵金属公司多金属综合循环利用项目投产（冶炼铅+330%），系冶炼综合回收口径而非矿山克银成本。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.westmining.com/" target="_blank" rel="noopener">西部矿业年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 西部矿业_601168/西部矿业_601168_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 西部矿业_601168/西部矿业_601168_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要矿产品产量汇总（2022–2026E）", "years": [2022, 2023, 2024, 2025, 2026], "series": [{"label": "矿产铜", "unit": "万吨", "points": [14.4, 13.13, 17.75, 16.75, 17.2]}, {"label": "矿产铅", "unit": "万吨", "points": [5.15, 6.03, 5.4, 6.3, 6.34]}, {"label": "矿产锌", "unit": "万吨", "points": [11.2, 12.03, 10.71, 12.88, 12.76]}, {"label": "矿产钼", "unit": "吨", "points": [3373.0, 3401.0, 4009.0, 4051.0, 4438.0]}, {"label": "铁精粉", "unit": "万吨", "points": [181.05, 119.39, 137.69, 140.53, 221.6]}, {"label": "冶炼铜", "unit": "万吨", "points": [16.55, 18.3, 26.38, 33.42, null]}, {"label": "冶炼铅", "unit": "万吨", "points": [null, null, 3.58, 15.41, null]}, {"label": "冶炼锌", "unit": "万吨", "points": [8.66, 11.88, 11.47, 15.21, 18.06]}], "log": true, "type": "line", "omitted": 2, "id": "chart1"}, {"title": "1.5 矿产铜分矿明细", "years": [2024, 2025], "series": [{"label": "西藏玉龙铜矿", "unit": "", "points": [159084.0, 152116.0]}, {"label": "内蒙古获各琦铜多金属矿", "unit": "", "points": [14991.0, 12372.0]}, {"label": "合计", "unit": "", "points": [174075.0, 164488.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "1.6 矿产铅锌分矿明细", "years": [2024, 2025], "series": [{"label": "锡铁山铅锌矿", "unit": "", "points": [40786.0, 33978.0]}, {"label": "会东大梁铅锌矿", "unit": "", "points": [1801.0, null]}, {"label": "呷村银多金属矿", "unit": "", "points": [9168.0, null]}, {"label": "获各琦铜多金属矿", "unit": "", "points": [2215.0, null]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "1.7 重大产量变化（同比超10%品种）", "years": [2024, 2025], "series": [{"label": "年份", "unit": "", "points": [2024.0, 2025.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "3.4 财务表现", "years": [2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [50026000000.0, 61687000000.0]}, {"label": "利润总额", "unit": "", "points": [5992000000.0, 7069000000.0]}, {"label": "净利润", "unit": "", "points": [5294000000.0, 6152000000.0]}, {"label": "归母净利润", "unit": "", "points": [2932000000.0, 3643000000.0]}, {"label": "扣非归母净利润", "unit": "", "points": [null, 3618000000.0]}, {"label": "经营性净现金流", "unit": "", "points": [8245999999.999999, 10211000000.0]}, {"label": "资产总额", "unit": "", "points": [54940000000.0, 59416999999.99999]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}];</script>
 

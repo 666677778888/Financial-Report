@@ -13,6 +13,99 @@
   <span class="tag">ASM · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="ASM" data-name="Avino Silver &amp; Gold Mines Ltd. — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Avino Silver &amp; Gold Mines Ltd. — 年报摘要（ASM · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/ASM.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Avino Silver &amp; Gold Mines Ltd. — 年报摘要</h1>
 <blockquote>
@@ -544,9 +637,49 @@
 <li><strong>关注风险</strong>：Avino Mine无NI 43-101合规储量；高度依赖单一客户和单一国家（墨西哥）</li>
 <li><strong>估值参考</strong>：2025年现金$101.7M（2024年底仅$27.3M），资产负债表显著改善，为La Preciosa开发提供资金保障</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2024（截至2024-12-31）｜<strong>主金属</strong>：银（银金铜多金属）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ag（AgEq口径）</td>
+<td>14.84（2023：15.61）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>20.55（2023：21.87）</td>
+<td>US$/AgEq oz</td>
+<td>Cash cost per silver equivalent payable ounce（非IFRS）；「银当量应付盎司」=银+金+铜按现货价格比折算（co-product折算口径，非净副产品抵扣）；证据文件2025年报摘录无数值，取自2024年报摘录（对应FY2024）</td>
+</tr>
+<tr>
+<td>Ag（不含stand-by costs）</td>
+<td>2023：15.61（2022：10.34）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>US$/AgEq oz</td>
+<td>剔除维护保养成本的口径，仅历史年份披露</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：Avino为银-金-铜多金属矿，成本按**银当量应付盎司（AgEq）**披露（金银铜合并折算），属co-product折算口径而非净副产品抵扣，可作C1近似参考。2024年C1降4.9%至14.84（银当量销量+22.8%摊薄单位成本），AISC降5.9%至20.55（另有罚金及冶炼加工费下降）。FY2025证据文件无成本数值（2025年报摘录无有效行），故当年（证据文件对应财年取2024年报）成本披露止于FY2024。C2/C3未披露。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://avino.com/investors/" target="_blank" rel="noopener">Avino Silver &amp; Gold Mines Ltd. — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Avino_Silver_Gold/Avino_Silver_Gold_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Avino_Silver_Gold/Avino_Silver_Gold_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "2.1 Avino Mine 产量明细", "years": [2023, 2024], "series": [{"label": "磨矿量（干吨）", "unit": "干吨", "points": [615373.0, 648774.0]}, {"label": "银品位（g/t）", "unit": "g/t", "points": [54.0, 61.0]}, {"label": "金品位（g/t）", "unit": "g/t", "points": [0.45, 0.51]}, {"label": "铜品位（%）", "unit": "%", "points": [0.49, 0.52]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "2.2 金属产量", "years": [2023, 2024], "series": [{"label": "Avino Mine", "unit": "", "points": [928643.0, 1109214.0]}, {"label": "Avino Mine", "unit": "", "points": [7335.0, 7477.0]}, {"label": "Avino Mine", "unit": "", "points": [5304808.0, 6197603.0]}, {"label": "Avino Mine", "unit": "", "points": [2415232.0, 2652498.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "2.3 2025年运营概况", "years": [2024, 2025], "series": [{"label": "Avino + La Preciosa", "unit": "", "points": [28284.0, 42069.0]}, {"label": "Avino + La Preciosa", "unit": "", "points": [27437.0, 27603.0]}, {"label": "Avino + La Preciosa", "unit": "", "points": [16962.0, 27362.0]}, {"label": "合计（扣除精炼费用）", "unit": "扣除精炼费用", "points": [66178.0, 92227.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "2.4 销售与成本数据（Avino Mine，2024年）", "years": [2023, 2024], "series": [{"label": "银当量应付盎司销量", "unit": "", "points": [2086485.0, 2562211.0]}, {"label": "单位现金成本/银当量应付盎司", "unit": "", "points": [15.61, 14.84]}, {"label": "AISC/银当量应付盎司", "unit": "", "points": [21.87, 20.57]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "4.2 成本结构", "years": [2024, 2025], "series": [{"label": "生产成本", "unit": "", "points": [38600000.0, 39518000.0]}, {"label": "折旧摊销", "unit": "", "points": [3233000.0, 3549000.0]}, {"label": "设备及材料减值", "unit": "", "points": [1144000.0, 593000.0]}, {"label": "销售成本合计", "unit": "", "points": [42977000.0, 43692000.0]}, {"label": "矿业毛利", "unit": "", "points": [23201000.0, 48535000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "4.3 财务亮点", "years": [2024, 2025], "series": [{"label": "矿业收入", "unit": "", "points": [66178000.0, 92227000.0]}, {"label": "经营利润（扣费用前）", "unit": "扣费用前", "points": [14940000.0, 36119000.0]}, {"label": "税前利润", "unit": "", "points": [14421000.0, 39898000.0]}, {"label": "净利润", "unit": "", "points": [8100000.0, 26643000.0]}, {"label": "综合收益", "unit": "", "points": [7273000.0, 28414000.0]}, {"label": "总资产", "unit": "", "points": [148711000.0, 279032000.0]}, {"label": "权益", "unit": "", "points": [125399000.0, 234030000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}, {"title": "4.4 资本支出与融资", "years": [2024, 2025], "series": [{"label": "PP&E增加", "unit": "", "points": [5139000.0, 18931000.0]}, {"label": "勘探资产转入矿业资产", "unit": "", "points": [null, 35005000.0]}, {"label": "矿权回购（La Preciosa royalty）", "unit": "", "points": [null, 21787000.0]}, {"label": "PP&E余额", "unit": "", "points": [81719000.0, 155406000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart7"}];</script>
 

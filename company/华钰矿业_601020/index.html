@@ -13,6 +13,99 @@
   <span class="tag">601020 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="601020" data-name="华钰矿业年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 华钰矿业年报摘要（601020 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/601020.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>华钰矿业（601020）年报摘要</h1>
 <blockquote>
@@ -508,9 +601,117 @@
 <li><strong>泥堡金矿选厂预计2026年10月试产</strong>，井下工程预计2027年底投产，是未来重要增长点</li>
 <li><strong>埃塞俄比亚项目</strong>仍处建设筹备期，可控黄金资源量9.475吨</li>
 </ol>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，含采矿+选冶，净副产品前）；AISC=WGC全维持成本；A股公司普遍不披露AISC。数据源：FY2025年报（截至2025-12-31）。</p>
+</blockquote>
+<p><strong>企业类型</strong>：矿山型｜<strong>主金属</strong>：锑（+铅锌银金）</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>铅锑精矿含银</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/吨</td>
+<td>核心利润来源，2025年营收8.45亿元，毛利率51.32%（+0.09pct）</td>
+</tr>
+<tr>
+<td>金精矿</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/克或元/吨</td>
+<td>毛利率48.74%（-9.80pct），塔铝金产量-46.66%摊薄</td>
+</tr>
+<tr>
+<td>锌精矿</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/吨</td>
+<td>毛利率47.99%（-4.23pct）</td>
+</tr>
+<tr>
+<td>载金炭含金</td>
+<td>未披露单位成本</td>
+<td>—</td>
+<td>元/千克</td>
+<td>毛利率52.77%（泥堡金矿新增产品）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. 年报未披露任何分产品单位现金成本，成本信息仅有分产品毛利率（区间47.99%–52.77%），多金属伴生（铅锑银）精矿难以拆分单一金属成本。
+2. 产量结构剧烈变化影响成本：塔铝金业金产量-46.66%（采矿量-19.73%+品位变化）、国内扎西康入选矿量+20.07%，两端单位成本走势分化。
+3. AISC未披露；泥堡金矿2026年10月选厂试产后黄金单位成本口径将更复杂（堆浸/生物氧化工艺）。</p>
+<hr />
+<h2>八、成本口径横向对比小结（6家）</h2>
+<table>
+<thead>
+<tr>
+<th>公司</th>
+<th>类型</th>
+<th>cash cost有无</th>
+<th>AISC有无</th>
+<th>数据源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>紫金矿业</td>
+<td>矿山+冶炼一体化</td>
+<td>无数值（定性：全球成本曲线前20%）</td>
+<td>无</td>
+<td>摘要映射（年报定性表述）</td>
+</tr>
+<tr>
+<td>兴业银锡</td>
+<td>矿山型</td>
+<td>无（仅营业成本总量+49.40%/毛利率）</td>
+<td>无</td>
+<td>摘要映射</td>
+</tr>
+<tr>
+<td>银泰黄金</td>
+<td>矿山型</td>
+<td>有：金145.40元/克、银2.67元/克等（2024年）</td>
+<td>定性有（全球前10%），无数值</td>
+<td>摘要映射（2024年报单位成本）</td>
+</tr>
+<tr>
+<td>盛达资源</td>
+<td>矿山型</td>
+<td>无（仅采选营业成本总量+16.51%/毛利率）</td>
+<td>无</td>
+<td>摘要映射</td>
+</tr>
+<tr>
+<td>湖南黄金</td>
+<td>矿山+冶炼混合</td>
+<td>无（营业成本470.97亿元为冶炼加工口径为主）</td>
+<td>无</td>
+<td>证据v2（年报直接营业成本总量）</td>
+</tr>
+<tr>
+<td>华钰矿业</td>
+<td>矿山型</td>
+<td>无（仅分产品毛利率）</td>
+<td>无</td>
+<td>摘要映射</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="http://www.huayumining.com/" target="_blank" rel="noopener">华钰矿业年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 华钰矿业_601020/华钰矿业_601020_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 华钰矿业_601020/华钰矿业_601020_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1. 国内——山南分公司（扎西康矿山）", "years": [2024, 2025], "series": [{"label": "采矿量", "unit": "", "points": [645000.0, 683800.0]}, {"label": "入选矿量", "unit": "", "points": [603600.0, 724700.0]}, {"label": "铅锌锑金属量合计", "unit": "", "points": [36200.0, 41200.0]}, {"label": "其中：锌", "unit": "", "points": [19600.0, null]}, {"label": "其中：铅", "unit": "", "points": [14400.0, null]}, {"label": "其中：锑", "unit": "", "points": [2235.0, null]}, {"label": "银金属量", "unit": "", "points": [53.57, 72.47]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "2. 国外——塔铝金业（塔吉克斯坦）", "years": [2024, 2025], "series": [{"label": "采矿量", "unit": "", "points": [2188000.0, 1756300.0]}, {"label": "入选矿量", "unit": "", "points": [1823000.0, 1698700.0]}, {"label": "金金属量", "unit": "", "points": [1878.9, 1002.11]}, {"label": "锑金属量", "unit": "", "points": [1592.88, 2337.68]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "五、财务概况", "years": [2023, 2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [871000000.0000001, 1614000000.0, 2071000000.0]}, {"label": "利润总额", "unit": "", "points": [57999999.99999999, 440000000.00000006, 1119000000.0]}, {"label": "归母净利润", "unit": "", "points": [74000000.0, 252999999.99999997, 871000000.0000001]}, {"label": "扣非归母净利润", "unit": "", "points": [73000000.0, 252999999.99999997, 451000000.0]}, {"label": "经营活动现金流净额", "unit": "", "points": [247000000.00000003, 426999999.99999994, 1044999999.9999999]}, {"label": "总资产", "unit": "", "points": [5420000000.0, 5786000000.0, 10396000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 

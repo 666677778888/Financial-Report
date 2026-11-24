@@ -13,6 +13,99 @@
   <span class="tag">601899 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="601899" data-name="紫金矿业年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 紫金矿业年报摘要（601899 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/601899.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>紫金矿业（601899.SH / 2899.HK）年报摘要</h1>
 <blockquote>
@@ -931,9 +1024,60 @@
 <li><strong>黄金并购驱动</strong>：加纳阿基姆+哈萨克斯坦瑞果多两大金矿并表驱动2025年金产量+22.77%，2026年金矿计划产量105吨，继续高增长</li>
 <li><strong>巨龙铜矿</strong>：二期已投产（2026年1月），将成为中国最大铜矿，规划三期60万吨/年为全球最大单体铜矿</li>
 </ol>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，含采矿+选冶，净副产品前）；AISC=WGC全维持成本；A股公司普遍不披露AISC。数据源：FY2025年报（截至2025-12-31）。</p>
+</blockquote>
+<p><strong>企业类型</strong>：矿山+冶炼一体化集团｜<strong>主金属</strong>：铜、金（+银锌锂钼）</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>矿产铜</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/吨</td>
+<td>2025年产量109万吨；仅有定性：主营矿产品成本位居全球「成本曲线」前20%左右</td>
+</tr>
+<tr>
+<td>矿产金</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/克</td>
+<td>2025年产量89.5吨（+22.77%）；未按克金成本口径披露</td>
+</tr>
+<tr>
+<td>矿产银</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/吨</td>
+<td>铜金伴生产品（439吨），未单独披露成本</td>
+</tr>
+<tr>
+<td>冶炼铜/冶炼加工及贸易金</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>冶炼与贸易口径，非开采成本（2025年冶炼铜697,588吨、冶炼加工及贸易金163,311千克）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. 年报未披露分产品单位现金成本数值，仅有定性表述「主营矿产品成本位居全球成本曲线前20%左右」，反映低成本竞争优势；「矿石流五环归一」工程管理模式为控本核心手段。
+2. 2025年矿产金+22.77%、矿产锂从0到2.55万吨，产量高增长下成本管控为战略重点（工作方针含「控本」）；卡莫阿矿震复产、巨龙二期爬坡或短期摊薄单位成本优势。
+3. 口径局限：公司为H+A两地上市，港股ESG/运营披露较详，但A股年报不按WGC口径披露AISC或克金/吨铜现金成本，横向可比性受限。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.zjky.cn/" target="_blank" rel="noopener">紫金矿业年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 紫金矿业_601899/紫金矿业_601899_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 紫金矿业_601899/紫金矿业_601899_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要矿产品产量汇总（2023–2025年及未来计划）", "years": [2023, 2024, 2025, 2026, 2028], "series": [{"label": "矿产铜", "unit": "万吨", "points": [101.0, 107.0, 109.0, 120.0, null]}, {"label": "矿产金", "unit": "吨", "points": [68.0, 73.0, 90.0, 105.0, null]}, {"label": "矿产锌（铅）", "unit": "万吨", "points": [47.0, 45.0, 40.0, 40.0, null]}, {"label": "矿产银", "unit": "吨", "points": [412.0, 436.0, 439.0, 520.0, null]}, {"label": "当量碳酸锂", "unit": "万吨", "points": [0.3, null, 2.55, 12.0, null]}, {"label": "矿产钼", "unit": "万吨", "points": [0.8, 0.9, 1.15, 1.5, null]}], "log": true, "type": "line", "omitted": 0, "id": "chart1"}, {"title": "1.6 白银产量与变化", "years": [2023, 2024, 2025], "series": [{"label": "矿产银（吨）", "unit": "吨", "points": [412.0, 436.0, 439.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "1.7 锌（铅）产量", "years": [2023, 2024, 2025], "series": [{"label": "矿产锌（铅）（万吨）", "unit": "", "points": [47.0, 45.0, 40.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "3.4 财务表现", "years": [2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [303600000000.0, 349100000000.0]}, {"label": "归母净利润", "unit": "", "points": [32100000000.0, 51800000000.0]}, {"label": "利润总额", "unit": "", "points": [48100000000.0, 75400000000.0]}, {"label": "EBITDA", "unit": "", "points": [63200000000.0, 101400000000.0]}, {"label": "经营性净现金流", "unit": "", "points": [48900000000.0, 80800000000.0]}, {"label": "资产总额", "unit": "", "points": [396600000000.0, 512000000000.0]}, {"label": "基本每股收益", "unit": "", "points": [1.21, 1.95]}, {"label": "分红", "unit": "", "points": [10100000000.0, null]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}];</script>
 

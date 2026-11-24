@@ -13,6 +13,99 @@
   <span class="tag">600531 · A股白银冶炼</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="600531" data-name="豫光金铅年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 豫光金铅年报摘要（600531 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/600531.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>豫光金铅（600531）年报摘要</h1>
 <blockquote>
@@ -584,9 +677,55 @@
 <li>铅锭获"美豫名品"授权证书，银锭获"卓越品牌产品"</li>
 <li>2025年《财富》中国500强第360位（较上年前进75位）</li>
 </ul>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：本公司为冶炼企业，无自有在产矿山，C1/C2/C3开采成本及AISC均不适用；下表为冶炼环节现金成本（加工费/生产成本）。摘要3.4节已有成本结构总额表，此处仅作口径归集，不重复展开。</p>
+</blockquote>
+<p><strong>企业类型</strong>：冶炼型｜<strong>财年</strong>：FY2025（截至2025-12-31）</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>铅冶炼</td>
+<td>未披露单位现金成本（仅有色金属加工费总额12.18亿元，占营业成本2.60%，同比+18.48%）</td>
+<td>不适用</td>
+<td>亿元（总额口径）</td>
+<td>加工费总额口径，未披露元/吨单位成本；原料（铅精矿）100%外购，国内69.14%/境外30.86%</td>
+</tr>
+<tr>
+<td>铜冶炼</td>
+<td>未披露单位现金成本（与铅冶炼合并计入有色金属加工费）</td>
+<td>不适用</td>
+<td>亿元（总额口径）</td>
+<td>铜精矿TC/RC单位加工费未单独披露</td>
+</tr>
+<tr>
+<td>贵金属冶炼（金/银）</td>
+<td>贵金属加工费总额0.89亿元（占营业成本0.18%，同比+15.86%）</td>
+<td>不适用</td>
+<td>亿元（总额口径）</td>
+<td>金银为铅铜冶炼伴生回收+外购金物料</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：</p>
+<ol>
+<li>公司为纯冶炼企业（原料自给率0%），年报未披露任何环节的单位现金成本（元/吨）或TC/RC具体数值，仅披露加工费总额：2025年有色金属加工费12.18亿元+贵金属加工费0.89亿元，合计约占营业成本2.78%。</li>
+<li>注意区分：摘要3.7节"铅17,062元/吨、铜83,023元/吨、金807.83元/克"为市场金属均价（价格），非原料采购成本，更非冶炼加工成本，勿混淆。</li>
+<li>冶炼盈利模式为"原料价格-加工费"模式，加工费方向：2025年有色金属加工费同比+18.48%（随铅产量+29.45%放量）；风险在于铅产品毛利率为-4.85%（原料涨价的负价差模式）。</li>
+</ol>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.yggf.com.cn/" target="_blank" rel="noopener">豫光金铅年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 豫光金铅_600531/豫光金铅_600531_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 豫光金铅_600531/豫光金铅_600531_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要产品产量（2023-2025年）", "years": [2023, 2024, 2025], "series": [{"label": "铅产品", "unit": "吨", "points": [553855.0, 555571.0, 719166.0]}, {"label": "阴极铜", "unit": "吨", "points": [153398.0, 164947.0, 165235.0]}, {"label": "黄金", "unit": "千克", "points": [11725.0, 15134.0, 13455.0]}, {"label": "白银", "unit": "吨", "points": [1531.77, 1566.24, 1678.93]}, {"label": "硫酸", "unit": "吨", "points": [null, 910133.0, 1003470.0]}, {"label": "锑产品", "unit": "吨", "points": [null, 6000.0, 6092.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "3.4 成本结构变化", "years": [2024, 2025], "series": [{"label": "有色金属原材料", "unit": "", "points": [181.82, 216.54]}, {"label": "有色金属加工费", "unit": "", "points": [10.28, 12.18]}, {"label": "贵金属原材料", "unit": "", "points": [166.59, 226.54]}, {"label": "贵金属加工费", "unit": "", "points": [0.77, 0.89]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.5 主要财务数据", "years": [2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [39345000000.0, 49554000000.0]}, {"label": "归母净利润", "unit": "", "points": [807000000.0, 860000000.0]}, {"label": "扣非归母净利润", "unit": "", "points": [752000000.0, 791000000.0]}, {"label": "经营性现金流", "unit": "", "points": [742000000.0, 509999999.99999994]}, {"label": "总资产", "unit": "", "points": [17607000000.0, 23630000000.0]}, {"label": "净资产", "unit": "", "points": [5509000000.0, 6542000000.0]}, {"label": "分红总额", "unit": "", "points": [245000000.00000003, 260000000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 

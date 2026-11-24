@@ -13,6 +13,99 @@
   <span class="tag">GAU · 开发/勘探阶段</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="GAU" data-name="Galiano Gold — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Galiano Gold — 年报摘要（GAU · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/GAU.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Galiano Gold — 年报摘要</h1>
 <blockquote>
@@ -241,9 +334,44 @@
 <li><strong>地下增量期权</strong>：Nkran/Abore地下系统沿走向与深部开放，首批0.83 Moz地下资源或仅为成矿系统一小部分，品位2.5-2.7 g/t显著高于露天，为中期储量接续的关键。</li>
 <li><strong>无杠杆资产负债表</strong>：年末现金$1.083亿、零债务，经营现金流$1.58亿，扩产与递延对价支付（剩余$30.0M）资金压力可控。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，介于C2与C3之间，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>2,233</td>
+<td>US$/oz</td>
+<td>证据文件未含FY2025总现金成本（total cash costs）单值（对账表以引用方式纳入MD&amp;A，未在摘录文本中呈现）；AISC/oz=2,233（修正指引区间内；2024：2,063）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- AISC构成（AIF定义）：总现金成本+矿山G&amp;A+复垦增值+维持性资本化剥离+维持性资本开支+租赁付款。
+- 公司遵循Gold Institute Production Cost Standard口径披露运营现金成本/总现金成本，但FY2025单值未在证据文件中披露。
+- AISC同比+8%（2,063→2,233）：Nkran Cut 3剥离（全年10.7 Mt）及二级破碎建设期成本为主要推手。
+- 参考吨矿成本（FY2025）：采矿$3.46/t、运输$4.43/t、选矿$12.92/t；LOM规划平均总现金成本$905/oz、AISC $1,143/oz（2023版FS）。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.galianogold.com/investors/" target="_blank" rel="noopener">Galiano Gold — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Galiano_Gold/Galiano_Gold_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Galiano_Gold/Galiano_Gold_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "四、财务摘要（US$千，IFRS）", "years": [2024, 2025], "series": [{"label": "收入（金+银毛收入）", "unit": "金+银毛收入", "points": [231339.0, 447767.0]}, {"label": "对冲已实现+未实现损失", "unit": "", "points": [-23121.0, -119324.0]}, {"label": "净收入（对冲后）", "unit": "对冲后", "points": [208218.0, 328443.0]}, {"label": "税前利润", "unit": "", "points": [8541.0, 30482.0]}, {"label": "所得税（当期+递延）", "unit": "当期+递延", "points": [0.0, -61283.0]}, {"label": "净亏损", "unit": "", "points": [8541.0, -30801.0]}, {"label": "经营现金流", "unit": "", "points": [55746.0, 157994.0]}, {"label": "现金及等价物（12/31）", "unit": "12/31", "points": [105775.0, 108327.0]}], "log": false, "type": "bar", "omitted": 2, "id": "chart1"}];</script>
 

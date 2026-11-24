@@ -64,3 +64,15 @@ ul, ol { padding-left: 24px; }
 .files .src-link a { font-weight: 600; }
 .files .hint { color: var(--ink-3); font-size: 12.5px; margin: 4px 0 10px; }
 .foot { margin-top: 18px; color: var(--ink-3); font-size: 12px; text-align: center; }
+
+/* ---- v6: 详情页顶部K线 ---- */
+.kcard { padding: 14px 18px 10px; }
+.khead { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.ktitle { font-size: 14.5px; font-weight: 800; color: #1A2030; }
+.kmeta { font-size: 12px; color: var(--ink-3); }
+.kmeta b { color: #1A2030; }
+.kmeta .up { color: #C0392B; } .kmeta .dn { color: #1E8449; }
+.kfoot { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--ink-3); }
+.kupd b { color: #1A2030; }
+.klink { color: #4C6EF5; text-decoration: none; }
+.klink:hover { text-decoration: underline; }

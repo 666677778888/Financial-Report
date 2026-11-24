@@ -13,6 +13,99 @@
   <span class="tag">DC · 开发/勘探阶段</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="DC" data-name="Dakota Gold — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Dakota Gold — 年报摘要（DC · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/DC.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Dakota Gold — 年报摘要</h1>
 <blockquote>
@@ -168,6 +261,37 @@
 <div class="chart-box"><div class="chart-title">四、财务摘要（US$，U.S. GAAP）<span class="chart-sub">2024–2025 · 柱状图</span></div><div class="chart-canvas-wrap"><canvas id="chart1"></canvas></div></div>
 
 <p>FY2025融资：3月公募12,400,000股@$2.83净得$32.8M；ATM发行3,022,019股净得$9.7M（2025年11月设立$5,000万ATM）；认股权证行权$4.2M。期后2026年2月再公募12,336,000股+超额配售225,000股，合计毛收入约$7,640万/净得约$7,240万。公司预计至2027年3月25日现金支出约$32.3M。</p>
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本；C2=C1+D&amp;A；C3=C2+期间费用；AISC=WGC标准。<strong>本公司当前为纯勘探阶段，无实际开采成本</strong>；下表为IACF（初始评估现金流模型，相当于PEA前层级）研究成本指引（非实际）。</p>
+</blockquote>
+<p><strong>研究基准</strong>：Richmond Hill IACF（2025-07-07发布，M3牵头）｜<strong>主金属</strong>：金（银为副产品）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本，指引）</th>
+<th>AISC（指引）</th>
+<th>单位</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au</td>
+<td>857</td>
+<td>1,047</td>
+<td>US$/oz Au</td>
+<td>IACF 2025</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- IACF披露LOM现金成本 US$857/oz（即C1口径）、AISC US$1,047/oz（M&amp;I方案，基准金价$2,350/oz）；<strong>AISC − C1 = US$190/oz</strong>，对应维持性资本（$219.6M LOM折合）。
+- 正文「三、项目进展」已列IACF经济性（税后NPV@5% $16亿/IRR 55%），本节为标准化成本口径引用。
+- C2（C1+D&amp;A）、C3（C2+期间费用）在IACF中未单列，<strong>无C2/C3指引</strong>。
+- 层级提示：IACF为S-K 1300初始评估（低于PEA），资源量以历史钻孔为主，成本假设的可靠性低于PEA/FS级研究；权利金负担（Richmond Hill初步估计平均3.8%）或使实际成本上浮。</p>
+<hr />
 <h2>五、要点与风险</h2>
 <ol>
 <li><strong>矿区级期权价值</strong>：坐拥Homestake成矿带核心地段49,500+英亩，三类矿化类型全覆盖，Wharf（邻近在产堆浸矿）直接类比支撑Richmond Hill低品位大吨位堆浸路线。</li>
@@ -179,7 +303,7 @@
 </ol>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.dakotagoldcorp.com/investors/" target="_blank" rel="noopener">Dakota Gold — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Dakota_Gold/Dakota_Gold_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Dakota_Gold/Dakota_Gold_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "四、财务摘要（US$，U.S. GAAP）", "years": [2024, 2025], "series": [{"label": "经营收入", "unit": "", "points": [0.0, 0.0]}, {"label": "勘探费用", "unit": "", "points": [23700000.0, 21000000.0]}, {"label": "G&A费用", "unit": "", "points": [10600000.0, 9800000.0]}, {"label": "净亏损", "unit": "", "points": [-33900000.0, -29500000.0]}, {"label": "经营现金流（流出）", "unit": "流出", "points": [-31500000.0, -25400000.0]}, {"label": "融资现金流（流入）", "unit": "流入", "points": [15900000.0, 46100000.0]}, {"label": "营运资本", "unit": "", "points": [null, 27400000.0]}, {"label": "累计亏损", "unit": "", "points": [null, 106100000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}];</script>
 

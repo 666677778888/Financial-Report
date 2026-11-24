@@ -13,6 +13,99 @@
   <span class="tag">USAS · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="USAS" data-name="Americas Gold and Silver— 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Americas Gold and Silver— 年报摘要（USAS · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/USAS.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Americas Gold and Silver（USAS）— 年报摘要</h1>
 <blockquote>
@@ -277,9 +370,58 @@
 <li><strong>Crescent复产与锑合资</strong>：Crescent矿山目标2026年中复产银铜锑；与UAMY的锑JV切入美国战略金属供应链。</li>
 <li><strong>地域风险</strong>：墨西哥运营面临安全、社区与监管（SEMARNAT）风险；SAF贷款部分财务契约（2025-12-31至2026-03-31）获豁免，附带最低7,500万美元合并现金余额要求。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：银（银锌铅+铜）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ag（合并，by-product口径）</td>
+<td>25.69（2024：17.41）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>32.95（2024：28.13）</td>
+<td>US$/oz Ag</td>
+<td>Cash Costs/Ag Oz Produced（$/oz，非GAAP），净副产品抵扣（锌铅铜抵扣）；合并C1/合并AISC取自本摘要MD「四、财务摘要」，与AIF披露一致</td>
+</tr>
+<tr>
+<td>Ag – Cosalá（by-product口径）</td>
+<td>22.82（2024：11.13）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>26.52（2024：21.48）</td>
+<td>US$/oz Ag</td>
+<td>锌铅产量下降致副产品抵扣减少，C1翻倍</td>
+</tr>
+<tr>
+<td>Ag – Galena（by-product口径）</td>
+<td>28.04</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>38.20（2024：34.13）</td>
+<td>US$/oz Ag</td>
+<td>铅为副产品</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：公司现金成本为<strong>Cash Costs/Ag Oz Produced</strong>（副产品抵扣后，对应C1定义）。FY2025合并C1从17.41升至25.69美元/oz（+47.6%），主因Cosalá从San Rafael银锌铅转向EC120银铜矿体致锌铅副产品抵扣大减（Cosalá C1从11.13翻倍至22.82）+EC120投产前成本；合并AISC升至32.95。金（Relief Canyon）处于维护保养状态，无在产金成本披露。C2/C3未披露。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://americas-gold.com/investors/" target="_blank" rel="noopener">Americas Gold and Silver— 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Americas_Gold_and_Silver/Americas_Gold_and_Silver_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Americas_Gold_and_Silver/Americas_Gold_and_Silver_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "二、关键产量与运营（FY2024 vs FY2025）", "years": [2024, 2025], "series": [{"label": "白银产量（oz）", "unit": "oz", "points": [1739272.0, 2646293.0]}, {"label": "锌产量（lb）", "unit": "lb", "points": [31508284.0, 8284795.0]}, {"label": "铅产量（lb）", "unit": "lb", "points": [15834224.0, 9326026.0]}, {"label": "铜产量（lb）", "unit": "lb", "points": [null, 2011352.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "二、关键产量与运营（FY2024 vs FY2025）", "years": [2024, 2025], "series": [{"label": "处理量（吨）", "unit": "吨", "points": [120804.0, 97173.0]}, {"label": "银品位（g/t）", "unit": "g/t", "points": [392.0, 473.0]}, {"label": "银回收率（%）", "unit": "%", "points": [98.1, 98.5]}, {"label": "银产量（oz）", "unit": "oz", "points": [1494385.0, 1457097.0]}, {"label": "铅产量（lb）", "unit": "lb", "points": [10021111.0, 7523345.0]}, {"label": "AISC（$/Ag oz）", "unit": "$/Ag oz", "points": [34.13, 38.2]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "四、财务摘要（FY对比，美元）", "years": [2024, 2025], "series": [{"label": "收入", "unit": "", "points": [100200000.0, null]}, {"label": "净亏损", "unit": "", "points": [-49000000.0, null]}, {"label": "每股亏损", "unit": "", "points": [-0.43, -0.33]}, {"label": "经营现金（Cash generated from operations）", "unit": "", "points": [null, 4800000.0]}, {"label": "合并AISC（$/Ag oz）", "unit": "$/Ag oz", "points": [28.13, 32.95]}, {"label": "合并现金成本（$/Ag oz）", "unit": "$/Ag oz", "points": [17.41, 25.69]}, {"label": "期末现金", "unit": "", "points": [20000000.0, 129800000.00000001]}, {"label": "营运资金", "unit": "", "points": [-27900000.0, 67500000.0]}], "log": false, "type": "bar", "omitted": 1, "id": "chart3"}];</script>
 

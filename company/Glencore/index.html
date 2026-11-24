@@ -13,6 +13,99 @@
   <span class="tag">GLEN.L · 多金属矿业巨头</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="GLEN" data-name="Glencore plc 年报摘要" data-ccy="GBp">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Glencore plc 年报摘要（GLEN.L · GBp）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/GLEN.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Glencore plc 年报摘要</h1>
 <blockquote>
@@ -624,9 +717,51 @@
 <li><strong>DRC铜钴资产40%权益拟出售给美国Orion联盟</strong>——如完成将改变公司铜/钴产量归属，是关键跟踪事件。</li>
 <li><strong>热力煤EBITDA利润率从36%降至26%</strong>，反映煤价下行压力。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（日历年）｜<strong>主金属</strong>：银/金均为铜锌副产</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>银（副产）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>银（2025年20,425koz）为铜锌矿副产品（Antamina/KCC等），成本包含在铜单位成本（net unit cash cost after by-products）内，不单列贵金属成本</td>
+</tr>
+<tr>
+<td>金（副产）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>同上</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- Glencore的成本披露以铜/锌/煤单位净现金成本（副产抵扣后）为主框架，贵金属不作为成本对象
+- 本次证据提取文本（2024/2025年报提取件）中无任何单位成本数值，待原文核对后可补充铜C1作参考；不虚构拆分</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.glencore.com/investors" target="_blank" rel="noopener">Glencore plc 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Glencore/Glencore_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Glencore/Glencore_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 集团总产量（含炼钢煤、能源煤）", "years": [2023, 2024, 2025], "series": [{"label": "铜 Copper", "unit": "kt", "points": [1010.1, 951.6, 851.6]}, {"label": "钴 Cobalt", "unit": "kt", "points": [41.3, 38.2, 36.1]}, {"label": "锌 Zinc", "unit": "kt", "points": [918.5, 905.0, 969.4]}, {"label": "铅 Lead", "unit": "kt", "points": [182.7, 185.9, 178.9]}, {"label": "镍 Nickel", "unit": "kt", "points": [97.6, 82.3, 71.9]}, {"label": "金 Gold", "unit": "koz", "points": [747.0, 738.0, 604.0]}, {"label": "银 Silver", "unit": "koz", "points": [20011.0, 19286.0, 20425.0]}, {"label": "铬铁 Ferrochrome", "unit": "kt", "points": [1162.0, 1166.0, 436.0]}], "log": true, "type": "bar", "omitted": 2, "id": "chart1"}, {"title": "1.3 铜业务部门（Copper department）明细", "years": [2024, 2025], "series": [{"label": "African Copper (KCC, Mutanda)", "unit": "", "points": [224.5, 247.8]}, {"label": "African Copper", "unit": "", "points": [35.1, 33.5]}, {"label": "Collahuasi (44%)", "unit": "44%", "points": [245.8, 177.7]}, {"label": "Antamina (33.75%)", "unit": "33.75%", "points": [144.7, 130.1]}, {"label": "Antamina", "unit": "", "points": [92.1, 152.6]}, {"label": "Antamina", "unit": "", "points": [3835.0, 5974.0]}, {"label": "South America (Antapaccay, Lomas Bayas)", "unit": "", "points": [74.1, 65.3]}, {"label": "铜部门合计", "unit": "", "points": [834.9, 751.6]}], "log": true, "type": "bar", "omitted": 1, "id": "chart2"}, {"title": "1.4 锌业务部门（Zinc department）明细", "years": [2024, 2025], "series": [{"label": "Kazzinc", "unit": "", "points": [128.3, 125.0]}, {"label": "Kazzinc", "unit": "", "points": [99.2, 87.5]}, {"label": "Kazzinc", "unit": "", "points": [37.4, 28.1]}, {"label": "Kazzinc", "unit": "", "points": [603.0, 543.0]}, {"label": "Kazzinc", "unit": "", "points": [3340.0, 3416.0]}, {"label": "Australia (Mount Isa等)", "unit": "Mount Isa等", "points": [548.4, 562.8]}, {"label": "Australia", "unit": "", "points": [486.0, 341.0]}, {"label": "North America (Kidd)", "unit": "Kidd", "points": [37.0, 41.5]}], "log": true, "type": "bar", "omitted": 2, "id": "chart3"}, {"title": "3.3 财务与成本结构", "years": [2024, 2025], "series": [{"label": "工业资本开支", "unit": "", "points": [7118000000.0, 7570000000.0]}, {"label": "营销业务调整后EBIT", "unit": "", "points": [null, 2921000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}];</script>
 

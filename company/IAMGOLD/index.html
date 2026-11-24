@@ -13,6 +13,99 @@
   <span class="tag">IAG · 在产黄金核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="IAG" data-name="IAMGOLD — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · IAMGOLD — 年报摘要（IAG · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/IAG.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>IAMGOLD — 年报摘要</h1>
 <blockquote>
@@ -236,9 +329,44 @@
 <li><strong>去杠杆与股东回报</strong>：Q4用4亿美元自由现金流清偿3亿美元二线贷款、还循环信贷5,000万并回购3百万股（5,000万美元），净债务年内降5.149亿至3.444亿美元；2026年AISC指引$2,000–2,150/oz（$4,000金价假设下权利金约$325/oz）。</li>
 <li><strong>地缘与资产处置</strong>：布基纳法索安全形势与2024年新矿业法（权益稀释已落地）仍是Essakane长期风险；马里Diakha-Siribaya出售协议2024年底到期未续，正寻求替代出售方案。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，介于C2与C3之间，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au</td>
+<td>1,484（含权利金）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,900</td>
+<td>US$/oz sold</td>
+<td>Cash costs（含权利金）=1,484；剔除权利金=1,230；AISC=1,900（均为 attributable ounce sold口径，剔除Essakane少数股东权益）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- IAMGOLD双口径披露：含权利金$1,484/oz（达指引$1,375–1,475上限附近）、剔权利金$1,230/oz；权利金$254/oz，金价上涨是主要推手（2026年$4,000金价假设下预计约$325/oz）。
+- AISC $1,900/oz在指引区间$1,830–1,930内；同比+10.7%（1,716→1,900）。
+- 分矿：Essakane现金成本$1,268/oz、AISC $1,636/oz；Côté Gold现金成本（含权利金）$1,265/oz、AISC $1,688/oz；Westwood现金成本$1,530/oz、AISC $2,117/oz（品位下滑拖累）。
+- 公司未披露C2/C3口径，留空。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.iamgold.com/investors/" target="_blank" rel="noopener">IAMGOLD — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 IAMGOLD/IAMGOLD_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 IAMGOLD/IAMGOLD_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "二、黄金产量（盎司，权益法/attributable）", "years": [2024, 2025], "series": [{"label": "Côté Gold（70%）", "unit": "70%", "points": [124000.0, 279900.0]}, {"label": "Westwood", "unit": "", "points": [133700.0, 113900.0]}, {"label": "Essakane（90%→85%）", "unit": "90%→85%", "points": [408800.0, 372100.0]}, {"label": "合计（attributable）", "unit": "", "points": [666500.0, 765900.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "四、财务摘要（百万美元，attributable口径）", "years": [2024, 2025], "series": [{"label": "收入", "unit": "", "points": [1633.0, 2852.8]}, {"label": "黄金销量（attributable koz）", "unit": "", "points": [653.7, 763.7]}, {"label": "净利润（归属股东）", "unit": "归属股东", "points": [819.6, 664.4]}, {"label": "调整后净利（归属股东）", "unit": "归属股东", "points": [296.0, 709.2]}, {"label": "经营现金流", "unit": "", "points": [486.0, 1142.6]}, {"label": "现金成本（含权利金，$/oz sold）", "unit": "", "points": [1152.0, 1484.0]}, {"label": "AISC（$/oz sold）", "unit": "$/oz sold", "points": [1716.0, 1900.0]}, {"label": "净债务", "unit": "", "points": [859.3, 344.4]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}];</script>
 

@@ -13,6 +13,99 @@
   <span class="tag">SSRM · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="SSRM" data-name="SSR Mining Inc.年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · SSR Mining Inc.年报摘要（SSRM · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/SSRM.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>SSR Mining Inc.（NYSE: SSRM / TSX: SSRM）年报摘要</h1>
 <blockquote>
@@ -536,9 +629,79 @@
 <li><strong>阿根廷</strong>：Puna矿面临通胀和汇率波动风险</li>
 <li><strong>美国</strong>：CC&amp;V和Marigold运营环境相对稳定</li>
 </ul>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025｜<strong>主金属</strong>：金（金当量合并）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au Eq（集团合并）</td>
+<td>1,362</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>2,153</td>
+<td>US$/oz Au Eq</td>
+<td>非GAAP cash cost（不含D&amp;A），净副产品抵扣；AuEq按银/金价格比折算，不含副产品</td>
+</tr>
+<tr>
+<td>Au（Marigold）</td>
+<td>1,636</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,918</td>
+<td>US$/oz Au</td>
+<td>分矿山</td>
+</tr>
+<tr>
+<td>Au（CC&amp;V，2.28收购后）</td>
+<td>1,265</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,555</td>
+<td>US$/oz Au</td>
+<td>2025.2.28自Newmont收购，仅并表10个月</td>
+</tr>
+<tr>
+<td>Au（Seabee）</td>
+<td>1,525</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>2,231</td>
+<td>US$/oz Au</td>
+<td>分矿山</td>
+</tr>
+<tr>
+<td>Ag（Puna）</td>
+<td>11.79（Au Eq口径1,014）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>14.24（Au Eq口径1,225）</td>
+<td>US$/oz Ag</td>
+<td>多金属（Ag/Pb/Zn），副产品抵扣铅锌精矿收入</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- Çöpler（土耳其）2024.2事故后全年停产，处于看护维护状态（费用$150.8M，不计入成本指标）；合并指标受此拖累及Seabee产量下滑影响，AISC同比+14.6%至2,153 US$/oz Au Eq
+- CC&amp;V为成本最优资产（C1=1,265 US$/oz），收购后贡献10个月产量124.6koz；Seabee因品位下降24%叠加山火停产，AISC飙升至2,231 US$/oz（+47.3%）
+- 公司仅披露C1（cash cost）与AISC；另披露含D&amp;A的销售成本（Cost of Sales，$1,472/oz Au Eq，GAAP口径），但非C2/C3框架定义，不列入</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.ssrmining.com/investors/" target="_blank" rel="noopener">SSR Mining Inc.年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 SSR_Mining/SSR_Mining_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 SSR_Mining/SSR_Mining_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "合并产量数据", "years": [2023, 2024, 2025], "series": [{"label": "合并", "unit": "", "points": [590264.0, 275013.0, 333078.0]}, {"label": "合并", "unit": "", "points": [585171.0, 279121.0, 331534.0]}, {"label": "合并", "unit": "", "points": [9688.0, 10500.0, 9814.0]}, {"label": "合并", "unit": "", "points": [9920.0, 9642.0, 9663.0]}, {"label": "合并", "unit": "", "points": [45772.0, 53703.0, 45881.0]}, {"label": "合并", "unit": "", "points": [48640.0, 49631.0, 46756.0]}, {"label": "合并", "unit": "", "points": [7127.0, 3641.0, 4120.0]}, {"label": "合并", "unit": "", "points": [8166.0, 3121.0, 3470.0]}], "log": false, "type": "bar", "omitted": 2, "id": "chart1"}, {"title": "Marigold 金矿（美国内华达州）— 堆浸露天矿", "years": [2023, 2024, 2025], "series": [{"label": "金产量 (oz)", "unit": "oz", "points": [278488.0, 168262.0, 153535.0]}, {"label": "金销量 (oz)", "unit": "oz", "points": [275962.0, 167669.0, 154024.0]}, {"label": "矿石开采 (kt)", "unit": "kt", "points": [21846.0, 27690.0, 19321.0]}, {"label": "堆浸品位 (g/t)", "unit": "g/t", "points": [0.45, 0.28, 0.39]}, {"label": "AISC ($/oz)", "unit": "$/oz", "points": [1349.0, 1711.0, 1918.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "Seabee 金矿（加拿大萨斯喀彻温省）— 地下矿", "years": [2023, 2024, 2025], "series": [{"label": "金产量 (oz)", "unit": "oz", "points": [90777.0, 78545.0, 54986.0]}, {"label": "金销量 (oz)", "unit": "oz", "points": [83610.0, 81070.0, 54000.0]}, {"label": "矿石处理 (kt)", "unit": "kt", "points": [445.0, 366.0, 331.0]}, {"label": "处理品位 (g/t)", "unit": "g/t", "points": [6.62, 6.93, 5.25]}, {"label": "AISC ($/oz)", "unit": "$/oz", "points": [1427.0, 1515.0, 2231.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "Puna 银/铅/锌矿（阿根廷）— 露天矿", "years": [2023, 2024, 2025], "series": [{"label": "银产量 ('000 oz)", "unit": "'000 oz", "points": [9688.0, 10500.0, 9814.0]}, {"label": "铅产量 ('000 lb)", "unit": "'000 lb", "points": [45772.0, 53703.0, 45881.0]}, {"label": "锌产量 ('000 lb)", "unit": "'000 lb", "points": [7127.0, 3641.0, 4120.0]}, {"label": "银处理品位 (g/t)", "unit": "g/t", "points": [181.11, 180.96, 161.8]}, {"label": "AISC ($/oz Ag)", "unit": "$/oz Ag", "points": [15.37, 15.56, 14.24]}, {"label": "AISC ($/oz AuEq)", "unit": "$/oz AuEq", "points": [1277.0, 1315.0, 1225.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "三、成本结构", "years": [2023, 2024, 2025], "series": [{"label": "合并AISC ($/AuEq oz)", "unit": "$/AuEq oz", "points": [1461.0, 1878.0, 2153.0]}, {"label": "合并现金成本 ($/AuEq oz)", "unit": "$/AuEq oz", "points": [1083.0, 1200.0, 1362.0]}, {"label": "销售成本 ($/AuEq oz)", "unit": "$/AuEq oz", "points": [1141.0, 1307.0, 1472.0]}, {"label": "平均实现金价 ($/oz)", "unit": "$/oz", "points": [1950.0, 2381.0, 3524.0]}, {"label": "平均实现银价 ($/oz)", "unit": "$/oz", "points": [22.82, 29.16, 42.49]}], "log": true, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "5. 财务表现", "years": [2023, 2024, 2025], "series": [{"label": "收入 ($M)", "unit": "$M", "points": [1426.9, 995.6, 1629.6]}, {"label": "净利润(亏损) ($M)", "unit": "$M", "points": [-120.2, -352.6, 362.4]}, {"label": "调整后净利润 ($M)", "unit": "$M", "points": [276.5, 57.6, 430.5]}, {"label": "现金及等价物 ($M)", "unit": "$M", "points": [null, null, 534.8]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}];</script>
 

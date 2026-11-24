@@ -13,6 +13,99 @@
   <span class="tag">EXK · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="EXK" data-name="Endeavour Silver Corp.  年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Endeavour Silver Corp.  年报摘要（EXK · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/EXK.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Endeavour Silver Corp. (NYSE: EXK / TSX: EDR) 年报摘要</h1>
 <blockquote>
@@ -1036,9 +1129,58 @@
 <li>储量/资源量数据有效日期：2024年12月31日（公司内部更新估算）</li>
 <li>所有储量/资源量均按 NI 43-101 / CIM 标准披露，非 SEC S-K 1300 标准</li>
 </ul>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2024（截至2024-12-31）｜<strong>主金属</strong>：银</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ag（合并，by-product口径）</td>
+<td>12.99（2023：13.49）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>23.88（2023：22.93）</td>
+<td>US$/oz Ag</td>
+<td>Cash cost美元/银盎司，副产品抵扣后（金作副产品）；数据取自本摘要MD「2.3 成本结构」（源自MD&amp;A Exhibit 99.3），证据摘录文件无成本行</td>
+</tr>
+<tr>
+<td>Ag – Bolañitos（by-product口径）</td>
+<td>-31.47（负值）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1.47</td>
+<td>US$/oz Ag</td>
+<td>金产出高+金价大涨，副产品抵扣大于现金成本，C1为负——本质为金矿带银</td>
+</tr>
+<tr>
+<td>Ag – Guanaceví</td>
+<td>未按矿山单列（合并口径披露）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未按矿山单列</td>
+<td>US$/oz Ag</td>
+<td>公司以合并口径披露为主</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：Endeavour现金成本为<strong>净副产品抵扣（by-product）口径</strong>（金作副产品抵扣），直接对应C1定义。2024年合并C1为12.99美元/oz（-4%），但AISC升至23.88（+4%）；Bolañitos因金产出占比高且金价大涨，C1为-31.47（负值）、AISC仅1.47。2024年Guanaceví球磨机滑履故障致Q4大幅减产，管理层撤销全年成本指引。公司另披露「总生产成本」19.70美元/oz（2024），介于C1与AISC之间。C2/C3未披露。2025年指引：cash cost 16.00–17.00、AISC 25.00–26.00美元/oz。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://edrsilver.com/investors/financial-reports/" target="_blank" rel="noopener">Endeavour Silver Corp.  年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Endeavour_Silver/Endeavour_Silver_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Endeavour_Silver/Endeavour_Silver_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "2.1 合并产量表（FY2023 vs FY2024）", "years": [2023, 2024], "series": [{"label": "合并", "unit": "", "points": [5672703.0, 4471824.0]}, {"label": "合并", "unit": "", "points": [5627379.0, 4438354.0]}, {"label": "合并", "unit": "", "points": [37858.0, 39047.0]}, {"label": "合并", "unit": "", "points": [37189.0, 38327.0]}, {"label": "合并", "unit": "", "points": [8701343.0, 7595584.0]}, {"label": "合并", "unit": "", "points": [874382.0, 781439.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "Guanaceví 矿山（占 2024 年合并营收 68%）", "years": [2023, 2024], "series": [{"label": "处理量（吨）", "unit": "吨", "points": [433409.0, 353793.0]}, {"label": "银品位（g/t）", "unit": "g/t", "points": [417.0, 397.0]}, {"label": "金品位（g/t）", "unit": "g/t", "points": [1.19, 1.35]}, {"label": "银产出（oz）", "unit": "oz", "points": [5105237.0, 4019197.0]}, {"label": "金产出（oz）", "unit": "oz", "points": [14955.0, 13817.0]}, {"label": "银当量产出（oz）", "unit": "oz", "points": [6301637.0, 5124557.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "Bolañitos 矿山（占 2024 年合并营收 32%）", "years": [2023, 2024], "series": [{"label": "处理量（吨）", "unit": "吨", "points": [440973.0, 427646.0]}, {"label": "银品位（g/t）", "unit": "g/t", "points": [47.0, 39.0]}, {"label": "金品位（g/t）", "unit": "g/t", "points": [1.82, 1.98]}, {"label": "银产出（oz）", "unit": "oz", "points": [567466.0, 452627.0]}, {"label": "金产出（oz）", "unit": "oz", "points": [22903.0, 25230.0]}, {"label": "银当量产出（oz）", "unit": "oz", "points": [2399706.0, 2471027.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "2.3 成本结构", "years": [2023, 2024], "series": [{"label": "Cash cost（美元/银盎司，副产品抵扣后）", "unit": "", "points": [13.49, 12.99]}, {"label": "总生产成本（美元/银盎司）", "unit": "美元/银盎司", "points": [18.55, 19.7]}, {"label": "AISC（美元/银盎司）", "unit": "美元/银盎司", "points": [22.93, 23.88]}, {"label": "直接运营成本（美元/吨）", "unit": "美元/吨", "points": [130.17, 140.98]}, {"label": "直接总成本（含特许权使用费，美元/吨）", "unit": "", "points": [171.0, 192.51]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "3.1 Terronera 项目（核心增长项目）", "years": [2024, 2025], "series": [{"label": "采矿", "unit": "", "points": [83.8, 100.2]}, {"label": "选矿厂", "unit": "", "points": [64.8, 78.0]}, {"label": "场地基础设施", "unit": "", "points": [56.2, 58.4]}, {"label": "直接成本合计", "unit": "", "points": [204.8, 236.6]}, {"label": "业主费用", "unit": "", "points": [33.3, 50.3]}, {"label": "项目间接费用", "unit": "", "points": [24.2, 45.1]}, {"label": "应急费用", "unit": "", "points": [8.7, 0.0]}, {"label": "间接成本合计", "unit": "", "points": [66.2, 95.4]}], "log": false, "type": "bar", "omitted": 1, "id": "chart5"}, {"title": "4.1 财务状况", "years": [2023, 2024], "series": [{"label": "营收（M）", "unit": "M", "points": [205.5, 217.6]}, {"label": "矿山经营利润（M）", "unit": "M", "points": [36.6, 42.1]}, {"label": "经营活动现金流（M）", "unit": "M", "points": [37.0, 27.2]}, {"label": "EBITDA（M）", "unit": "M", "points": [47.9, 10.0]}, {"label": "调整后 EBITDA（M）", "unit": "M", "points": [47.1, 52.7]}, {"label": "营运资金（M）", "unit": "M", "points": [42.5, 78.8]}, {"label": "现金及等价物（M）", "unit": "M", "points": [35.3, 106.4]}, {"label": "总资产（M）", "unit": "M", "points": [474.8, 719.2]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}];</script>
 

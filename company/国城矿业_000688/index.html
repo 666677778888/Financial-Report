@@ -13,6 +13,99 @@
   <span class="tag">000688 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="000688" data-name="国城矿业年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 国城矿业年报摘要（000688 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/000688.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>国城矿业（000688）年报摘要</h1>
 <blockquote>
@@ -523,9 +616,67 @@
 <p><strong>中都矿产金矿是贵金属板块保留的资产</strong>。16.226吨金金属量，35万吨/年采选项目尚在前期准备中，投产时间待定。</p>
 </li>
 </ol>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，采矿+选冶单位成本）；AISC=WGC全维持成本（A股不披露）。公司已剥离银矿（宇邦矿业），白银不再是主营，成本按钼/铅锌主金属口径披露。财年FY2025（截至2025-12-31）。标注"测算"的数值系以年报营业成本构成表金额÷销售量折算（单位销售成本口径，非公司直接披露的cash cost）。</p>
+</blockquote>
+<p><strong>企业类型</strong>：矿山采选（钼核心+铅锌）+钛化工｜<strong>主金属</strong>：钼（转型后核心）</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>钼精矿（国城实业大苏计钼矿，矿山）</td>
+<td>主营成本7.24亿元（<strong>测算单位销售成本≈9.93万元/金属吨</strong>，按销量7,287.09金属吨折算）</td>
+<td>未披露</td>
+<td>万元/金属吨</td>
+<td>品位0.116%（较高品位）；"钼的采选、冶炼及加工成本相对固定"（年报行业表述）</td>
+</tr>
+<tr>
+<td>锌精矿（东矿，矿山）</td>
+<td>主营成本3.97亿元（测算≈1.33万元/金属吨，按销量29,981.32金属吨折算）</td>
+<td>未披露</td>
+<td>万元/金属吨</td>
+<td>东矿品位自然下降</td>
+</tr>
+<tr>
+<td>铅精矿（东矿，矿山）</td>
+<td>主营成本0.68亿元（测算≈1.46万元/金属吨，按销量4,680.51金属吨折算）</td>
+<td>未披露</td>
+<td>万元/金属吨</td>
+<td>—</td>
+</tr>
+<tr>
+<td>锂（金鑫矿业党坝锂矿，参股）</td>
+<td>建设期无数值</td>
+<td>不适用</td>
+<td>—</td>
+<td>5000吨/天选厂试生产、500万吨/年采矿证办理中；Li₂O品位1.34%，正式投产后方可形成成本口径</td>
+</tr>
+<tr>
+<td>钛白粉（国城钛业，化工）</td>
+<td>主营成本14.97亿元（测算≈1.16万元/吨，按销量128,594.40吨折算）</td>
+<td>不适用</td>
+<td>万元/吨</td>
+<td>非采选环节</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. <strong>钼精矿测算单位销售成本≈9.93万元/金属吨</strong>：系主营成本÷销量口径（含采选全流程+分摊），公司未披露标准cash cost；国城实业2025年净利润11.46亿元，反映大苏计钼矿在钼价3,000-4,600元/吨度区间下盈利能力强劲。
+2. <strong>银精矿成本已不具参考性</strong>：出售宇邦矿业后2025年银精矿仅972.34千克（-98.75%），银精矿主营成本0.28亿元（-88.41%）系尾货销售。
+3. <strong>锂业务为参股+建设期</strong>，金鑫矿业（参股）与国城锂业（锂盐一期6万吨在建）均未形成产量，暂无锂口径成本数据。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="http://gckychina.com/companyfile/2/" target="_blank" rel="noopener">国城矿业年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 国城矿业_000688/国城矿业_000688_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 国城矿业_000688/国城矿业_000688_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "2.1 有色金属采选产品产量", "years": [2023, 2024, 2025], "series": [{"label": "钼精矿", "unit": "", "points": [null, 6983.53, 7519.87]}, {"label": "锌精矿", "unit": "", "points": [53698.04, 40954.62, 29457.75]}, {"label": "铅精矿", "unit": "", "points": [9486.54, 6861.6, 4677.53]}, {"label": "铜精矿", "unit": "", "points": [976.36, 867.17, 665.07]}, {"label": "银精矿", "unit": "", "points": [16846.5, 77493.84, 972.34]}, {"label": "硫精矿（吨）", "unit": "吨", "points": [180134.73, 281112.31, 420442.77]}, {"label": "硫铁粉（吨）", "unit": "吨", "points": [296328.91, 64111.0, 319297.37]}, {"label": "硫酸（吨）", "unit": "吨", "points": [140965.0, 163953.68, null]}], "log": true, "type": "bar", "omitted": 1, "id": "chart1"}, {"title": "2.2 化工产品产量", "years": [2023, 2024, 2025], "series": [{"label": "钛白粉", "unit": "", "points": [126.18, 40726.44, 136555.23]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "4.2 财务数据要点", "years": [2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [1918000000.0, 4806000000.0]}, {"label": "归母净利润", "unit": "", "points": [-112999999.99999999, 1076000000.0]}, {"label": "扣非归母净利润", "unit": "", "points": [-90000000.0, -256999999.99999997]}, {"label": "经营活动现金流净额", "unit": "", "points": [225999999.99999997, 1093000000.0]}, {"label": "总资产", "unit": "", "points": [9272000000.0, 11131000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 

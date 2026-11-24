@@ -13,6 +13,99 @@
   <span class="tag">600362 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="600362" data-name="江西铜业年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 江西铜业年报摘要（600362 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/600362.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>江西铜业（600362）年报摘要</h1>
 <blockquote>
@@ -457,9 +550,56 @@
 </tbody>
 </table>
 <div class="chart-box"><div class="chart-title">3.6 核心财务指标<span class="chart-sub">2023–2025 · 柱状图 · 对数轴</span></div><div class="chart-canvas-wrap"><canvas id="chart4"></canvas></div></div>
+
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：本公司以冶炼为主体（阴极铜238万吨 vs 自产铜精矿含铜27万吨），拥有德兴铜矿等自有矿山但年报未披露矿山单位采矿成本，C1/C2/C3及AISC均无披露；下表为可得现金成本口径（行业TC/RC+公司成本结构）。摘要3.2节已有成本结构表，此处仅作口径归集。</p>
+</blockquote>
+<p><strong>企业类型</strong>：冶炼型（含矿山分部）｜<strong>财年</strong>：FY2025（截至2025-12-31）</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>矿山分部（德兴铜矿等）</td>
+<td>未披露单位采矿现金成本</td>
+<td>不适用</td>
+<td>—</td>
+<td>自产铜精矿含铜26.99万吨（2025，含第一量子权益产量），年报未披露C1口径采矿成本</td>
+</tr>
+<tr>
+<td>铜冶炼</td>
+<td>行业TC口径：2025年现货TC维持-50至-40美元/吨低位；2024年长单TC/RC由80美元/吨、8美分/磅降至23.25美元/吨、2.33美分/磅</td>
+<td>不适用</td>
+<td>美元/吨（TC）、美分/磅（RC）</td>
+<td>公司自身冶炼单位加工费未单独披露；冶炼环节现金成本体现为原材料3,591.06亿元+能源38.17亿元+人工26.97亿元+制造费用88.56亿元</td>
+</tr>
+<tr>
+<td>副产品（金/银/硫酸）</td>
+<td>未披露</td>
+<td>不适用</td>
+<td>—</td>
+<td>伴生回收，成本归集于铜冶炼系统</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：</p>
+<ol>
+<li>铜精矿加工费（TC）2025年2月起进入负值区间、全年维持-40美元/吨左右低位，行业冶炼现金利润被挤压；公司凭矿山分部（自产矿26.99万吨）+副产品（硫酸毛利率63.36%）对冲TC下行。</li>
+<li>原材料占成本比重由2024年59.74%升至2025年69.32%，铜产品毛利率4.13%——冶炼盈利核心在原料自给率与副产品，而非加工费。</li>
+<li>矿山分部（德兴、武山、银山、巴库塔钨矿）无单位成本披露，无法计算矿山cash cost/AISC；索尔黄金（Alpala）尚在建设期。</li>
+</ol>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.jxcc.com/" target="_blank" rel="noopener">江西铜业年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 江西铜业_600362/江西铜业_600362_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 江西铜业_600362/江西铜业_600362_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要产品产量", "years": [2023, 2024, 2025], "series": [{"label": "阴极铜（万吨）", "unit": "万吨", "points": [209.73, 229.19, 238.04]}, {"label": "白银（吨）", "unit": "吨", "points": [1351.54, 1214.18, 1383.18]}, {"label": "黄金（吨）", "unit": "吨", "points": [112.64, 118.26, 118.93]}, {"label": "硫酸（万吨）", "unit": "万吨", "points": [595.79, 604.12, 703.43]}, {"label": "铜加工产品（万吨）", "unit": "万吨", "points": [181.79, 189.28, 191.31]}, {"label": "自产铜精矿含铜（万吨）", "unit": "万吨", "points": [20.2, 19.97, 26.99]}, {"label": "标硫精矿（万吨）", "unit": "万吨", "points": [265.85, 271.66, 287.82]}, {"label": "钼精矿折合量（45%）（吨）", "unit": "吨", "points": [10006.0, 8466.0, 8699.0]}], "log": true, "type": "bar", "omitted": 1, "id": "chart1"}, {"title": "3.2 成本结构变化", "years": [2024, 2025], "series": [{"label": "有色金属制造业-原材料（亿元）", "unit": "亿元", "points": [2964.36, 3591.06]}, {"label": "有色金属制造业-能源动力（亿元）", "unit": "亿元", "points": [35.62, 38.17]}, {"label": "有色金属制造业-人工（亿元）", "unit": "亿元", "points": [23.06, 26.97]}, {"label": "有色金属制造业-制造费用（亿元）", "unit": "亿元", "points": [80.14, 88.56]}, {"label": "贵金属副产品-原材料（亿元）", "unit": "亿元", "points": [689.03, 1045.48]}, {"label": "研发费用（亿元）", "unit": "亿元", "points": [11.18, 14.15]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.4 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "100%所有权保有铜金属（万吨）", "unit": "万吨", "points": [889.91, 855.89]}, {"label": "100%所有权保有金（吨）", "unit": "吨", "points": [239.08, 227.34]}, {"label": "100%所有权保有银（吨）", "unit": "吨", "points": [8252.6, 8216.27]}, {"label": "100%所有权保有钼（万吨）", "unit": "万吨", "points": [16.62, 16.1]}, {"label": "联合控制资源-铜（万吨）", "unit": "万吨", "points": [1312.0, 1491.51]}, {"label": "联合控制资源-黄金（吨）", "unit": "吨", "points": [97.26, 234.55]}, {"label": "恒邦股份保有金资源量（吨）", "unit": "吨", "points": [82.19, 150.1]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "3.6 核心财务指标", "years": [2023, 2024, 2025], "series": [{"label": "营业收入（亿元）", "unit": "亿元", "points": [5218.93, 5209.28, 5446.23]}, {"label": "归母净利润（亿元）", "unit": "亿元", "points": [65.05, 69.62, 71.3]}, {"label": "扣非归母净利润（亿元）", "unit": "亿元", "points": [53.74, 82.87, 91.48]}, {"label": "总资产（亿元）", "unit": "亿元", "points": [1681.51, 1931.28, 2186.91]}, {"label": "归母净资产（亿元）", "unit": "亿元", "points": [674.22, 779.45, 812.76]}, {"label": "基本每股收益（元/股）", "unit": "元/股", "points": [1.88, 2.01, 2.07]}, {"label": "加权平均ROE（%）", "unit": "%", "points": [9.23, 9.58, 8.96]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}];</script>
 

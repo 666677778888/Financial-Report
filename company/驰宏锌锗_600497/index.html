@@ -13,6 +13,99 @@
   <span class="tag">600497 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="600497" data-name="驰宏锌锗年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 驰宏锌锗年报摘要（600497 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/600497.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>驰宏锌锗（600497）年报摘要</h1>
 <blockquote>
@@ -682,9 +775,60 @@
 </tr>
 </tbody>
 </table>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，采矿+选冶单位成本）；AISC=WGC全维持成本（A股不披露）。白银为铅锌矿伴生+铅锌冶炼综合回收，开采成本按主金属（铅/锌）口径披露。财年FY2025（截至2025-12-31）。标注"测算"的数值系以年报成本分析表金额÷产销量折算，非公司直接披露。</p>
+</blockquote>
+<p><strong>企业类型</strong>：矿山+冶炼混合（原料自给率约13.77%）｜<strong>主金属</strong>：铅/锌（银为伴生+综合回收）</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>铅锌精矿（矿山，采选）</td>
+<td>采选成本合计4.02亿元；其中锌精矿采选成本3.14亿元（测算≈1,474元/金属吨，对应外销锌精矿口径）</td>
+<td>未披露（定性：矿山完全成本达历史最优）</td>
+<td>元/金属吨</td>
+<td>部分矿山铅锌精矿完全成本远低于行业平均水平</td>
+</tr>
+<tr>
+<td>锌产品（冶炼，加工成本）</td>
+<td>23.70亿元（测算≈4,516元/吨，按产量52.48万吨折算）</td>
+<td>不适用</td>
+<td>元/吨</td>
+<td>原材料另计66.66亿元</td>
+</tr>
+<tr>
+<td>铅产品（冶炼，加工成本）</td>
+<td>4.82亿元（测算≈2,837元/吨，按产量16.99万吨折算）</td>
+<td>不适用</td>
+<td>元/吨</td>
+<td>原材料另计19.52亿元</td>
+</tr>
+<tr>
+<td>银锭（冶炼，加工成本）</td>
+<td>2,483万元（测算≈141.6元/千克≈0.14元/克，按销量175,341千克折算）</td>
+<td>不适用</td>
+<td>元/千克</td>
+<td>系冶炼加工环节成本，不含原料；银原料24.08亿元（外购+伴生）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. <strong>采选/冶炼成本分项披露（同业中较细）</strong>：年报成本分析表单列"采选成本"（锌精矿3.14亿、硫精矿465万、西藏鑫湖8,288万）与各产品"加工成本"，可近似还原cash cost结构，但矿山端未按金属量直接披露单位成本。
+2. <strong>矿山端仅定性表述</strong>："矿山完全成本、冶炼锌加工成本、锌冶炼完全成本实现同比、预算比双优化，达到历史最优水平"（会泽品位27%、彝良品位20%，公司称部分矿山完全成本远低于行业平均）。
+3. **银锭加工成本约0.14元/克（测算）**仅为冶炼环节，银的"矿山成本"隐含在铅锌精矿采选成本中，无独立克银cash cost。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://chxz.chinalco.com.cn/" target="_blank" rel="noopener">驰宏锌锗年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 驰宏锌锗_600497/驰宏锌锗_600497_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 驰宏锌锗_600497/驰宏锌锗_600497_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要产品产量（2023-2025年）", "years": [2023, 2024, 2025], "series": [{"label": "铅精矿", "unit": "万金属吨", "points": [8.83, 7.5, 8.17]}, {"label": "锌精矿", "unit": "万金属吨", "points": [25.23, 21.48, 21.32]}, {"label": "铅锌精矿合计", "unit": "万金属吨", "points": [34.06, 28.98, 29.49]}, {"label": "铅产品（铅锭）", "unit": "万吨", "points": [17.94, 16.62, 16.99]}, {"label": "锌产品-锌锭", "unit": "万吨", "points": [37.1, 29.17, 29.14]}, {"label": "锌产品-锌合金", "unit": "万吨", "points": [14.71, 19.35, 23.34]}, {"label": "锌产品合计", "unit": "万吨", "points": [51.81, 48.52, 52.48]}, {"label": "锗产品含锗", "unit": "吨", "points": [65.92, 65.12, 54.69]}], "log": true, "type": "bar", "omitted": 2, "id": "chart1"}, {"title": "4.4 成本结构变化", "years": [2024, 2025], "series": [{"label": "原材料采购", "unit": "", "points": [98.4, 123.96]}, {"label": "冶炼成本", "unit": "", "points": [34.12, 33.44]}, {"label": "采选成本", "unit": "", "points": [3.77, 4.02]}, {"label": "贸易采购成本", "unit": "", "points": [16.34, 36.74]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "4.5 主要财务数据", "years": [2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [18803000000.0, 24059000000.0]}, {"label": "归母净利润", "unit": "", "points": [1293000000.0, 1035000000.0]}, {"label": "扣非归母净利润", "unit": "", "points": [1397000000.0, 1061999999.9999999]}, {"label": "经营性现金流", "unit": "", "points": [2366000000.0, 3763000000.0000005]}, {"label": "分红总额", "unit": "", "points": [null, 772000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 

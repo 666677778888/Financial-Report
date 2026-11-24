@@ -13,6 +13,99 @@
   <span class="tag">CDE · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="CDE" data-name="Coeur Mining, Inc. 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Coeur Mining, Inc. 年报摘要（CDE · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/CDE.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Coeur Mining, Inc. 年报摘要</h1>
 <blockquote>
@@ -706,9 +799,49 @@ Las Chispas 储量为 SilverCrest 收购带来的增量（生效日期为 Silver
 <li>2025 指引来自 FY2024 10-K 中 2025 Guidance 章节，假设价格金 $2,700/oz、银 $30.00/oz、CAD 1.425、MXN 20.50。</li>
 <li>Las Chispas 储量/产量数据来自 SilverCrest 历史披露，Coeur 收购后尚未重新估算。</li>
 </ul>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2024（截至2024-12-31）｜<strong>主金属</strong>：银（金银双主产）</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ag（by-product口径）</td>
+<td>CAS：Palmarejo 14.38 / Rochester 20.43</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露（公司层面未在证据中给出AISC；Coeur主要披露CAS）</td>
+<td>US$/oz Ag</td>
+<td>Costs Applicable to Sales per silver ounce。<strong>注意：CAS≈C1近似</strong>——为矿山现场销售成本口径（co-product分摊，非严格净副产品抵扣），本表以CAS作为C1参考；数据取自本摘要MD「五、关键成本结构」（源自FY2024 10-K），因证据文件（10-K 2025/AnnualReport 2024摘录）无有效成本行</td>
+</tr>
+<tr>
+<td>Au（by-product口径）</td>
+<td>CAS：Palmarejo 898 / Rochester 1,693 / Kensington 1,655 / Wharf 935</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>US$/oz Au</td>
+<td>同上，CAS口径；Wharf摘要MD提及「minesite AISC极具竞争力」但无数值，不引用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：Coeur披露体系以**CAS（Costs Applicable to Sales）**为核心非GAAP成本指标，按矿山、按金属分别列示（金银均为co-product分摊口径），概念上接近C1直接现金成本但含折旧摊销前的销售成本分摊，与严格C1（净副产品抵扣）存在口径差异。2024年CAS同比改善：金降13%、银降12%，其中Rochester扩建达产使CAS-银降23%至20.43。Las Chispas（2025-02并表）2025年CAS指引银9.25–10.25美元/oz，为行业领先低成本。AISC、C2、C3在本摘要MD及证据文件中均未披露。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.coeur.com/investors/financials/default.aspx" target="_blank" rel="noopener">Coeur Mining, Inc. 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Coeur_Mining/Coeur_Mining_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Coeur_Mining/Coeur_Mining_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "合并产量（FY2022–FY2024）", "years": [2022, 2023, 2024], "series": [{"label": "合并", "unit": "", "points": [330346.0, 317671.0, 341582.0]}, {"label": "合并", "unit": "", "points": [9816680.0, 10250906.0, 11389519.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "Palmarejo（墨西哥，金-银地下矿）", "years": [2022, 2023, 2024], "series": [{"label": "处理量 (t)", "unit": "t", "points": [2197808.0, 2008459.0, 1762779.0]}, {"label": "金品位 (oz/t)", "unit": "oz/t", "points": [0.05, 0.05, 0.07]}, {"label": "银品位 (oz/t)", "unit": "oz/t", "points": [3.63, 3.97, 4.52]}, {"label": "金回收率 (%)", "unit": "%", "points": [92.1, 91.1, 93.0]}, {"label": "银回收率 (%)", "unit": "%", "points": [84.2, 82.7, 85.0]}, {"label": "金产量 (oz)", "unit": "oz", "points": [106782.0, 100605.0, 108666.0]}, {"label": "银产量 (oz)", "unit": "oz", "points": [6708689.0, 6591590.0, 6779659.0]}, {"label": "CAS - 金 ($/oz)", "unit": "$/oz", "points": [886.0, 961.0, 898.0]}], "log": true, "type": "bar", "omitted": 1, "id": "chart2"}, {"title": "Rochester（美国内华达，银-金露天堆浸）", "years": [2022, 2023, 2024], "series": [{"label": "堆浸量 (t)", "unit": "t", "points": [14919803.0, 11388657.0, 23529814.0]}, {"label": "金品位 (oz/t)", "unit": "oz/t", "points": [0.003, 0.003, 0.002]}, {"label": "银品位 (oz/t)", "unit": "oz/t", "points": [0.41, 0.45, 0.52]}, {"label": "金产量 (oz)", "unit": "oz", "points": [34735.0, 38775.0, 39203.0]}, {"label": "银产量 (oz)", "unit": "oz", "points": [3061924.0, 3391530.0, 4377847.0]}, {"label": "CAS - 金 ($/oz)", "unit": "$/oz", "points": [2403.0, 2138.0, 1693.0]}, {"label": "CAS - 银 ($/oz)", "unit": "$/oz", "points": [27.26, 26.67, 20.43]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "Kensington（美国阿拉斯加，地下金矿）", "years": [2022, 2023, 2024], "series": [{"label": "处理量 (t)", "unit": "t", "points": [700346.0, 651576.0, 699037.0]}, {"label": "金品位 (oz/t)", "unit": "oz/t", "points": [0.17, 0.14, 0.15]}, {"label": "金回收率 (%)", "unit": "%", "points": [92.5, 91.9, 91.3]}, {"label": "金产量 (oz)", "unit": "oz", "points": [109061.0, 84789.0, 95671.0]}, {"label": "CAS - 金 ($/oz)", "unit": "$/oz", "points": [1423.0, 1797.0, 1655.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "Wharf（美国南达科他，露天金堆浸）", "years": [2022, 2023, 2024], "series": [{"label": "堆浸量 (t)", "unit": "t", "points": [4506849.0, 4743469.0, 5003935.0]}, {"label": "金品位 (oz/t)", "unit": "oz/t", "points": [0.021, 0.026, 0.031]}, {"label": "金产量 (oz)", "unit": "oz", "points": [79768.0, 93502.0, 98042.0]}, {"label": "银（副产）产量 (oz)", "unit": "oz", "points": [46067.0, 267786.0, 232013.0]}, {"label": "CAS - 金 ($/oz)", "unit": "$/oz", "points": [1283.0, 1159.0, 935.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "2. 财务表现反转（FY2024 vs FY2023）", "years": [2023, 2024], "series": [{"label": "营业收入", "unit": "", "points": [821000000.0, 1054000000.0]}, {"label": "调整后 EBITDA", "unit": "", "points": [142000000.0, 339000000.0]}, {"label": "经营性现金流", "unit": "", "points": [67000000.0, 174000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}];</script>
 

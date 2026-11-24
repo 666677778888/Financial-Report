@@ -13,6 +13,99 @@
   <span class="tag">000426 · A股银矿核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="000426" data-name="兴业银锡年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 兴业银锡年报摘要（000426 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/000426.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>兴业银锡（000426）年报摘要</h1>
 <blockquote>
@@ -618,9 +711,53 @@
 <p><strong>储量优势突出</strong>：银金属量2.98万吨、锡39.16万吨，资源禀赋行业领先，为长期发展提供保障。</p>
 </li>
 </ol>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，含采矿+选冶，净副产品前）；AISC=WGC全维持成本；A股公司普遍不披露AISC。数据源：FY2025年报（截至2025-12-31）。</p>
+</blockquote>
+<p><strong>企业类型</strong>：矿山型｜<strong>主金属</strong>：银（+锡锌铅锑）</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>矿产银</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/克或元/吨</td>
+<td>2025年矿产银营业成本同比+126.59%（并表宇邦矿业所致），毛利率58.71%（-7.27pct）</td>
+</tr>
+<tr>
+<td>矿产锡</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/吨</td>
+<td>2025年营业成本同比+36.29%，毛利率67.84%（-4.66pct）</td>
+</tr>
+<tr>
+<td>矿产锌</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/吨</td>
+<td>毛利率43.79%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. 年报未披露分产品单位现金成本，仅有总量与毛利率数据：2025年营业成本同比+49.40%高于收入增速30.09%，采矿行业毛利率下降5.40pct至57.58%。
+2. 成本抬升主因并表宇邦矿业（银品位72.96 g/t，显著低于银漫185 g/t及乾金达275 g/t，低品位摊薄单位经济价值），需关注宇邦选矿效率提升及成本管控进展。
+3. 2024年报曾有「选矿单位成本节约1元/吨」的降本目标表述，但未披露实际单位成本绝对值；AISC未披露（非WGC会员口径）。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.xyyxky.com/Investor_relations/p-0-400.html" target="_blank" rel="noopener">兴业银锡年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 兴业银锡_000426/兴业银锡_000426_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 兴业银锡_000426/兴业银锡_000426_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 矿产品产量（2023-2025年）", "years": [2023, 2024, 2025], "series": [{"label": "矿产银（吨）", "unit": "吨", "points": [199.62, 228.93, 301.03]}, {"label": "矿产锡（吨）", "unit": "吨", "points": [7769.25, 8901.85, 6679.34]}, {"label": "矿产锌（吨）", "unit": "吨", "points": [54972.43, 59740.98, 66686.55]}, {"label": "矿产铅（吨）", "unit": "吨", "points": [15694.65, 16958.57, 19156.7]}, {"label": "矿产铜（吨）", "unit": "吨", "points": [2769.51, 2906.43, 2380.89]}, {"label": "矿产锑（吨）", "unit": "吨", "points": [1019.55, 1351.7, 1634.85]}, {"label": "矿产铁（吨）", "unit": "吨", "points": [352283.91, 339088.17, 293839.07]}, {"label": "矿产铋（吨）", "unit": "吨", "points": [181.11, 175.52, 174.45]}], "log": true, "type": "bar", "omitted": 1, "id": "chart1"}, {"title": "1.4 矿产银销量", "years": [2023, 2024, 2025], "series": [{"label": "销量（千克）", "unit": "", "points": [232050.57, 209819.08, 298143.91]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.3 营收与利润", "years": [2024, 2025], "series": [{"label": "营业收入（万元）", "unit": "万元", "points": [427038.72, 555525.36]}, {"label": "利润总额（万元）", "unit": "万元", "points": [176522.61, 209623.7]}, {"label": "归母净利润（万元）", "unit": "万元", "points": [152985.86, 170423.93]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "3.9 现金流", "years": [2024, 2025], "series": [{"label": "经营活动现金流量净额", "unit": "", "points": [1814999999.9999998, 2488000000.0]}, {"label": "投资活动现金流量净额", "unit": "", "points": [-1003999999.9999999, -2937000000.0]}, {"label": "筹资活动现金流量净额", "unit": "", "points": [-23000000.0, 610000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}];</script>
 

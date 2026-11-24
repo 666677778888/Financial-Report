@@ -13,6 +13,99 @@
   <span class="tag">ITRG · 在产白银核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="ITRG" data-name="Integra Resources— 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Integra Resources— 年报摘要（ITRG · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/ITRG.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Integra Resources（ITRG）— 年报摘要</h1>
 <blockquote>
@@ -254,9 +347,43 @@
 <li><strong>运营扰动事件</strong>：Q4溶液池衬垫破损（已修复、无环境泄漏）导致Q4产量降至12,864 oz并递延2,000–3,000盎司；Q3曾因水井问题致缺水与抑尘挑战。</li>
 <li><strong>资本密集期</strong>：2026年维持性资本$62–68M+增长资本$7.5–9.5M叠加DeLamar投入， reliance on经营现金流与在手现金（$63.1M）；闭坑复垦义务未折现合计$97.0M。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（Florida Canyon首个完整生产年，2024.11.8并购）｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au（Florida Canyon）</td>
+<td>1,937</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>2,693（Mine-site AISC）</td>
+<td>US$/oz Au sold</td>
+<td>非GAAP cash cost（含权利金/消费税）；Mine-site AISC=矿山层级AISC；公司另披露含G&amp;A的Total AISC（全年$200.07M总额，per oz值未列示）；2024年仅含并购后53天（C1=1,687、AISC=2,102，已重述含租赁付款），可比性有限</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>
+- 2025年C1（$1,937）与Mine-site AISC（$2,693）均超指引上限（$1,800-1,900 / $2,450-2,550），主因金价超预期推高权利金与消费税（金价每±$100/oz影响成本约±$7/oz）；Q4 AISC升至$3,371还含计划内新设备购置付款
+- 公司仅披露C1与AISC两级，C2/C3未披露；2026年指引：C1 $1,900-2,100/oz、Mine-site AISC $2,750-2,950/oz（资本密集期：维持性资本$62-68M，含资本化剥离/车队翻新）
+- DeLamar项目FS（2025.12生效）提供前瞻成本参考：total cash cost $1,179/oz Au Eq、co-product mine-site AISC $1,480/oz Au Eq（LOM口径，非实际发生）</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://integraresources.com/investors/" target="_blank" rel="noopener">Integra Resources— 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Integra_Resources/Integra_Resources_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Integra_Resources/Integra_Resources_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "二、关键产量与运营（Florida Canyon Mine；FY2024仅含11月8日起53天）", "years": [2024, 2025], "series": [{"label": "筑堆量（kt）", "unit": "kt", "points": [1627.0, 13226.0]}, {"label": "金品位（g/t）", "unit": "g/t", "points": [0.25, 0.22]}, {"label": "金回收率（%）", "unit": "%", "points": [61.2, 60.1]}, {"label": "金产量（oz）", "unit": "oz", "points": [10984.0, 70927.0]}, {"label": "金销量（oz）", "unit": "oz", "points": [11382.0, 70919.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "四、财务摘要（美元）", "years": [2024, 2025], "series": [{"label": "收入", "unit": "", "points": [30400000.0, null]}, {"label": "销售成本", "unit": "", "points": [-25000000.0, -149400000.0]}, {"label": "矿山经营盈利", "unit": "", "points": [5400000.0, null]}, {"label": "净利（亏损）", "unit": "亏损", "points": [-9500000.0, null]}, {"label": "经营现金流", "unit": "", "points": [-10100000.0, 72300000.0]}, {"label": "自由现金流", "unit": "", "points": [-12400000.0, 19800000.0]}, {"label": "期末现金", "unit": "", "points": [52200000.0, 63100000.0]}, {"label": "营运资金", "unit": "", "points": [64400000.00000001, 92900000.0]}], "log": false, "type": "bar", "omitted": 3, "id": "chart2"}];</script>
 

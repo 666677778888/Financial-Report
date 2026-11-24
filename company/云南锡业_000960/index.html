@@ -13,6 +13,99 @@
   <span class="tag">000960 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="000960" data-name="云南锡业年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 云南锡业年报摘要（000960 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/000960.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>云南锡业（000960）年报摘要</h1>
 <blockquote>
@@ -422,9 +515,47 @@
 </tbody>
 </table>
 <div class="chart-box"><div class="chart-title">3.6 核心财务指标<span class="chart-sub">2024–2025 · 柱状图 · 对数轴</span></div><div class="chart-canvas-wrap"><canvas id="chart3"></canvas></div></div>
+
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，采矿+选冶单位成本）；AISC=WGC全维持成本（A股不披露）。白银为铜/锡冶炼副产（阳极泥），开采成本按主金属（锡/铜/锌）口径披露。财年FY2025（截至2025-12-31）。</p>
+</blockquote>
+<p><strong>企业类型</strong>：冶炼+矿山混合（精矿部分自给）｜<strong>主金属</strong>：锡（银为铜冶炼副产）</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>锡原矿/锡精矿（矿山）</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>—</td>
+<td>FY2025锡原矿金属产量31,788吨，无单位成本披露</td>
+</tr>
+<tr>
+<td>锡锭（冶炼）</td>
+<td>未披露（原材料占冶炼成本84.61%）</td>
+<td>不适用</td>
+<td>—</td>
+<td>冶炼营业成本构成：原材料268.25亿元/84.61%、燃料动力8.77亿元/2.77%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. <strong>无单位成本披露</strong>：年报仅披露营业成本构成（行业/产品维度总额），无吨锡/吨矿成本。冶炼原材料占营业成本84.61%，成本高度绑定外购原料与加工费。
+2. <strong>自给率低放大加工费敏感度</strong>：锡精矿自给率28.47%、铜精矿14.00%、锌精矿82.75%；锡/铜/锌加工费持续走低，公司以有价金属综合回收对冲。
+3. <strong>银134吨为铜冶炼阳极泥副产</strong>，无独立银成本口径。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="http://www.ytl.com.cn/" target="_blank" rel="noopener">云南锡业年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 云南锡业_000960/云南锡业_000960_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 云南锡业_000960/云南锡业_000960_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要产品产量", "years": [2024, 2025], "series": [{"label": "锡（万吨）", "unit": "万吨", "points": [8.48, 9.12]}, {"label": "铜（万吨）", "unit": "万吨", "points": [13.03, 13.01]}, {"label": "锌（万吨）", "unit": "万吨", "points": [14.4, 13.34]}, {"label": "铅（吨）", "unit": "吨", "points": [1848.0, 1236.0]}, {"label": "铟锭（吨）", "unit": "吨", "points": [127.0, 119.0]}, {"label": "金（千克）", "unit": "千克", "points": [1229.0, 1260.0]}, {"label": "银（吨）", "unit": "吨", "points": [145.0, 134.0]}, {"label": "有色金属总产量（万吨）", "unit": "万吨", "points": [36.1, 35.6]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "3.4 储量/资源量变化", "years": [2024, 2025], "series": [{"label": "矿石量（亿吨）", "unit": "亿吨", "points": [2.58, 2.56]}, {"label": "锡金属量（万吨）", "unit": "万吨", "points": [62.62, 61.38]}, {"label": "铜金属量（万吨）", "unit": "万吨", "points": [114.99, 114.67]}, {"label": "锌金属量（万吨）", "unit": "万吨", "points": [366.1, 357.84]}, {"label": "铟（吨）", "unit": "吨", "points": [4821.0, 4701.0]}, {"label": "三氧化钨（万吨）", "unit": "万吨", "points": [7.78, 7.69]}, {"label": "铅金属量（万吨）", "unit": "万吨", "points": [9.63, 9.78]}, {"label": "银（吨）", "unit": "吨", "points": [2460.0, 2453.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.6 核心财务指标", "years": [2024, 2025], "series": [{"label": "营业收入（亿元）", "unit": "亿元", "points": [419.73, 435.35]}, {"label": "归母净利润（亿元）", "unit": "亿元", "points": [14.44, 19.66]}, {"label": "扣非归母净利润（亿元）", "unit": "亿元", "points": [19.43, 24.18]}, {"label": "总资产（亿元）", "unit": "亿元", "points": [366.43, 402.36]}, {"label": "归母净资产（亿元）", "unit": "亿元", "points": [208.48, 217.64]}, {"label": "分红方案（每10股，元）", "unit": "每10股，元", "points": [1.9, 2.5]}], "log": true, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 

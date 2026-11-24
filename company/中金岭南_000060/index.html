@@ -13,6 +13,99 @@
   <span class="tag">000060 · A股多金属副产银</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="000060" data-name="中金岭南年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 中金岭南年报摘要（000060 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/000060.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>中金岭南（000060.SZ）年报摘要</h1>
 <blockquote>
@@ -611,9 +704,55 @@
 <li><strong>降本增效</strong>：2024年定位"降本增效年"，26项重点举措，归母净利润同比+57.30%（低基数效应）</li>
 <li><strong>市值与估值</strong>：2025年位列深圳企业500强第33位、《财富》中国500强第287位</li>
 </ol>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：本公司为"矿山+冶炼"一体化企业（矿山铅锌金属量25.38万吨 vs 冶炼产品91.79万吨），冶炼为主体；拥有凡口铅锌矿等自有矿山但年报未披露单位采矿成本，C1/C2/C3及AISC均无披露；下表为可得现金成本口径（分产品毛利率反推）。摘要3.4节已有分产品毛利率表，此处仅作口径归集。</p>
+</blockquote>
+<p><strong>企业类型</strong>：冶炼型（含较大矿山分部）｜<strong>财年</strong>：FY2025（截至2025-12-31）</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>矿山分部（凡口/盘龙/布罗肯山/迈蒙）</td>
+<td>未披露单位采矿现金成本（精矿产品收入37.55亿元、毛利率30.65%，反推营业成本约26.0亿元，非单位成本口径）</td>
+<td>不适用</td>
+<td>亿元（推算总额）</td>
+<td>凡口矿为中国第二大产银矿山；精矿铅锌金属量25.38万吨（-4.21%），资源禀赋下降中</td>
+</tr>
+<tr>
+<td>铅锌冶炼</td>
+<td>未披露单位现金成本（铅锌冶炼产品收入87.84亿元、毛利率17.27%，同比+1.91pct）</td>
+<td>不适用</td>
+<td>亿元（总额口径）</td>
+<td>自有矿山提供部分原料，冶炼毛利率高于纯冶炼同行</td>
+</tr>
+<tr>
+<td>铜冶炼（中金铜业）</td>
+<td>未披露单位现金成本（铜冶炼产品收入437.34亿元、毛利率仅2.18%，同比-0.79pct）</td>
+<td>不适用</td>
+<td>亿元（总额口径）</td>
+<td>"中金法"两段短流程炼铜，年处理150万吨多金属矿；阴极铜47.72万吨</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：</p>
+<ol>
+<li>公司未披露任何单位现金成本（元/吨）或TC/RC数值；风险提示明确"铅锌铜精矿供应紧张导致加工费大幅下滑"——行业加工费方向向下。</li>
+<li>与纯冶炼企业不同，公司矿山分部（精矿产品毛利率30.65%）是核心利润来源，冶炼环节（尤其铜冶炼毛利率2.18%）利润薄；白银为铅锌冶炼伴生（年产137吨），成本归集于铅锌系统。</li>
+<li>矿山端无C1/AISC披露，且精矿铅锌金属量连续两年下降（2025年-4.21%）、银产量-10.46%——资源禀赋下降是长期成本抬升变量。</li>
+</ol>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.nonfemet.com/" target="_blank" rel="noopener">中金岭南年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 中金岭南_000060/中金岭南_000060_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 中金岭南_000060/中金岭南_000060_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要产品产量汇总（2024–2025年）", "years": [2024, 2025], "series": [{"label": "精矿铅锌金属量", "unit": "万吨", "points": [26.5, 25.38]}, {"label": "精矿含铜", "unit": "吨", "points": [11956.0, 10255.0]}, {"label": "冶炼铜铅锌产品合计", "unit": "万吨", "points": [87.15, 91.79]}, {"label": "其中：阴极铜", "unit": "万吨", "points": [43.17, 47.72]}, {"label": "其中：铅锌产品", "unit": "万吨", "points": [43.98, 44.07]}, {"label": "白银（冶炼）", "unit": "吨", "points": [153.0, 137.0]}, {"label": "黄金（冶炼）", "unit": "千克", "points": [267.0, 450.0]}, {"label": "工业硫酸", "unit": "万吨", "points": [173.77, 212.64]}], "log": true, "type": "bar", "omitted": 4, "id": "chart1"}, {"title": "1.2 精矿产销明细", "years": [2024, 2025], "series": [{"label": "精矿含铅锌金属量", "unit": "", "points": [264955.0, 253805.0]}, {"label": "精矿含铜金属量", "unit": "", "points": [11956.0, 10255.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "1.3 冶炼产品产销明细", "years": [2024, 2025], "series": [{"label": "冶炼铅、锌及锌制品", "unit": "", "points": [439769.0, 440727.0]}, {"label": "铜冶炼产品", "unit": "", "points": [431690.0, 477203.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "1.4 白银产量与变化（重点关注）", "years": [2024, 2025], "series": [{"label": "白银产量（吨）", "unit": "", "points": [153.0, 137.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "截止2025年底公司保有金属资源量", "years": [2024, 2025], "series": [{"label": "锌", "unit": "", "points": [7130000.0, 7040000.0]}, {"label": "铅", "unit": "", "points": [3660000.0, 3850000.0]}, {"label": "铜", "unit": "", "points": [1430000.0, 1550000.0]}, {"label": "银", "unit": "", "points": [6607.0, 7292.0]}, {"label": "金", "unit": "", "points": [90.0, 89.0]}, {"label": "镍", "unit": "", "points": [92400.0, 92400.0]}, {"label": "镓", "unit": "", "points": [717.0, 690.0]}, {"label": "锗", "unit": "", "points": [240.0, 208.0]}], "log": true, "type": "bar", "omitted": 1, "id": "chart5"}];</script>
 

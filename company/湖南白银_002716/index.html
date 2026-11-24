@@ -13,6 +13,99 @@
   <span class="tag">002716 · A股白银冶炼</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="002716" data-name="湖南白银年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 湖南白银年报摘要（002716 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/002716.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>湖南白银（002716）年报摘要</h1>
 <blockquote>
@@ -347,9 +440,62 @@ A股唯一以白银为主业的上市公司，2023年重组后湖南矿产集团
 <li><strong>国资背景</strong>：控股股东湖南矿产集团（湖南省国资委），信用评级AA+</li>
 <li><strong>区位优势</strong>：总部位于"中国银都"郴州，有色金属产业聚集区</li>
 </ul>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：本公司以冶炼为主体（银产能2,000吨/年），持有宝山矿业、金和矿业矿山但规模较小、未披露单位采矿成本，C1/C2/C3及AISC均不适用；下表为冶炼环节可得现金成本口径（原料采购结算扣减+成本结构）。摘要3.2节已有成本结构表，此处仅作口径归集。</p>
+</blockquote>
+<p><strong>企业类型</strong>：冶炼型（含小型矿山分部）｜<strong>财年</strong>：FY2025（截至2025-12-31）</p>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>矿山分部（宝山/金和矿业）</td>
+<td>未披露单位采矿现金成本</td>
+<td>不适用</td>
+<td>—</td>
+<td>宝山矿业2025年出矿量44.99万吨、金属量2.98万吨；矿产品板块毛利率57.37%（收入占比仅5.05%），无元/吨成本披露</td>
+</tr>
+<tr>
+<td>铅冶炼（采购定价扣减口径）</td>
+<td>原料采购按1#铅结算平均价减扣150元/吨（2024年为减扣250-500元/吨）</td>
+<td>不适用</td>
+<td>元/吨</td>
+<td>为原料采购定价扣减（近似加工费的市场对价），非公司自身冶炼单位成本；三连炉升级后下料量38吨/小时</td>
+</tr>
+<tr>
+<td>银冶炼（采购定价扣减口径）</td>
+<td>粗银类按上海华通铂银9995加权平均价扣减15-25元/克</td>
+<td>不适用</td>
+<td>元/克</td>
+<td>同上，为采购定价扣减口径</td>
+</tr>
+<tr>
+<td>黄金冶炼</td>
+<td>金结算平均价792元/克（2025年）</td>
+<td>不适用</td>
+<td>元/克</td>
+<td>此为原料结算价（市场价口径），非加工成本</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：</p>
+<ol>
+<li>公司未披露任何环节的单位现金成本（元/吨）；主材（原材料）占营业成本94.85%，冶炼综合毛利率约6.63%，属典型"原料价格-加工费差"模式。</li>
+<li>原料采购定价扣减2025年收窄（铅扣减150元/吨 vs 2024年250-500元/吨），反映含银原料竞争加剧——白银产量+26.85%依赖粗银外购量+162.21%。</li>
+<li>电铅毛利率-17.56%（公司主动削减低毛利电铅产出13.63%），高毛利在矿产品板块（57.37%）但体量小；自有矿山原料自给率低，冶炼产能远超矿山供应。</li>
+</ol>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://jingui-silver.com/" target="_blank" rel="noopener">湖南白银年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 湖南白银_002716/湖南白银_002716_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 湖南白银_002716/湖南白银_002716_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1.1 主要金属产量（2023-2025年）", "years": [2023, 2024, 2025], "series": [{"label": "白银", "unit": "", "points": [592.99, 761.08, 965.46]}, {"label": "黄金", "unit": "", "points": [1979.99, 2683.28, 2947.37]}, {"label": "电铅", "unit": "", "points": [68300.0, null, null]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "1.2 主要金属销量（2023-2025年）", "years": [2023, 2024, 2025], "series": [{"label": "白银", "unit": "", "points": [536.08, 699.87, 868.13]}, {"label": "黄金", "unit": "", "points": [2018.54, 2814.65, 2938.39]}, {"label": "电铅", "unit": "", "points": [68012.0, 61943.0, 53549.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3.4 财务概况", "years": [2023, 2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [5139000000.0, 8313000000.0, 12445000000.0]}, {"label": "归母净利润", "unit": "", "points": [-161000000.0, 170000000.0, 340000000.0]}, {"label": "扣非归母净利润", "unit": "", "points": [-149000000.0, 120000000.0, 329000000.0]}, {"label": "经营活动现金流量净额", "unit": "", "points": [-62000000.0, 698000000.0, 655000000.0]}, {"label": "总资产", "unit": "", "points": [4186999999.9999995, 5521000000.0, 6798999999.999999]}, {"label": "归母净资产", "unit": "", "points": [1648000000.0, 3290000000.0, 3535000000.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}];</script>
 

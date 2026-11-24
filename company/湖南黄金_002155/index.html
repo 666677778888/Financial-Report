@@ -13,6 +13,99 @@
   <span class="tag">002155 · A股白银冶炼</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="002155" data-name="湖南黄金年报摘要" data-ccy="CNY">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · 湖南黄金年报摘要（002155 · CNY）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/002155.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>湖南黄金（002155）年报摘要</h1>
 <blockquote>
@@ -585,9 +678,53 @@
 <li><strong>钨业务亮眼</strong>：钨品毛利率提升36.64pct，钨价上涨带来重要利润增量</li>
 <li><strong>银产能约120吨/年</strong>（副产品），具体产量未单独披露</li>
 </ol>
+<hr />
+<h2>开采成本（cash cost/AISC口径）</h2>
+<blockquote>
+<p>口径：cash cost=现金成本（≈C1，含采矿+选冶，净副产品前）；AISC=WGC全维持成本；A股公司普遍不披露AISC。数据源：FY2025年报（截至2025-12-31）。</p>
+</blockquote>
+<p><strong>企业类型</strong>：矿山+冶炼混合型（外购非标金冶炼占营收88.38%）｜<strong>主金属</strong>：金（+锑钨），银为副产品</p>
+<table>
+<thead>
+<tr>
+<th>产品/环节</th>
+<th>cash cost（现金成本）</th>
+<th>AISC</th>
+<th>单位</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自产金（3,431千克）</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/克</td>
+<td>自产矿口径单位成本年报未披露</td>
+</tr>
+<tr>
+<td>自产锑（14,206吨）/钨（908标吨）</td>
+<td>未披露单位成本</td>
+<td>未披露</td>
+<td>元/吨</td>
+<td>锑品毛利率同比+6.64pct（精锑）、钨品毛利率+36.64pct，价格上涨驱动</td>
+</tr>
+<tr>
+<td>外购非标金冶炼加工</td>
+<td>开采口径不适用，列冶炼加工成本：全公司营业成本470.97亿元（同比+83.61%）</td>
+<td>—</td>
+<td>—</td>
+<td>外购非标金业务营收443.52亿元（占88.38%），营业成本主要为外购原料+冶炼加工费，极低毛利（代加工属性）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+1. 营业成本总量（470.97亿元）中约九成来自外购非标金冶炼加工业务，<strong>非开采成本</strong>；开采（自产矿）单位成本未单独披露，分析矿山盈利需依赖分产品毛利率（黄金毛利率同比-0.96pct）。
+2. 2025年冶炼加工量大幅增长（黄金总产量+32.49%全靠外购原料）摊薄整体毛利率，但核心利润仍来自自产金3,431千克（-7.4%）、自产锑14,206吨（-6.7%）——自产矿产量连续下滑是单位成本上行压力源。
+3. AISC未披露；若剔除外购加工口径还原矿山真实成本，需参考万古矿区重组（2026年1月启动）后的整合披露。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://www.hngoldcorp.com/" target="_blank" rel="noopener">湖南黄金年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2020–2025 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 湖南黄金_002155/湖南黄金_002155_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 湖南黄金_002155/湖南黄金_002155_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "1. 黄金", "years": [2023, 2024, 2025], "series": [{"label": "黄金总产量", "unit": "", "points": [47699.0, 46328.0, 61382.0]}, {"label": "其中：标准金", "unit": "", "points": [null, 44012.0, 59281.0]}, {"label": "其中：含量金", "unit": "", "points": [null, 2316.0, 2101.0]}, {"label": "黄金自产", "unit": "", "points": [3947.0, 3705.0, 3431.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "2. 锑品", "years": [2023, 2024, 2025], "series": [{"label": "锑品总产量", "unit": "", "points": [31124.0, 29209.0, 22998.0]}, {"label": "其中：精锑", "unit": "", "points": [null, 8686.0, 5823.0]}, {"label": "其中：氧化锑", "unit": "", "points": [null, 13258.0, 9524.0]}, {"label": "其中：含量锑", "unit": "", "points": [null, 4721.0, 4842.0]}, {"label": "其中：乙二醇锑", "unit": "", "points": [null, 2331.0, 2506.0]}, {"label": "其中：氧化锑母粒", "unit": "", "points": [null, 213.0, 303.0]}, {"label": "锑自产", "unit": "", "points": [17543.0, 15227.0, 14206.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart2"}, {"title": "3. 钨品", "years": [2023, 2024, 2025], "series": [{"label": "钨品总产量", "unit": "", "points": [941.0, 1008.0, 958.0]}, {"label": "钨精矿自产", "unit": "", "points": [552.0, 879.0, 908.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart3"}, {"title": "2026年经营计划", "years": [2025, 2026], "series": [{"label": "黄金", "unit": "", "points": [61382.0, 62817.0]}, {"label": "锑品", "unit": "", "points": [22998.0, 34292.0]}, {"label": "钨品", "unit": "", "points": [958.0, 1100.0]}, {"label": "销售收入目标", "unit": "", "points": [50200000000.0, 51800000000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart4"}, {"title": "保有资源量（每年末）", "years": [2024, 2025], "series": [{"label": "矿石量", "unit": "", "points": [67290000.0, 71900000.0]}, {"label": "锑金属量", "unit": "", "points": [323060.0, 347168.0]}, {"label": "钨金属量", "unit": "", "points": [97005.0, 109882.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart5"}, {"title": "矿业权", "years": [2024, 2025], "series": [{"label": "矿业权总数", "unit": "", "points": [30.0, 28.0]}, {"label": "探矿权", "unit": "", "points": [18.0, 17.0]}, {"label": "采矿权", "unit": "", "points": [12.0, 11.0]}], "log": false, "type": "bar", "omitted": 0, "id": "chart6"}, {"title": "五、财务概况", "years": [2024, 2025], "series": [{"label": "营业收入", "unit": "", "points": [27839000000.0, 50181000000.0]}, {"label": "营业成本", "unit": "", "points": [25650000000.0, 47097000000.0]}, {"label": "利润总额", "unit": "", "points": [1005000000.0000001, 1782999999.9999998]}, {"label": "归母净利润", "unit": "", "points": [847000000.0000001, 1488000000.0]}, {"label": "每股收益", "unit": "", "points": [0.7, 0.95]}, {"label": "经营活动现金流净额", "unit": "", "points": [889000000.0, 1499000000.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart7"}];</script>
 

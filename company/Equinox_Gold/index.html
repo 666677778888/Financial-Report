@@ -13,6 +13,99 @@
   <span class="tag">EQX · 在产黄金核心</span>
 </div>
 <div class="wrap">
+
+<div class="card kcard" id="kcard" data-key="EQX" data-name="Equinox Gold — 年报摘要" data-ccy="USD">
+  <div class="khead">
+    <span class="ktitle">📈 股价 · Equinox Gold — 年报摘要（EQX · USD）</span>
+    <span class="kmeta" id="kmeta">加载中…</span>
+  </div>
+  <canvas id="kcv" width="860" height="180" style="width:100%;height:180px;display:block"></canvas>
+  <div class="kfoot">
+    <span class="kupd" id="kupd"></span>
+    <a class="klink" href="../../stocks.html">→ 股价看板（全部66家）</a>
+  </div>
+</div>
+<script src="../../stocks_data/ohlc/EQX.js"></script>
+
+<script>
+(function(){
+"use strict";
+var KEY = document.getElementById("kcard").getAttribute("data-key");
+var CCY = document.getElementById("kcard").getAttribute("data-ccy");
+var KNAME = document.getElementById("kcard").getAttribute("data-name");
+function fmt(v){ if(v>=1000) return v.toFixed(0); if(v>=100) return v.toFixed(1); return v.toFixed(2); }
+function draw(d){
+  var cv = document.getElementById("kcv");
+  var dpr = window.devicePixelRatio || 1;
+  var W = cv.clientWidth * dpr, H = 180 * dpr;
+  cv.width = W; cv.height = H;
+  var ctx = cv.getContext("2d");
+  var UP="#C0392B", DN="#1E8449", SUB="#8a97a5", LINE="#e3e8ee";
+  var n = Math.min(120, d.t.length), s = d.t.length - n;
+  var hi=-1e9, lo=1e9, i;
+  for(i=s;i<d.t.length;i++){ if(d.h[i]>hi)hi=d.h[i]; if(d.l[i]<lo)lo=d.l[i]; }
+  if(hi<=lo) hi=lo+1;
+  var pad=(hi-lo)*0.06; hi+=pad; lo-=pad;
+  var cw=W/n, bw=Math.max(1, Math.min(5, cw*0.62));
+  function y(v){ return H - (v-lo)/(hi-lo)*H; }
+  for(var j=s;j<d.t.length;j++){
+    var o=d.o[j], h=d.h[j], l=d.l[j], c=d.c[j];
+    var x=(j-s)*cw + cw/2;
+    ctx.strokeStyle = ctx.fillStyle = (c>=o)?UP:DN;
+    ctx.lineWidth = Math.max(1, cw*0.1);
+    ctx.beginPath(); ctx.moveTo(x, y(h)); ctx.lineTo(x, y(l)); ctx.stroke();
+    var yo=y(o), yc=y(c);
+    ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(1, Math.abs(yo-yc)));
+  }
+  // 末值标注
+  ctx.fillStyle = "#1c2733"; ctx.font = (10*dpr)+"px sans-serif"; ctx.textAlign="right";
+  ctx.fillText(fmt(d.c[d.t.length-1])+" "+CCY, W-4, 12*dpr);
+  // 起止日期
+  ctx.fillStyle = SUB; ctx.textAlign="left";
+  ctx.fillText(d.t[s], 2, H-3);
+  ctx.textAlign="right"; ctx.fillText(d.t[d.t.length-1], W-2, H-3);
+}
+function meta(){
+  // 从 manifest 取估值与YTD
+  var arr = (window.__STOCKS__&&window.__STOCKS__.companies)||[];
+  var c = null;
+  for(var i=0;i<arr.length;i++){ if(arr[i].key===KEY){ c=arr[i]; break; } }
+  var d = (window.__OHLC__||{})[KEY];
+  var ytd=null;
+  if(d && d.t.length){
+    var yl=d.t.length-1, y=d.t[yl].slice(0,4), ib=-1;
+    for(var k=0;k<d.t.length;k++){ if(d.t[k].slice(0,4)<y) ib=k; }
+    if(ib>=0 && d.c[ib]>0) ytd = d.c[yl]/d.c[ib]-1;
+  }
+  var parts=[];
+  if(c){
+    if(c.pe!=null) parts.push("PE <b>"+c.pe.toFixed(1)+"</b>");
+    if(c.pb!=null) parts.push("PB <b>"+c.pb.toFixed(2)+"</b>");
+  }
+  if(ytd!=null) parts.push("YTD <b class='"+(ytd>=0?"up":"dn")+"'>"+(ytd>=0?"+":"")+(ytd*100).toFixed(1)+"%</b>");
+  var el=document.getElementById("kmeta");
+  if(el){ el.innerHTML = parts.length? parts.join(" · ") : "—"; }
+  var up=document.getElementById("kupd");
+  if(up && window.__STOCKS__){
+    up.innerHTML = "K线数据更新：<b>"+window.__STOCKS__.updated+"</b>";
+  }
+}
+function wait(){
+  var d=(window.__OHLC__||{})[KEY];
+  if(d && d.t && d.t.length){ draw(d); meta(); }
+  else setTimeout(wait, 200);
+}
+// manifest 异步加载
+(function(){
+  var s=document.createElement("script");
+  s.src="../../stocks_data/manifest.js";
+  s.onload = meta;
+  document.head.appendChild(s);
+})();
+wait();
+})();
+</script>
+
 <div class="card">
 <h1>Equinox Gold — 年报摘要</h1>
 <blockquote>
@@ -291,9 +384,53 @@
 <li><strong>巴西资产退出</strong>：Aurizona/Bahia/RDM以8.911亿美元现金+1.15亿或有对价出售（2026年1月交割），聚焦北美低成本资产；但Bahia州立CBPM就Santa Luz出售同意权提起诉讼，仍在进行中。</li>
 <li><strong>尼加拉瓜地缘风险</strong>：美加对尼制裁扩展至金板块参与者，FATF列名观察；公司认为合规但存在被"误伤"及融资/保险受限风险。2026年指引：产量70–80万 oz、AISC $1,775–1,875/oz。</li>
 </ol>
+<hr />
+<h2>开采成本（C1/C2/C3框架）</h2>
+<blockquote>
+<p>口径：C1=现金成本（净副产品抵扣）；C2=C1+折旧摊销；C3=C2+期间费用；AISC=WGC标准（含维持性资本开支，介于C2与C3之间，单列参考）。</p>
+</blockquote>
+<p><strong>财年</strong>：FY2025（截至2025-12-31）｜<strong>主金属</strong>：金</p>
+<table>
+<thead>
+<tr>
+<th>金属</th>
+<th>C1（现金成本）</th>
+<th>C2</th>
+<th>C3</th>
+<th>AISC</th>
+<th>单位</th>
+<th>口径备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Au（All Operations）</td>
+<td>1,494</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,925</td>
+<td>US$/oz</td>
+<td>Cash costs/oz sold（All Ops）=1,494（2024：1,598，−6%）；AISC（All Ops）=1,925（2024：1,870，+3%）</td>
+</tr>
+<tr>
+<td>Au（持续经营）</td>
+<td>1,406</td>
+<td>未披露</td>
+<td>未披露</td>
+<td>1,786</td>
+<td>US$/oz</td>
+<td>巴西业务列为终止经营口径；剔除后成本更低（尼加拉瓜资产拉低）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>要点</strong>：
+- 指引口径（含Calibre资产全年、剔Los Filos）：现金成本$1,416/oz、AISC $1,809/oz，均在指引区间（$1,400–1,500/$1,800–1,900）内。
+- AISC上行主因：Mesquite维持性资本开支增加及Bahia Complex资本化剥离；现金成本下降主因尼加拉瓜资产（并表期现金成本$1,272/oz、AISC $1,551/oz）组合摊薄。
+- 收入按净银副产品抵扣后列报（revenue net of silver by-product credits）。
+- 注意：AIF中"C1 deposit"（Greenstone矿区内矿床名）非成本口径，已排除。公司未披露C2/C3口径。</p>
 </div>
 <div class="card files"><h2>原文来源</h2><p class="hint">年报原文请访问公司官方披露页面；本站仅提供结构化摘要与图表。</p><p class="src-link">🔗 <a href="https://equinoxgold.com/investors/" target="_blank" rel="noopener">Equinox Gold — 年报摘要 · 官网投资者关系 / 定期报告页</a></p><p class="hint">摘要依据：2024–2026 年度报告 / 10-K / 40-F / AIF / 综合报告（本地归档）</p></div>
-<div class="foot">由 Equinox_Gold/Equinox_Gold_摘要.md 生成 · 构建时间 2026-11-11 16:22 · <a href="../../index.html">返回公司总览</a></div>
+<div class="foot">由 Equinox_Gold/Equinox_Gold_摘要.md 生成 · 构建时间 2026-11-24 11:48 · <a href="../../index.html">返回公司总览</a></div>
 </div>
 <script>window.__PM_CHARTS__ = [{"title": "二、黄金产量（盎司）", "years": [2024, 2025], "series": [{"label": "Greenstone", "unit": "", "points": [111717.0, 223843.0]}, {"label": "Mesquite", "unit": "", "points": [71984.0, 85998.0]}, {"label": "Brazil Operations（终止经营）", "unit": "终止经营", "points": [247311.0, 258905.0]}, {"label": "Castle Mountain（残浸）", "unit": "残浸", "points": [null, 9089.0]}, {"label": "合计（All Operations，持有期口径）", "unit": "", "points": [621893.0, 779544.0]}, {"label": "合计（含Calibre资产全年口径）", "unit": "", "points": [null, 856908.0]}], "log": true, "type": "bar", "omitted": 0, "id": "chart1"}, {"title": "四、财务摘要（百万美元）", "years": [2024, 2025], "series": [{"label": "收入（持续经营）", "unit": "持续经营", "points": [912.8, 1817.2]}, {"label": "黄金销量（持续经营，oz）", "unit": "持续经营，oz", "points": [374246.0, 519671.0]}, {"label": "实现金价（All Ops，$/oz）", "unit": "", "points": [2423.0, 3465.0]}, {"label": "净利润（All Operations）", "unit": "", "points": [339.3, 221.5]}, {"label": "净利润（持续经营）", "unit": "持续经营", "points": [260.3, -18.9]}, {"label": "调整后净利（All Ops）", "unit": "All Ops", "points": [113.1, 420.5]}, {"label": "调整后EBITDA（All Ops）", "unit": "All Ops", "points": [479.0, 1339.6]}, {"label": "经营现金流（All Ops）", "unit": "All Ops", "points": [430.2, 818.3]}], "log": false, "type": "bar", "omitted": 3, "id": "chart2"}];</script>
 
